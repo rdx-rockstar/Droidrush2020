@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:ShareApp/constants/color_constant.dart';
 import 'package:ShareApp/constants/style_constant.dart';
 import 'package:ShareApp/models/buttontapped.dart';
+import 'package:ShareApp/screens/recieveOne.dart';
+import 'package:ShareApp/screens/sendOne.dart';
 import 'package:ShareApp/widgets/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -146,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 if (await Nearby().checkLocationPermission()) {
                                   if (await Nearby().checkExternalStoragePermission()) {
                                     if (await Nearby().checkLocationEnabled()) {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => sendOne(userName)));
                                     } else {
                                       if (await Nearby().enableLocationServices()) {
                                         Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
@@ -193,19 +195,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                 if (await Nearby().checkLocationPermission()) {
                                   if (await Nearby().checkExternalStoragePermission()) {
                                     if (await Nearby().checkLocationEnabled()) {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                      //Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => recieveOne(userName)));
                                     } else {
                                       if (await Nearby().enableLocationServices()) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => recieveOne(userName)));
                                       }
                                     }
                                   } else {
                                     Nearby().askExternalStoragePermission();
                                     if (await Nearby().checkLocationEnabled()) {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => recieveOne(userName)));
                                     } else {
                                       if (await Nearby().enableLocationServices()) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => recieveOne(userName)));
                                       }
                                     }
                                   }
@@ -213,19 +216,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                   if (await Nearby().askLocationPermission()) {
                                     if (await Nearby().checkExternalStoragePermission()) {
                                       if (await Nearby().checkLocationEnabled()) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => recieveOne(userName)));
                                       } else {
                                         if (await Nearby().enableLocationServices()) {
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => recieveOne(userName)));
                                         }
                                       }
                                     } else {
                                       Nearby().askExternalStoragePermission();
                                       if (await Nearby().checkLocationEnabled()) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => recieveOne(userName)));
                                       } else {
                                         if (await Nearby().enableLocationServices()) {
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => recieveOne(userName)));
                                         }
                                       }
                                     }
