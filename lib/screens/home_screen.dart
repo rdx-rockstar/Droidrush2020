@@ -1,13 +1,18 @@
+import 'dart:math';
+
 import 'package:ShareApp/constants/color_constant.dart';
 import 'package:ShareApp/constants/style_constant.dart';
 import 'package:ShareApp/models/buttontapped.dart';
 import 'package:ShareApp/widgets/bottom_navigation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ShareApp/models/button.dart';
 import 'package:ShareApp/models/buttontapped.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ShareApp/screens/sharing.dart';
+import 'package:nearby_connections/nearby_connections.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -19,6 +24,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void _press1() {
     // To implement this functionality to change the screen
   }
+
+  // Unique identity for a user.
+  final String userName = Random().nextInt(10000).toString();
 
   @override
   Widget build(BuildContext context) {
@@ -134,13 +142,97 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: <Widget>[
                         Expanded(
                             child: GestureDetector(
-                          onTap: _press1,
-                          child: ButtonTapped(icon: Icons.share),
+                              onTap: () async {
+                                if (await Nearby().checkLocationPermission()) {
+                                  if (await Nearby().checkExternalStoragePermission()) {
+                                    if (await Nearby().checkLocationEnabled()) {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
+                                    } else {
+                                      if (await Nearby().enableLocationServices()) {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
+                                      }
+                                    }
+                                  } else {
+                                    Nearby().askExternalStoragePermission();
+                                    if (await Nearby().checkLocationEnabled()) {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
+                                    } else {
+                                      if (await Nearby().enableLocationServices()) {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
+                                      }
+                                    }
+                                  }
+                                } else {
+                                  if (await Nearby().askLocationPermission()) {
+                                    if (await Nearby().checkExternalStoragePermission()) {
+                                      if (await Nearby().checkLocationEnabled()) {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
+                                      } else {
+                                        if (await Nearby().enableLocationServices()) {
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
+                                        }
+                                      }
+                                    } else {
+                                      Nearby().askExternalStoragePermission();
+                                      if (await Nearby().checkLocationEnabled()) {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
+                                      } else {
+                                        if (await Nearby().enableLocationServices()) {
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              child: ButtonTapped(icon: Icons.share),
                         )),
                         Expanded(
                             child: GestureDetector(
-                          onTap: _press1,
-                          child: ButtonTapped(icon: Icons.call_received),
+                              onTap: () async {
+                                if (await Nearby().checkLocationPermission()) {
+                                  if (await Nearby().checkExternalStoragePermission()) {
+                                    if (await Nearby().checkLocationEnabled()) {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                    } else {
+                                      if (await Nearby().enableLocationServices()) {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                      }
+                                    }
+                                  } else {
+                                    Nearby().askExternalStoragePermission();
+                                    if (await Nearby().checkLocationEnabled()) {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                    } else {
+                                      if (await Nearby().enableLocationServices()) {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                      }
+                                    }
+                                  }
+                                } else {
+                                  if (await Nearby().askLocationPermission()) {
+                                    if (await Nearby().checkExternalStoragePermission()) {
+                                      if (await Nearby().checkLocationEnabled()) {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                      } else {
+                                        if (await Nearby().enableLocationServices()) {
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                        }
+                                      }
+                                    } else {
+                                      Nearby().askExternalStoragePermission();
+                                      if (await Nearby().checkLocationEnabled()) {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                      } else {
+                                        if (await Nearby().enableLocationServices()) {
+                                          Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              child: ButtonTapped(icon: Icons.call_received),
                         )),
                       ],
                     ),
