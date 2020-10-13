@@ -41,7 +41,7 @@ class _sendOneState extends State<sendOne> {
   void dispose() {
     //   TextField
     // Clean up the controller when the widget is disposed.
-    // mymessage.dispose();
+    mymessage.dispose();
     super.dispose();
   }
 
@@ -216,15 +216,15 @@ class _sendOneState extends State<sendOne> {
                       icon: Icon(Icons.send),
                       iconSize: 25.0,
                       color: Theme.of(context).primaryColor,
-                      onPressed: () async {
-                        Message n;
-                        n.text = mymessage.text;
+                      onPressed: () {
+                        Message n = new Message();
                         n.sender = cId;
+                        n.text = mymessage.text;
                         print(mymessage.text);
                         setState(() {
                           _messages.add(n);
                         });
-                        //  showSnackbar("Sending ${mymessage.text} to $cId");
+                        // showSnackbar("Sending ${mymessage.text} to $cId");
                         Nearby().sendBytesPayload(
                             cId, Uint8List.fromList(mymessage.text.codeUnits));
                       },

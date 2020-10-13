@@ -156,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                sharing("send", userName)));
+                                                sendOne(userName)));
                                   }
                                 }
                               } else {
@@ -166,14 +166,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              sharing("send", userName)));
+                                              sendOne(userName)));
                                 } else {
                                   if (await Nearby().enableLocationServices()) {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                sharing("send", userName)));
+                                                sendOne(userName)));
                                   }
                                 }
                               }
@@ -186,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                sharing("send", userName)));
+                                                sendOne(userName)));
                                   } else {
                                     if (await Nearby()
                                         .enableLocationServices()) {
@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  sharing("send", userName)));
+                                                  sendOne(userName)));
                                     }
                                   }
                                 } else {
@@ -204,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                sharing("send", userName)));
+                                                sendOne(userName)));
                                   } else {
                                     if (await Nearby()
                                         .enableLocationServices()) {
@@ -212,7 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  sharing("send", userName)));
+                                                  sendOne(userName)));
                                     }
                                   }
                                 }
