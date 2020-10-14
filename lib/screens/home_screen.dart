@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:ShareApp/constants/color_constant.dart';
 import 'package:ShareApp/constants/style_constant.dart';
@@ -13,7 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ShareApp/models/button.dart';
 import 'package:ShareApp/models/buttontapped.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:ShareApp/screens/sharing.dart';
+// import 'package:ShareApp/screens/sharing.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -54,17 +55,13 @@ class _HomeScreenState extends State<HomeScreen> {
               accountName: Text("MiA3"),
               accountEmail: Text("fetchfrom@firebase.com"),
               currentAccountPicture: new GestureDetector(
-                onTap: () => print('To implement This Function'),
+                onTap: () => print(
+                    'To implement This Function'), // FUNCTION WHICH CAN BE
                 child: new CircleAvatar(
                   backgroundColor: Colors.white,
                   child: new Text("MiA3"),
                 ),
               ),
-
-              //  new CircleAvatar(
-              //   backgroundColor: Colors.white,
-              //   child: new Text("MiA3"),
-              // ),
             ),
             ListTile(
               title: Text("Setting"),
@@ -133,8 +130,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 100),
+            SizedBox(height: 50),
             // Now buttons
+            // Send one
             Center(
               child: Column(
                 children: <Widget>[
@@ -144,98 +142,184 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: <Widget>[
                         Expanded(
                             child: GestureDetector(
-                              onTap: () async {
-                                if (await Nearby().checkLocationPermission()) {
-                                  if (await Nearby().checkExternalStoragePermission()) {
-                                    if (await Nearby().checkLocationEnabled()) {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => sendOne(userName)));
-                                    } else {
-                                      if (await Nearby().enableLocationServices()) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
-                                      }
-                                    }
+                          onTap: () async {
+                            if (await Nearby().checkLocationPermission()) {
+                              if (await Nearby()
+                                  .checkExternalStoragePermission()) {
+                                if (await Nearby().checkLocationEnabled()) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              sendOne(userName)));
+                                } else {
+                                  if (await Nearby().enableLocationServices()) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                sendOne(userName)));
+                                  }
+                                }
+                              } else {
+                                Nearby().askExternalStoragePermission();
+                                if (await Nearby().checkLocationEnabled()) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              sendOne(userName)));
+                                } else {
+                                  if (await Nearby().enableLocationServices()) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                sendOne(userName)));
+                                  }
+                                }
+                              }
+                            } else {
+                              if (await Nearby().askLocationPermission()) {
+                                if (await Nearby()
+                                    .checkExternalStoragePermission()) {
+                                  if (await Nearby().checkLocationEnabled()) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                sendOne(userName)));
                                   } else {
-                                    Nearby().askExternalStoragePermission();
-                                    if (await Nearby().checkLocationEnabled()) {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
-                                    } else {
-                                      if (await Nearby().enableLocationServices()) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
-                                      }
+                                    if (await Nearby()
+                                        .enableLocationServices()) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  sendOne(userName)));
                                     }
                                   }
                                 } else {
-                                  if (await Nearby().askLocationPermission()) {
-                                    if (await Nearby().checkExternalStoragePermission()) {
-                                      if (await Nearby().checkLocationEnabled()) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
-                                      } else {
-                                        if (await Nearby().enableLocationServices()) {
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
-                                        }
-                                      }
-                                    } else {
-                                      Nearby().askExternalStoragePermission();
-                                      if (await Nearby().checkLocationEnabled()) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
-                                      } else {
-                                        if (await Nearby().enableLocationServices()) {
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("send",userName)));
-                                        }
-                                      }
+                                  Nearby().askExternalStoragePermission();
+                                  if (await Nearby().checkLocationEnabled()) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                sendOne(userName)));
+                                  } else {
+                                    if (await Nearby()
+                                        .enableLocationServices()) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  sendOne(userName)));
                                     }
                                   }
                                 }
-                              },
-                              child: ButtonTapped(icon: Icons.share),
+                              }
+                            }
+                          },
+                          child: ButtonTapped(icon: Icons.share),
                         )),
                         Expanded(
                             child: GestureDetector(
-                              onTap: () async {
-                                if (await Nearby().checkLocationPermission()) {
-                                  if (await Nearby().checkExternalStoragePermission()) {
-                                    if (await Nearby().checkLocationEnabled()) {
-                                      //Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => recieveOne(userName)));
-                                    } else {
-                                      if (await Nearby().enableLocationServices()) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => recieveOne(userName)));
-                                      }
-                                    }
+                          onTap: () async {
+                            if (await Nearby().checkLocationPermission()) {
+                              if (await Nearby()
+                                  .checkExternalStoragePermission()) {
+                                if (await Nearby().checkLocationEnabled()) {
+                                  //Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              recieveOne(userName)));
+                                } else {
+                                  if (await Nearby().enableLocationServices()) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                recieveOne(userName)));
+                                  }
+                                }
+                              } else {
+                                Nearby().askExternalStoragePermission();
+                                if (await Nearby().checkLocationEnabled()) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              recieveOne(userName)));
+                                } else {
+                                  if (await Nearby().enableLocationServices()) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                recieveOne(userName)));
+                                  }
+                                }
+                              }
+                            } else {
+                              if (await Nearby().askLocationPermission()) {
+                                if (await Nearby()
+                                    .checkExternalStoragePermission()) {
+                                  if (await Nearby().checkLocationEnabled()) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                recieveOne(userName)));
                                   } else {
-                                    Nearby().askExternalStoragePermission();
-                                    if (await Nearby().checkLocationEnabled()) {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => recieveOne(userName)));
-                                    } else {
-                                      if (await Nearby().enableLocationServices()) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => recieveOne(userName)));
-                                      }
+                                    if (await Nearby()
+                                        .enableLocationServices()) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  recieveOne(userName)));
                                     }
                                   }
                                 } else {
-                                  if (await Nearby().askLocationPermission()) {
-                                    if (await Nearby().checkExternalStoragePermission()) {
-                                      if (await Nearby().checkLocationEnabled()) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => recieveOne(userName)));
-                                      } else {
-                                        if (await Nearby().enableLocationServices()) {
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => recieveOne(userName)));
-                                        }
-                                      }
-                                    } else {
-                                      Nearby().askExternalStoragePermission();
-                                      if (await Nearby().checkLocationEnabled()) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => recieveOne(userName)));
-                                      } else {
-                                        if (await Nearby().enableLocationServices()) {
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => recieveOne(userName)));
-                                        }
-                                      }
+                                  Nearby().askExternalStoragePermission();
+                                  if (await Nearby().checkLocationEnabled()) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                recieveOne(userName)));
+                                  } else {
+                                    if (await Nearby()
+                                        .enableLocationServices()) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  recieveOne(userName)));
                                     }
                                   }
                                 }
-                              },
-                              child: ButtonTapped(icon: Icons.call_received),
+                              }
+                            }
+                          },
+                          child: ButtonTapped(icon: Icons.call_received),
+                        )),
+                        Expanded(
+                            child: GestureDetector(
+                          // ON TAP FUCNTION FOR JOIN A GROUP
+                          onTap: () =>
+                              print('Here to add the create group function'),
+                          child: ButtonTapped(icon: Icons.group_add_rounded),
+                        )),
+                        Expanded(
+                            child: GestureDetector(
+                          //  on tap function for join the group
+                          onTap: () =>
+                              print('Here to add the join the group function'),
+                          child: ButtonTapped(icon: Icons.add_box_rounded),
                         )),
                       ],
                     ),
