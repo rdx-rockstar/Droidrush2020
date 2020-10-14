@@ -2,18 +2,26 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:ShareApp/models/message_model.dart';
+import 'package:ShareApp/models/try_switch.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 //   REcieve Main APP bar
 
 String cId = "0";
 final mymessage = TextEditingController();
 ValueNotifier<bool> _status = ValueNotifier<bool>(false);
+List<Message> messages = [
+  Message(
+    sender: 'Admin',
+    text: 'You Can Start You Conversation Here..',
+  ),
+];
 
 class sendOne extends StatefulWidget {
   String userName;
@@ -27,12 +35,7 @@ class sendOne extends StatefulWidget {
 class _sendOneState extends State<sendOne> {
   String userName;
   String barcode = "";
-  List<Message> _messages = [
-    Message(
-      sender: 'Admin',
-      text: 'You Can Start You Conversation..',
-    ),
-  ];
+
   _sendOneState(String uname) {
     //    Constructor
     this.userName = uname;
@@ -221,9 +224,18 @@ class _sendOneState extends State<sendOne> {
                         n.sender = cId;
                         n.text = mymessage.text;
                         print(mymessage.text);
-                        setState(() {
-                          _messages.add(n);
-                        });
+                        if (_status.value) {
+                          setState(() {
+                            messages.add(n);
+                          });
+                        } else {
+                          Fluttertoast.showToast(
+                            msg: "The Device is Disconnected",
+                            backgroundColor: Colors.white,
+                            textColor: Colors.black,
+                            fontSize: 16,
+                          );
+                        }
                         // showSnackbar("Sending ${mymessage.text} to $cId");
                         Nearby().sendBytesPayload(
                             cId, Uint8List.fromList(mymessage.text.codeUnits));
@@ -245,11 +257,11 @@ class _sendOneState extends State<sendOne> {
 
   ListView buildListView() {
     return ListView.builder(
-      reverse: true,
-      itemCount: _messages.length,
+      reverse: false,
+      itemCount: messages.length,
       itemBuilder: (BuildContext context, int index) {
         bool isMe = true;
-        return _chatbubble(_messages[index], isMe);
+        return _chatbubble(messages[index], isMe);
       },
     );
   }
@@ -412,7 +424,11 @@ class _sendOneBodyState extends State<sendOneBody> {
         if (payload.type == PayloadType.BYTES) {
           String str = String.fromCharCodes(payload.bytes);
           showSnackbar(endid + ": " + str);
-
+          Message m = new Message();
+          m.sender = endid;
+          m.text = str;
+          messages.add(m);
+          setState(() {});
           if (str.contains(':')) {
             // used for file payload as file payload is mapped as
             // payloadId:filename

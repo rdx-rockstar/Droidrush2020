@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:ShareApp/constants/color_constant.dart';
 import 'package:ShareApp/constants/style_constant.dart';
@@ -13,7 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ShareApp/models/button.dart';
 import 'package:ShareApp/models/buttontapped.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:ShareApp/screens/sharing.dart';
+// import 'package:ShareApp/screens/sharing.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -54,7 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
               accountName: Text("MiA3"),
               accountEmail: Text("fetchfrom@firebase.com"),
               currentAccountPicture: new GestureDetector(
-                onTap: () => print('To implement This Function'),
+                onTap: () => print(
+                    'To implement This Function'), // FUNCTION WHICH CAN BE
                 child: new CircleAvatar(
                   backgroundColor: Colors.white,
                   child: new Text("MiA3"),
@@ -128,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 100),
+            SizedBox(height: 50),
             // Now buttons
             // Send one
             Center(
@@ -304,6 +306,20 @@ class _HomeScreenState extends State<HomeScreen> {
                             }
                           },
                           child: ButtonTapped(icon: Icons.call_received),
+                        )),
+                        Expanded(
+                            child: GestureDetector(
+                          // ON TAP FUCNTION FOR JOIN A GROUP
+                          onTap: () =>
+                              print('Here to add the create group function'),
+                          child: ButtonTapped(icon: Icons.group_add_rounded),
+                        )),
+                        Expanded(
+                            child: GestureDetector(
+                          //  on tap function for join the group
+                          onTap: () =>
+                              print('Here to add the join the group function'),
+                          child: ButtonTapped(icon: Icons.add_box_rounded),
                         )),
                       ],
                     ),
