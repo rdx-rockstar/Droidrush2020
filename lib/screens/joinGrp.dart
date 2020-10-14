@@ -18,18 +18,18 @@ final mymessage = TextEditingController();
 Map<String, String> _paths;
 ValueNotifier<bool> _status = ValueNotifier<bool>(false);
 
-class sendOne extends StatefulWidget {
+class joinGrp extends StatefulWidget {
   String userName;
-  sendOne(String uname) {
+  joinGrp(String uname) {
     this.userName = uname;
   }
   @override
-  _sendOneState createState() => _sendOneState(userName);
+  _joinGrpState createState() => _joinGrpState(userName);
 }
 
-class _sendOneState extends State<sendOne> {
+class _joinGrpState extends State<joinGrp> {
   File tempFile;
-  final Strategy strategy = Strategy.P2P_POINT_TO_POINT; //   Strategy of connection (P2P)
+  final Strategy strategy = Strategy.P2P_STAR; //   Strategy of connection (P2P)
   Map<int, String> map = Map(); //   store filename mapped to corresponding payloadId
   String userName;
   String barcode = "";
@@ -39,7 +39,7 @@ class _sendOneState extends State<sendOne> {
       text: 'You Can Start You Conversation..',
     ),
   ];
-  _sendOneState(String uname) {
+  _joinGrpState(String uname) {
     //    Constructor
     this.userName = uname;
   }
@@ -67,7 +67,7 @@ class _sendOneState extends State<sendOne> {
                   padding: EdgeInsets.all(8),
                   margin: EdgeInsets.symmetric(vertical: 8),
                   decoration:
-                      BoxDecoration(color: Colors.blue[100], boxShadow: [
+                  BoxDecoration(color: Colors.blue[100], boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 2,
@@ -106,7 +106,7 @@ class _sendOneState extends State<sendOne> {
                   padding: EdgeInsets.all(8),
                   margin: EdgeInsets.symmetric(vertical: 8),
                   decoration:
-                      BoxDecoration(color: Colors.blue[100], boxShadow: [
+                  BoxDecoration(color: Colors.blue[100], boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 2,
@@ -160,10 +160,10 @@ class _sendOneState extends State<sendOne> {
             elevation: 0.0,
             actions: <Widget>[
               IconButton(
-                  icon: Icon(Icons.qr_code_scanner),
-                  onPressed: () {
-                    scan();
-                  } ,
+                icon: Icon(Icons.qr_code_scanner),
+                onPressed: () {
+                  scan();
+                } ,
               )
             ],
           ),
@@ -185,7 +185,7 @@ class _sendOneState extends State<sendOne> {
                           color: value ? Colors.green : Colors.grey,
                           child: Center(
                               child:
-                                  Text(value ? "Connected" : "Disconnected")),
+                              Text(value ? "Connected" : "Disconnected")),
                         ),
                       ),
                     ],
@@ -194,38 +194,38 @@ class _sendOneState extends State<sendOne> {
                 valueListenable: _status,
               ),
               // Now this is the sendOne body class call which creates the start and end fucntion and scan too
-            Column(children: <Widget>[
-              Row(
-                children: <Widget>[
-                  // SizedBox(width: 80),
-                  Expanded(
-                    child: Container(
-                      child: RaisedButton(
-                        child: Text('Start Connection'),
-                        color: Colors.amber,
-                        onPressed: () async {
-                          discovering(0);
-                        },
+              Column(children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    // SizedBox(width: 80),
+                    Expanded(
+                      child: Container(
+                        child: RaisedButton(
+                          child: Text('Start Connection'),
+                          color: Colors.amber,
+                          onPressed: () async {
+                            discovering(0);
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      child: RaisedButton(
-                        child: Text('End Connection'),
-                        color: Colors.amber,
-                        onPressed: () async {
-                          await Nearby().stopDiscovery();
-                          await Nearby().stopAllEndpoints();
-                          _status.value = false;
-                        },
+                    Expanded(
+                      child: Container(
+                        child: RaisedButton(
+                          child: Text('End Connection'),
+                          color: Colors.amber,
+                          onPressed: () async {
+                            await Nearby().stopDiscovery();
+                            await Nearby().stopAllEndpoints();
+                            _status.value = false;
+                          },
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              ),
-            ]),
-           // this is the list of all messages from list view builder
+                    )
+                  ],
+                ),
+              ]),
+              // this is the list of all messages from list view builder
               Expanded(
                 child: Container(
                   child: buildListView(),

@@ -4,6 +4,8 @@ import 'dart:ui';
 import 'package:ShareApp/constants/color_constant.dart';
 import 'package:ShareApp/constants/style_constant.dart';
 import 'package:ShareApp/models/buttontapped.dart';
+import 'package:ShareApp/screens/createGrp.dart';
+import 'package:ShareApp/screens/joinGrp.dart';
 import 'package:ShareApp/screens/recieveOne.dart';
 import 'package:ShareApp/screens/sendOne.dart';
 import 'package:ShareApp/widgets/bottom_navigation.dart';
@@ -310,15 +312,171 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(
                             child: GestureDetector(
                           // ON TAP FUCNTION FOR JOIN A GROUP
-                          onTap: () =>
-                              print('Here to add the create group function'),
+                              onTap: () async {
+                                if (await Nearby().checkLocationPermission()) {
+                                  if (await Nearby()
+                                      .checkExternalStoragePermission()) {
+                                    if (await Nearby().checkLocationEnabled()) {
+                                      //Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  joinGrp(userName)));
+                                    } else {
+                                      if (await Nearby().enableLocationServices()) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    joinGrp(userName)));
+                                      }
+                                    }
+                                  } else {
+                                    Nearby().askExternalStoragePermission();
+                                    if (await Nearby().checkLocationEnabled()) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  joinGrp(userName)));
+                                    } else {
+                                      if (await Nearby().enableLocationServices()) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    joinGrp(userName)));
+                                      }
+                                    }
+                                  }
+                                } else {
+                                  if (await Nearby().askLocationPermission()) {
+                                    if (await Nearby()
+                                        .checkExternalStoragePermission()) {
+                                      if (await Nearby().checkLocationEnabled()) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    joinGrp(userName)));
+                                      } else {
+                                        if (await Nearby()
+                                            .enableLocationServices()) {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      joinGrp(userName)));
+                                        }
+                                      }
+                                    } else {
+                                      Nearby().askExternalStoragePermission();
+                                      if (await Nearby().checkLocationEnabled()) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    joinGrp(userName)));
+                                      } else {
+                                        if (await Nearby()
+                                            .enableLocationServices()) {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      joinGrp(userName)));
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
                           child: ButtonTapped(icon: Icons.group_add_rounded),
                         )),
                         Expanded(
                             child: GestureDetector(
                           //  on tap function for join the group
-                          onTap: () =>
-                              print('Here to add the join the group function'),
+                              onTap: () async {
+                                if (await Nearby().checkLocationPermission()) {
+                                  if (await Nearby()
+                                      .checkExternalStoragePermission()) {
+                                    if (await Nearby().checkLocationEnabled()) {
+                                      //Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  createGrp(userName)));
+                                    } else {
+                                      if (await Nearby().enableLocationServices()) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    createGrp(userName)));
+                                      }
+                                    }
+                                  } else {
+                                    Nearby().askExternalStoragePermission();
+                                    if (await Nearby().checkLocationEnabled()) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  createGrp(userName)));
+                                    } else {
+                                      if (await Nearby().enableLocationServices()) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    createGrp(userName)));
+                                      }
+                                    }
+                                  }
+                                } else {
+                                  if (await Nearby().askLocationPermission()) {
+                                    if (await Nearby()
+                                        .checkExternalStoragePermission()) {
+                                      if (await Nearby().checkLocationEnabled()) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    createGrp(userName)));
+                                      } else {
+                                        if (await Nearby()
+                                            .enableLocationServices()) {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      createGrp(userName)));
+                                        }
+                                      }
+                                    } else {
+                                      Nearby().askExternalStoragePermission();
+                                      if (await Nearby().checkLocationEnabled()) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    createGrp(userName)));
+                                      } else {
+                                        if (await Nearby()
+                                            .enableLocationServices()) {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      createGrp(userName)));
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
                           child: ButtonTapped(icon: Icons.add_box_rounded),
                         )),
                       ],
