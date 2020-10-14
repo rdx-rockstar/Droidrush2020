@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:ShareApp/models/message_model.dart';
@@ -11,6 +12,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 String cId = "0";
 final mymessage = TextEditingController();
+Map<String, String> _paths;
 ValueNotifier<bool> _status = ValueNotifier<bool>(false);
 List<Message> messages = [
   Message(
@@ -35,6 +37,7 @@ class _recieveOneState extends State<recieveOne> {
   _recieveOneState(String uname) {
     //    Constructor
     this.userName = uname;
+
   }
   _chatbubble(Message message, bool isMe) {
     if (isMe) {
@@ -205,8 +208,15 @@ class _recieveOneState extends State<recieveOne> {
                       icon: Icon(Icons.attach_file),
                       iconSize: 25.0,
                       color: Theme.of(context).primaryColor,
-                      onPressed: () {
-                        // file transfer
+                      onPressed: () async {
+                        _paths = await FilePicker.getMultiFilePath();
+                        Fluttertoast.showToast(
+                          msg: "click send to send files",
+                          toastLength: Toast.LENGTH_LONG,
+                          backgroundColor: Colors.white,
+                          textColor: Colors.black,
+                          fontSize: 16,
+                        );
                       },
                     ),
                     Expanded(
@@ -223,6 +233,25 @@ class _recieveOneState extends State<recieveOne> {
                       color: Theme.of(context).primaryColor,
                       onPressed: () async {
                         if (_status.value) {
+
+                          if(_paths != null) {
+                            for (int i = 0; i < _paths.length; i++) {
+                              int payloadId = await Nearby().sendFilePayload(
+                                  cId, _paths.values.toList()[i]);
+                              Message n = new Message();
+                              String s = "Sending ${_paths.keys
+                                  .toList()[i]} to $cId";
+                              n.text = s;
+                              n.sender = cId;
+                              messages.add(n);
+                              Nearby().sendBytesPayload(
+                                  cId,
+                                  Uint8List.fromList(
+                                      "$payloadId:${_paths.values.toList()[i]
+                                          .split('/')
+                                          .last}".codeUnits));
+                            }
+                          }
                           Message n = new Message();
                           String s = "Sending ${mymessage.text} to $cId";
                           n.text = s;

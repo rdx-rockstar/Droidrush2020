@@ -6,6 +6,7 @@ import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -14,6 +15,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 String cId = "0";
 final mymessage = TextEditingController();
+Map<String, String> _paths;
 ValueNotifier<bool> _status = ValueNotifier<bool>(false);
 
 class sendOne extends StatefulWidget {
@@ -242,8 +244,15 @@ class _sendOneState extends State<sendOne> {
                       icon: Icon(Icons.photo),
                       iconSize: 25.0,
                       color: Theme.of(context).primaryColor,
-                      onPressed: () {
-                        // file transfer
+                      onPressed: () async {
+                        _paths = await FilePicker.getMultiFilePath();
+                        Fluttertoast.showToast(
+                          msg: "click send to send files",
+                          toastLength: Toast.LENGTH_LONG,
+                          backgroundColor: Colors.white,
+                          textColor: Colors.black,
+                          fontSize: 16,
+                        );
                       },
                     ),
                     Expanded(
@@ -258,7 +267,25 @@ class _sendOneState extends State<sendOne> {
                       icon: Icon(Icons.send),
                       iconSize: 25.0,
                       color: Theme.of(context).primaryColor,
-                      onPressed: () {
+                      onPressed: () async {
+                        if(_paths != null) {
+                          for (int i = 0; i < _paths.length; i++) {
+                            int payloadId = await Nearby().sendFilePayload(
+                                cId, _paths.values.toList()[i]);
+                            Message n = new Message();
+                            String s = "Sending ${_paths.keys
+                                .toList()[i]} to $cId";
+                            n.text = s;
+                            n.sender = cId;
+                            _messages.add(n);
+                            Nearby().sendBytesPayload(
+                                cId,
+                                Uint8List.fromList(
+                                    "$payloadId:${_paths.values.toList()[i]
+                                        .split('/')
+                                        .last}".codeUnits));
+                          }
+                        }
                         Message n = new Message();
                         n.sender = cId;
                         n.text = mymessage.text;
