@@ -326,7 +326,7 @@ class _recvOneBodyState extends State<recvOneBody> {
   void dispose() {
     //   TextField
     // Clean up the controller when the widget is disposed.
-    mymessage.dispose();
+    // mymessage.dispose();
     super.dispose();
   }
 
@@ -432,8 +432,14 @@ class _recvOneBodyState extends State<recvOneBody> {
       id,
       onPayLoadRecieved: (endid, payload) async {
         if (payload.type == PayloadType.BYTES) {
+          Message n = new Message();
           String str = String.fromCharCodes(payload.bytes);
-          showSnackbar(endid + ": " + str);
+          n.text = str;
+          n.sender = endid;
+          messages.add(n);
+          setState(() {});
+
+          //showSnackbar(endid + ": " + str);
 
           if (str.contains(':')) {
             // used for file payload as file payload is mapped as
