@@ -244,13 +244,9 @@ class _recieveOneState extends State<recieveOne> {
                               n.text = s;
                               n.sender = cId;
                               messages.add(n);
-                              Nearby().sendBytesPayload(
-                                  cId,
-                                  Uint8List.fromList(
-                                      "$payloadId:${_paths.values.toList()[i]
-                                          .split('/')
-                                          .last}".codeUnits));
+                              Nearby().sendBytesPayload(cId, Uint8List.fromList("$payloadId:${_paths.values.toList()[i].split('/').last}".codeUnits));
                             }
+                            _paths=null;
                           }
                           Message n = new Message();
                           String s = "Sending ${mymessage.text} to $cId";

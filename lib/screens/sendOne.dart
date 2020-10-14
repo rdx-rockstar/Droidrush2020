@@ -285,6 +285,7 @@ class _sendOneState extends State<sendOne> {
                                         .split('/')
                                         .last}".codeUnits));
                           }
+                          _paths=null;
                         }
                         Message n = new Message();
                         n.sender = cId;
