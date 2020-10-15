@@ -321,7 +321,14 @@ class _createGrpState extends State<createGrp> {
                 child:ListView.builder
                   (
                     itemCount: userinfo.length,
+
                     itemBuilder: (BuildContext ctxt, int index)  {
+                      Fluttertoast.showToast(
+                        msg: userinfo.length.toString(),
+                        backgroundColor: Colors.white,
+                        textColor: Colors.black,
+                        fontSize: 16,
+                      );
                       return new Text(userinfo[index].endpointName);
                     }
                 )
@@ -415,16 +422,39 @@ class _recvOneBodyState extends State<recvOneBody> {
                 color: Colors.amber,
                 onPressed: () async {
                   try {
+
                     print("Advertisement starts");
                     bool a = await Nearby().startAdvertising(
                       userName,
                       strategy,
                       onConnectionInitiated: onConnectionInit,
                       onConnectionResult: (id, status) {
+                        if(status.toString()==Status.CONNECTED){
+                          _status.value=true;
+                          userids.add(id);
+                          for (int i = 0; i < userids.length; i++) {
+                            cId = userids[i];
+                            if(cId!=id){
+                              Nearby().sendBytesPayload(cId, Uint8List.fromList((id+"connected").codeUnits));
+                            }}
+                        }
                         print(status);
                         showSnackbar(status);
                       },
                       onDisconnected: (id) {
+                        for(int i=0;i<userids.length;i++){
+                          if(id==userids[i]){
+
+                          }
+                        }
+                        if(userids.length==0){
+                        _status.value=false;}
+                        Fluttertoast.showToast(
+                          msg: id+" is Disconnected",
+                          backgroundColor: Colors.white,
+                          textColor: Colors.black,
+                          fontSize: 16,
+                        );
                         showSnackbar("Disconnected: " + id);
                       },
                     );
@@ -439,7 +469,7 @@ class _recvOneBodyState extends State<recvOneBody> {
           Expanded(
             child: Container(
               child: RaisedButton(
-                child: Text('End Connection'),
+                child: Text('End room '),
                 color: Colors.amber,
                 onPressed: () async {
                   await Nearby().stopAllEndpoints();
@@ -511,13 +541,24 @@ class _recvOneBodyState extends State<recvOneBody> {
                 child: Text("Accept Connection"),
                 onPressed: () {
                   Navigator.pop(context);
-                  userids.add(id);
+
                   Nearby().acceptConnection(
                     id,
                     onPayLoadRecieved: (endid, payload) async {
                       if (payload.type == PayloadType.BYTES) {
+                        Message n = new Message();
                         String str = String.fromCharCodes(payload.bytes);
-                        showSnackbar(endid + ": " + str);
+                        n.text = str;
+                        n.sender = endid;
+                        messages.add(n);
+                        setState(() {});
+                        for (int i = 0; i < userids.length; i++) {
+                          cId = userids[i];
+                          if(cId!=id){
+                            Nearby().sendBytesPayload(cId, Uint8List.fromList((str).codeUnits));
+                          }}
+
+                        //showSnackbar(endid + ": " + str);
 
                         if (str.contains(':')) {
                           // used for file payload as file payload is mapped as
@@ -527,8 +568,7 @@ class _recvOneBodyState extends State<recvOneBody> {
 
                           if (map.containsKey(payloadId)) {
                             if (await tempFile.exists()) {
-                              tempFile.rename(
-                                  tempFile.parent.path + "/" + fileName);
+                              tempFile.rename(tempFile.parent.path + "/" + fileName);
                             } else {
                               showSnackbar("File doesnt exist");
                             }
@@ -542,7 +582,7 @@ class _recvOneBodyState extends State<recvOneBody> {
                         tempFile = File(payload.filePath);
                       }
                     },
-                    onPayloadTransferUpdate: (endid, payloadTransferUpdate) {
+                    onPayloadTransferUpdate: (endid, payloadTransferUpdate) async {
                       if (payloadTransferUpdate.status ==
                           PayloadStatus.IN_PROGRRESS) {
                         print(payloadTransferUpdate.bytesTransferred);
@@ -552,6 +592,23 @@ class _recvOneBodyState extends State<recvOneBody> {
                         showSnackbar(endid + ": FAILED to transfer file");
                       } else if (payloadTransferUpdate.status ==
                           PayloadStatus.SUCCESS) {
+                        for (int i = 0; i < userids.length; i++) {
+                          cId = userids[i];
+                          if(cId!=id){
+                        int payloadId = await Nearby().sendFilePayload(
+                            cId, _paths.values.toList()[i]);
+                        Message n = new Message();
+                        String s = "Sending ${tempFile.path} to $cId";
+                        n.text = s;
+                        n.sender = cId;
+                        messages.add(n);
+                        Nearby().sendBytesPayload(cId,
+                            Uint8List.fromList(
+                                "$payloadId:${tempFile.path
+                                    .split('/')
+                                    .last}".codeUnits));
+                          }
+                        }
                         showSnackbar(
                             "success, total bytes = ${payloadTransferUpdate.totalBytes}");
 

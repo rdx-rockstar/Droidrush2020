@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:ShareApp/models/message_model.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,13 +8,13 @@ import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 //   Recieve Main APP bar
 
 String cId = "0";
 final mymessage = TextEditingController();
 Map<String, String> _paths;
+bool _searching=false;
 ValueNotifier<bool> _status = ValueNotifier<bool>(false);
 
 class sendOne extends StatefulWidget {
@@ -151,7 +150,7 @@ class _sendOneState extends State<sendOne> {
                 }),
             centerTitle: true,
             title: Text(
-              "Send Anything",
+              "Sender",
               style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
@@ -201,10 +200,27 @@ class _sendOneState extends State<sendOne> {
                   Expanded(
                     child: Container(
                       child: RaisedButton(
-                        child: Text('Start Connection'),
+                        child: Text('Search Connections'),
                         color: Colors.amber,
                         onPressed: () async {
+                          if(_searching==false){
+                          _searching=true;
+                          Fluttertoast.showToast(
+                            msg: "Searching",
+                            backgroundColor: Colors.white,
+                            textColor: Colors.black,
+                            fontSize: 16,
+                          );
                           discovering(0);
+                          }
+                          else{
+                            Fluttertoast.showToast(
+                              msg: "Already Searching",
+                              backgroundColor: Colors.white,
+                              textColor: Colors.black,
+                              fontSize: 16,
+                            );
+                          }
                         },
                       ),
                     ),
@@ -217,7 +233,23 @@ class _sendOneState extends State<sendOne> {
                         onPressed: () async {
                           await Nearby().stopDiscovery();
                           await Nearby().stopAllEndpoints();
-                          _status.value = false;
+                          if(_status.value==false && _searching==true){
+                            _searching=false;
+                          Fluttertoast.showToast(
+                            msg: "Search Stopped ",
+                            backgroundColor: Colors.white,
+                            textColor: Colors.black,
+                            fontSize: 16,
+                          );}
+                          else if(_status.value==true) {
+                            Fluttertoast.showToast(
+                              msg: "Disconnecting",
+                              backgroundColor: Colors.white,
+                              textColor: Colors.black,
+                              fontSize: 16,
+                            );
+                            _status.value = false;
+                          }
                         },
                       ),
                     ),
@@ -291,21 +323,24 @@ class _sendOneState extends State<sendOne> {
                         n.sender = cId;
                         n.text = mymessage.text;
                         print(mymessage.text);
-                        if (_status.value) {
-                          setState(() {
-                            _messages.add(n);
-                          });
-                        } else {
-                          Fluttertoast.showToast(
-                            msg: "The Device is Disconnected",
-                            backgroundColor: Colors.white,
-                            textColor: Colors.black,
-                            fontSize: 16,
-                          );
+                        if(n.text!="") {
+                          Nearby().sendBytesPayload(
+                              cId, Uint8List.fromList(mymessage.text.codeUnits));
+                          if (_status.value) {
+                            setState(() {
+                              _messages.add(n);
+                            });
+                          } else {
+                            Fluttertoast.showToast(
+                              msg: "The Device is Disconnected",
+                              backgroundColor: Colors.white,
+                              textColor: Colors.black,
+                              fontSize: 16,
+                            );
+                          }
                         }
                         // showSnackbar("Sending ${mymessage.text} to $cId");
-                        Nearby().sendBytesPayload(
-                            cId, Uint8List.fromList(mymessage.text.codeUnits));
+
 
                       },
                     )
@@ -378,26 +413,78 @@ class _sendOneState extends State<sendOne> {
                   onConnectionInit(id, info);
                 },
                 onConnectionResult: (id, status) {
+                  if(status.toString()=="Status.CONNECTED") {
+                    _status.value = true;
+                  }
+                  Fluttertoast.showToast(
+                    msg: ""+ status.toString(),
+                    backgroundColor: Colors.white,
+                    textColor: Colors.black,
+                    fontSize: 16,
+                  );
                   //showSnackbar(status);
                 },
                 onDisconnected: (id) {
+                  _status.value=false;
+                  Fluttertoast.showToast(
+                    msg: "Disconnected",
+                    backgroundColor: Colors.white,
+                    textColor: Colors.black,
+                    fontSize: 16,
+                  );
                   //showSnackbar(id);
                 },
               );
             }
           }
           else {
-            Nearby().requestConnection(
-              userName,
-              id,
-              onConnectionInitiated: (id, info) {
-                onConnectionInit(id, info);
-              },
-              onConnectionResult: (id, status) {
-                //showSnackbar(status);
-              },
-              onDisconnected: (id) {
-                //showSnackbar(id);
+            showModalBottomSheet(
+              context: context,
+              builder: (builder) {
+                return Center(
+                  child: Column(
+                    children: <Widget>[
+                      Text("id: " + id),
+                      Text("Name: " + name),
+                      Text("ServiceId: " + serviceId),
+                      RaisedButton(
+                        child: Text("Request Connection"),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Nearby().requestConnection(
+                            userName,
+                            id,
+                            onConnectionInitiated: (id, info) {
+                              onConnectionInit(id, info);
+                            },
+                            onConnectionResult: (id, status) {
+                              if(status.toString()=="Status.CONNECTED") {
+                                _status.value = true;
+                              }
+                              Fluttertoast.showToast(
+                                msg: status.toString(),
+                                backgroundColor: Colors.white,
+                                textColor: Colors.black,
+                                fontSize: 16,
+                              );
+                              //showSnackbar(status);
+                            },
+                            onDisconnected: (id) {
+                              _status.value = false;
+                              Fluttertoast.showToast(
+                                msg: "Disconnected",
+                                backgroundColor: Colors.white,
+                                textColor: Colors.black,
+                                fontSize: 16,
+                              );
+                              //showSnackbar(id);
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
               },
             );
           }
@@ -420,96 +507,63 @@ class _sendOneState extends State<sendOne> {
   // }
 
   void onConnectionInit(String id, ConnectionInfo info) {
-    showModalBottomSheet(
-      context: context,
-      builder: (builder) {
-        return Center(
-          child: Column(
-            children: <Widget>[
-              Text("id: " + id),
-              Text("Token: " + info.authenticationToken),
-              Text("Name" + info.endpointName),
-              Text("Incoming: " + info.isIncomingConnection.toString()),
-              RaisedButton(
-                child: Text("Accept Connection"),
-                onPressed: () {
-                  Navigator.pop(context);
-                  cId = id;
-                  _status.value = true;
-                  Nearby().acceptConnection(
-                    id,
-                    onPayLoadRecieved: (endid, payload) async {
-                      if (payload.type == PayloadType.BYTES) {
-                        String str = String.fromCharCodes(payload.bytes);
-                        Message m = new Message();
-                        m.sender = endid;
-                        m.text = str;
-                        _messages.add(m);
-                        setState(() {});
-                        //showSnackbar(endid + ": " + str);
+    cId = id;
+    Nearby().acceptConnection(
+      id,
+      onPayLoadRecieved: (endid, payload) async {
+        if (payload.type == PayloadType.BYTES) {
+          String str = String.fromCharCodes(payload.bytes);
+          Message m = new Message();
+          m.sender = endid;
+          m.text = str;
+          _messages.add(m);
+          setState(() {});
+          //showSnackbar(endid + ": " + str);
 
-                        if (str.contains(':')) {
-                          // used for file payload as file payload is mapped as
-                          // payloadId:filename
-                          int payloadId = int.parse(str.split(':')[0]);
-                          String fileName = (str.split(':')[1]);
+          if (str.contains(':')) {
+            // used for file payload as file payload is mapped as
+            // payloadId:filename
+            int payloadId = int.parse(str.split(':')[0]);
+            String fileName = (str.split(':')[1]);
 
-                          if (map.containsKey(payloadId)) {
-                            if (await tempFile.exists()) {
-                              tempFile.rename(
-                                  tempFile.parent.path + "/" + fileName);
-                            } else {
-                              //showSnackbar("File doesnt exist");
-                            }
-                          } else {
-                            //add to map if not already
-                            map[payloadId] = fileName;
-                          }
-                        }
-                      } else if (payload.type == PayloadType.FILE) {
-                        //showSnackbar(endid + ": File transfer started");
-                        tempFile = File(payload.filePath);
-                      }
-                    },
-                    onPayloadTransferUpdate: (endid, payloadTransferUpdate) {
-                      if (payloadTransferUpdate.status ==
-                          PayloadStatus.IN_PROGRRESS) {
-                        print(payloadTransferUpdate.bytesTransferred);
-                      } else if (payloadTransferUpdate.status ==
-                          PayloadStatus.FAILURE) {
-                        print("failed");
-                        //showSnackbar(endid + ": FAILED to transfer file");
-                      } else if (payloadTransferUpdate.status ==
-                          PayloadStatus.SUCCESS) {
-                        //showSnackbar("success, total bytes = ${payloadTransferUpdate.totalBytes}");
+            if (map.containsKey(payloadId)) {
+              if (await tempFile.exists()) {
+                tempFile.rename(
+                    tempFile.parent.path + "/" + fileName);
+              } else {
+                //showSnackbar("File doesnt exist");
+              }
+            } else {
+              //add to map if not already
+              map[payloadId] = fileName;
+            }
+          }
+        } else if (payload.type == PayloadType.FILE) {
+          //showSnackbar(endid + ": File transfer started");
+          tempFile = File(payload.filePath);
+        }
+      },
+      onPayloadTransferUpdate: (endid, payloadTransferUpdate) {
+        if (payloadTransferUpdate.status ==
+            PayloadStatus.IN_PROGRRESS) {
+          print(payloadTransferUpdate.bytesTransferred);
+        } else if (payloadTransferUpdate.status ==
+            PayloadStatus.FAILURE) {
+          print("failed");
+          //showSnackbar(endid + ": FAILED to transfer file");
+        } else if (payloadTransferUpdate.status ==
+            PayloadStatus.SUCCESS) {
+          //showSnackbar("success, total bytes = ${payloadTransferUpdate.totalBytes}");
 
-                        if (map.containsKey(payloadTransferUpdate.id)) {
-                          //rename the file now
-                          String name = map[payloadTransferUpdate.id];
-                          tempFile.rename(tempFile.parent.path + "/" + name);
-                        } else {
-                          //bytes not received till yet
-                          map[payloadTransferUpdate.id] = "";
-                        }
-                      }
-                    },
-                  );
-                },
-              ),
-              RaisedButton(
-                child: Text("Reject Connection"),
-                onPressed: () async {
-                  Navigator.pop(context);
-                  try {
-                    await Nearby().rejectConnection(id);
-                  } catch (e) {
-                    //showSnackbar(e);
-                  }
-                },
-              ),
-            ],
-          ),
-        );
+          if (map.containsKey(payloadTransferUpdate.id)) {
+            //rename the file now
+            String name = map[payloadTransferUpdate.id];
+            tempFile.rename(tempFile.parent.path + "/" + name);
+          } else {
+            //bytes not received till yet
+            map[payloadTransferUpdate.id] = "";
+          }
+        }
       },
     );
   }

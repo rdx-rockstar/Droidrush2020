@@ -13,6 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 String cId = "0";
 final mymessage = TextEditingController();
 Map<String, String> _paths;
+bool _isadvertising=false;
 ValueNotifier<bool> _status = ValueNotifier<bool>(false);
 List<Message> messages = [
   Message(
@@ -138,7 +139,7 @@ class _recieveOneState extends State<recieveOne> {
             centerTitle: true,
             title: Center(
               child: Text(
-                "Share Anything",
+                "Reciver",
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
@@ -233,8 +234,7 @@ class _recieveOneState extends State<recieveOne> {
                       color: Theme.of(context).primaryColor,
                       onPressed: () async {
                         if (_status.value) {
-
-                          if(_paths != null) {
+                          if(_paths!=null) {
                             for (int i = 0; i < _paths.length; i++) {
                               int payloadId = await Nearby().sendFilePayload(
                                   cId, _paths.values.toList()[i]);
@@ -249,23 +249,27 @@ class _recieveOneState extends State<recieveOne> {
                             _paths=null;
                           }
                           Message n = new Message();
-                          String s = "Sending ${mymessage.text} to $cId";
+                          String s = mymessage.text;
                           n.text = s;
                           n.sender = cId;
                           messages.add(n);
-                          setState(() {});
+                          if(n.text!="") {
+                            Nearby().sendBytesPayload(cId,
+                                Uint8List.fromList(mymessage.text.codeUnits));
+                            setState(() {});
+                            Fluttertoast.showToast(
+                              msg: s,
+                              toastLength: Toast.LENGTH_LONG,
+                              backgroundColor: Colors.white,
+                              textColor: Colors.black,
+                              fontSize: 16,
+                            );
+
+                          }
+                        }
+                        else {
                           Fluttertoast.showToast(
-                            msg: s,
-                            toastLength: Toast.LENGTH_LONG,
-                            backgroundColor: Colors.white,
-                            textColor: Colors.black,
-                            fontSize: 16,
-                          );
-                          Nearby().sendBytesPayload(cId,
-                              Uint8List.fromList(mymessage.text.codeUnits));
-                        } else {
-                          Fluttertoast.showToast(
-                            msg: "Device is Disconnected",
+                            msg: "Device is not Connected",
                             toastLength: Toast.LENGTH_SHORT,
                             backgroundColor: Colors.white,
                             textColor: Colors.black,
@@ -285,6 +289,7 @@ class _recieveOneState extends State<recieveOne> {
   }
 
   Future<void> _showMyDialog() async {
+
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -366,17 +371,33 @@ class _recvOneBodyState extends State<recvOneBody> {
                 child: Text('Open Connection'),
                 color: Colors.amber,
                 onPressed: () async {
+                if(_isadvertising==false){
                   try {
+                    _isadvertising=true;
+                    Fluttertoast.showToast(
+                      msg: "advertising",
+                      backgroundColor: Colors.white,
+                      textColor: Colors.black,
+                      fontSize: 16,
+                    );
                     print("Advertisement starts");
                     bool a = await Nearby().startAdvertising(
                       userName,
                       strategy,
                       onConnectionInitiated: onrecv_ConnectionInit,
                       onConnectionResult: (id, status) {
-                        print(status);
-                        showSnackbar(status);
+                        if(status.toString()=="Status.CONNECTED") {
+                          _status.value = true;
+                        }
                       },
                       onDisconnected: (id) {
+                        _status.value=false;
+                        Fluttertoast.showToast(
+                          msg: "Disconnected",
+                          backgroundColor: Colors.white,
+                          textColor: Colors.black,
+                          fontSize: 16,
+                        );
                         showSnackbar("Disconnected: " + id);
                       },
                     );
@@ -384,6 +405,15 @@ class _recvOneBodyState extends State<recvOneBody> {
                   } catch (exception) {
                     showSnackbar(exception);
                   }
+                  }
+                else{
+                  Fluttertoast.showToast(
+                    msg: "Already advertising",
+                    backgroundColor: Colors.white,
+                    textColor: Colors.black,
+                    fontSize: 16,
+                  );
+                }
                 },
               ),
             ),
@@ -394,6 +424,13 @@ class _recvOneBodyState extends State<recvOneBody> {
                 child: Text('End Connection'),
                 color: Colors.amber,
                 onPressed: () async {
+                  _isadvertising=false;
+                  Fluttertoast.showToast(
+                    msg: "Disconnected",
+                    backgroundColor: Colors.white,
+                    textColor: Colors.black,
+                    fontSize: 16,
+                  );
                   await Nearby().stopAllEndpoints();
                   _status.value = false;
                 },
@@ -450,44 +487,76 @@ class _recvOneBodyState extends State<recvOneBody> {
   }
 
   void onrecv_ConnectionInit(String id, ConnectionInfo info) {
-    //  on receiver side
-    cId = id;
-    _status.value = true;
-    Nearby().acceptConnection(
-      id,
-      onPayLoadRecieved: (endid, payload) async {
-        if (payload.type == PayloadType.BYTES) {
-          Message n = new Message();
-          String str = String.fromCharCodes(payload.bytes);
-          n.text = str;
-          n.sender = endid;
-          messages.add(n);
-          setState(() {});
+    showModalBottomSheet(
+      context: context,
+      builder: (builder) {
+        return Center(
+          child: Column(
+            children: <Widget>[
+              Text("id: " + id),
+              Text("Token: " + info.authenticationToken),
+              Text("Name" + info.endpointName),
+              Text("Incoming: " + info.isIncomingConnection.toString()),
+              RaisedButton(
+                child: Text("Accept Connection"),
+                onPressed: () {
+                  Navigator.pop(context);
+                  cId = id;
+                  Nearby().acceptConnection(
+                    id,
+                    onPayLoadRecieved: (endid, payload) async {
+                      if (payload.type == PayloadType.BYTES) {
+                        Message n = new Message();
+                        String str = String.fromCharCodes(payload.bytes);
+                        n.text = str;
+                        n.sender = endid;
+                        messages.add(n);
+                        setState(() {});
 
-          //showSnackbar(endid + ": " + str);
+                        //showSnackbar(endid + ": " + str);
 
-          if (str.contains(':')) {
-            // used for file payload as file payload is mapped as
-            // payloadId:filename
-            int payloadId = int.parse(str.split(':')[0]);
-            String fileName = (str.split(':')[1]);
+                        if (str.contains(':')) {
+                          // used for file payload as file payload is mapped as
+                          // payloadId:filename
+                          int payloadId = int.parse(str.split(':')[0]);
+                          String fileName = (str.split(':')[1]);
 
-            if (map.containsKey(payloadId)) {
-              if (await tempFile.exists()) {
-                tempFile.rename(tempFile.parent.path + "/" + fileName);
-              } else {
-                showSnackbar("File doesnt exist");
-              }
-            } else {
-              //add to map if not already
-              map[payloadId] = fileName;
-            }
-          }
-        } else if (payload.type == PayloadType.FILE) {
-          showSnackbar(endid + ": File transfer started");
-          tempFile = File(payload.filePath);
-        }
+                          if (map.containsKey(payloadId)) {
+                            if (await tempFile.exists()) {
+                              tempFile.rename(tempFile.parent.path + "/" + fileName);
+                            } else {
+                              showSnackbar("File doesnt exist");
+                            }
+                          } else {
+                            //add to map if not already
+                            map[payloadId] = fileName;
+                          }
+                        }
+                      } else if (payload.type == PayloadType.FILE) {
+                        showSnackbar(endid + ": File transfer started");
+                        tempFile = File(payload.filePath);
+                      }
+                    },
+                  );
+                },
+              ),
+              RaisedButton(
+                child: Text("Reject Connection"),
+                onPressed: () async {
+                  Navigator.pop(context);
+                  try {
+                    await Nearby().rejectConnection(id);
+                  } catch (e) {
+                    showSnackbar(e);
+                  }
+                },
+              ),
+            ],
+          ),
+        );
       },
     );
   }
+    //  on receiver side
+
 }
