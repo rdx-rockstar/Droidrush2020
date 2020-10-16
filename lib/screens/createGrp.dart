@@ -12,8 +12,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 String cId = "0";
 final mymessage = TextEditingController();
 Map<String, String> _paths;
+bool _isadvertising=false;
 ValueNotifier<bool> _status = ValueNotifier<bool>(false);
-List<ConnectionInfo>userinfo=[];
+Map<String,ConnectionInfo>usermap={};
 List<String>userids=[];
 List<Message> messages = [
   Message(
@@ -139,7 +140,7 @@ class _createGrpState extends State<createGrp> {
             centerTitle: true,
             title: Center(
               child: Text(
-                "Share Anything",
+                "Group Host",
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
@@ -236,12 +237,17 @@ class _createGrpState extends State<createGrp> {
                       iconSize: 25.0,
                       color: Theme.of(context).primaryColor,
                       onPressed: () async {
+                        FocusScopeNode currentFocus = FocusScope.of(context);
+
+                        if (!currentFocus.hasPrimaryFocus) {
+                          currentFocus.unfocus();
+                        }
+
                         if (_status.value) {
                           for (int i = 0; i < userids.length; i++) {
                             cId=userids[i];
                             if (_paths != null) {
                               for (int i = 0; i < _paths.length; i++) {
-
                                 int payloadId = await Nearby().sendFilePayload(
                                     cId, _paths.values.toList()[i]);
                                 Message n = new Message();
@@ -259,31 +265,34 @@ class _createGrpState extends State<createGrp> {
                               _paths = null;
                             }
                             Message n = new Message();
-                            String s = "Sending ${mymessage.text} to $cId";
+                            String s =mymessage.text;
                             n.text = s;
                             n.sender = cId;
-                            messages.add(n);
-                            setState(() {});
-                            Fluttertoast.showToast(
-                              msg: s,
-                              toastLength: Toast.LENGTH_LONG,
-                              backgroundColor: Colors.white,
-                              textColor: Colors.black,
-                              fontSize: 16,
-                            );
-                            Nearby().sendBytesPayload(cId,
-                                Uint8List.fromList(mymessage.text.codeUnits));
+                            if(n.text!="") {
+                              messages.add(n);
+                              Nearby().sendBytesPayload(cId,
+                                  Uint8List.fromList(mymessage.text.codeUnits));
+                              setState(() {});
+                              Fluttertoast.showToast(
+                                msg: s,
+                                toastLength: Toast.LENGTH_LONG,
+                                backgroundColor: Colors.white,
+                                textColor: Colors.black,
+                                fontSize: 16,
+                              );
+                            }
                           }
                         }
                         else {
                           Fluttertoast.showToast(
-                            msg: "Device is Disconnected",
+                            msg: "Device is not Connected",
                             toastLength: Toast.LENGTH_SHORT,
                             backgroundColor: Colors.white,
                             textColor: Colors.black,
                             fontSize: 16,
                           );
                         }
+                        mymessage.clear();
                       },
                     )
                   ],
@@ -316,23 +325,19 @@ class _createGrpState extends State<createGrp> {
             ],
           ),
           content:Scrollbar(
-            child: Center(
-              child: RepaintBoundary(
-                child:ListView.builder
-                  (
-                    itemCount: userinfo.length,
-
-                    itemBuilder: (BuildContext ctxt, int index)  {
-                      Fluttertoast.showToast(
-                        msg: userinfo.length.toString(),
-                        backgroundColor: Colors.white,
-                        textColor: Colors.black,
-                        fontSize: 16,
-                      );
-                      return new Text(userinfo[index].endpointName);
+            child:Container(
+              height: 500,
+              child: Center(
+                child: RepaintBoundary(
+                  child:ListView.builder
+                    (
+                      itemCount: userids.length,
+                      itemBuilder: (BuildContext ctxt, int index)  {
+                      return new Text(usermap[userids[index]].endpointName);
                     }
                 )
               ),
+            ),
             ),
           ),
         );
@@ -421,22 +426,36 @@ class _recvOneBodyState extends State<recvOneBody> {
                 child: Text('Create Room'),
                 color: Colors.amber,
                 onPressed: () async {
+                  if(_isadvertising==false){
+                    _isadvertising=true;
                   try {
-
+                    Fluttertoast.showToast(
+                      msg: "Advertising",
+                      backgroundColor: Colors.white,
+                      textColor: Colors.black,
+                      fontSize: 16,
+                    );
                     print("Advertisement starts");
                     bool a = await Nearby().startAdvertising(
                       userName,
                       strategy,
                       onConnectionInitiated: onConnectionInit,
-                      onConnectionResult: (id, status) {
-                        if(status.toString()==Status.CONNECTED){
+                      onConnectionResult: (id, status){
+                        if(status==Status.CONNECTED){
+                          Fluttertoast.showToast(
+                            msg: id+" is Connected",
+                            backgroundColor: Colors.white,
+                            textColor: Colors.black,
+                            fontSize: 16,
+                          );
                           _status.value=true;
                           userids.add(id);
                           for (int i = 0; i < userids.length; i++) {
                             cId = userids[i];
                             if(cId!=id){
-                              Nearby().sendBytesPayload(cId, Uint8List.fromList((id+"connected").codeUnits));
-                            }}
+                              Nearby().sendBytesPayload(cId, Uint8List.fromList((usermap[id].endpointName+" connected").codeUnits));
+                            }
+                            _status.value=true;}
                         }
                         print(status);
                         showSnackbar(status);
@@ -444,7 +463,7 @@ class _recvOneBodyState extends State<recvOneBody> {
                       onDisconnected: (id) {
                         for(int i=0;i<userids.length;i++){
                           if(id==userids[i]){
-
+                              userids.removeAt(i);
                           }
                         }
                         if(userids.length==0){
@@ -462,6 +481,15 @@ class _recvOneBodyState extends State<recvOneBody> {
                   } catch (exception) {
                     showSnackbar(exception);
                   }
+                  }
+                  else{
+                    Fluttertoast.showToast(
+                      msg: "Already Advertising",
+                      backgroundColor: Colors.white,
+                      textColor: Colors.black,
+                      fontSize: 16,
+                    );
+                  }
                 },
               ),
             ),
@@ -473,6 +501,22 @@ class _recvOneBodyState extends State<recvOneBody> {
                 color: Colors.amber,
                 onPressed: () async {
                   await Nearby().stopAllEndpoints();
+                  if(_isadvertising&&_status.value==false){
+                  Fluttertoast.showToast(
+                    msg: "Stopped Advertising",
+                    backgroundColor: Colors.white,
+                    textColor: Colors.black,
+                    fontSize: 16,
+                  );}
+                  else if(_status.value){
+                    Fluttertoast.showToast(
+                      msg: "Disconnecting",
+                      backgroundColor: Colors.white,
+                      textColor: Colors.black,
+                      fontSize: 16,
+                    );
+                  }
+                  _isadvertising=false;
                   _status.value = false;
                 },
               ),
@@ -540,8 +584,17 @@ class _recvOneBodyState extends State<recvOneBody> {
               RaisedButton(
                 child: Text("Accept Connection"),
                 onPressed: () {
+                  if(userName==null) {
+                    Fluttertoast.showToast(
+                      msg: "Still null",
+                      backgroundColor: Colors.white,
+                      textColor: Colors.black,
+                      fontSize: 16,
+                    );
+                  }
+                  else
+                    usermap.putIfAbsent(id, () => info);
                   Navigator.pop(context);
-
                   Nearby().acceptConnection(
                     id,
                     onPayLoadRecieved: (endid, payload) async {
@@ -597,11 +650,6 @@ class _recvOneBodyState extends State<recvOneBody> {
                           if(cId!=id){
                         int payloadId = await Nearby().sendFilePayload(
                             cId, _paths.values.toList()[i]);
-                        Message n = new Message();
-                        String s = "Sending ${tempFile.path} to $cId";
-                        n.text = s;
-                        n.sender = cId;
-                        messages.add(n);
                         Nearby().sendBytesPayload(cId,
                             Uint8List.fromList(
                                 "$payloadId:${tempFile.path

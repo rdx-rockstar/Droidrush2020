@@ -233,7 +233,14 @@ class _recieveOneState extends State<recieveOne> {
                       iconSize: 25.0,
                       color: Theme.of(context).primaryColor,
                       onPressed: () async {
+                        FocusScopeNode currentFocus = FocusScope.of(context);
+
+                        if (!currentFocus.hasPrimaryFocus) {
+                          currentFocus.unfocus();
+                        }
+
                         if (_status.value) {
+
                           if(_paths!=null) {
                             for (int i = 0; i < _paths.length; i++) {
                               int payloadId = await Nearby().sendFilePayload(
@@ -252,10 +259,11 @@ class _recieveOneState extends State<recieveOne> {
                           String s = mymessage.text;
                           n.text = s;
                           n.sender = cId;
-                          messages.add(n);
+
                           if(n.text!="") {
                             Nearby().sendBytesPayload(cId,
                                 Uint8List.fromList(mymessage.text.codeUnits));
+                            messages.add(n);
                             setState(() {});
                             Fluttertoast.showToast(
                               msg: s,
@@ -276,6 +284,7 @@ class _recieveOneState extends State<recieveOne> {
                             fontSize: 16,
                           );
                         }
+                        mymessage.clear();
                       },
                     )
                   ],
@@ -424,14 +433,23 @@ class _recvOneBodyState extends State<recvOneBody> {
                 child: Text('End Connection'),
                 color: Colors.amber,
                 onPressed: () async {
-                  _isadvertising=false;
-                  Fluttertoast.showToast(
-                    msg: "Disconnected",
-                    backgroundColor: Colors.white,
-                    textColor: Colors.black,
-                    fontSize: 16,
-                  );
                   await Nearby().stopAllEndpoints();
+                  if(_isadvertising&&_status.value==false){
+                    Fluttertoast.showToast(
+                      msg: "Stopped Advertising",
+                      backgroundColor: Colors.white,
+                      textColor: Colors.black,
+                      fontSize: 16,
+                    );}
+                  else if(_status.value){
+                    Fluttertoast.showToast(
+                      msg: "Disconnecting",
+                      backgroundColor: Colors.white,
+                      textColor: Colors.black,
+                      fontSize: 16,
+                    );
+                  }
+                  _isadvertising=false;
                   _status.value = false;
                 },
               ),
@@ -511,8 +529,7 @@ class _recvOneBodyState extends State<recvOneBody> {
                         n.text = str;
                         n.sender = endid;
                         messages.add(n);
-                        setState(() {});
-
+                        setState((){});
                         //showSnackbar(endid + ": " + str);
 
                         if (str.contains(':')) {

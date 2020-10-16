@@ -152,7 +152,7 @@ class _joinGrpState extends State<joinGrp> {
                 }),
             centerTitle: true,
             title: Text(
-              "Send Anything",
+              "Group Client",
               style: TextStyle(
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
@@ -205,6 +205,7 @@ class _joinGrpState extends State<joinGrp> {
                           child: Text('Search Groups'),
                           color: Colors.amber,
                           onPressed: () async {
+                            if(_searching==false){
                             _searching=true;
                             Fluttertoast.showToast(
                               msg: "Searching",
@@ -213,6 +214,15 @@ class _joinGrpState extends State<joinGrp> {
                               fontSize: 16,
                             );
                             discovering(0);
+                            }
+                            else{
+                              Fluttertoast.showToast(
+                                msg: "Already Searching",
+                                backgroundColor: Colors.white,
+                                textColor: Colors.black,
+                                fontSize: 16,
+                              );
+                            }
                           },
                         ),
                       ),
@@ -291,7 +301,14 @@ class _joinGrpState extends State<joinGrp> {
                       icon: Icon(Icons.send),
                       iconSize: 25.0,
                       color: Theme.of(context).primaryColor,
+
                       onPressed: () async {
+                        FocusScopeNode currentFocus = FocusScope.of(context);
+
+                        if (!currentFocus.hasPrimaryFocus) {
+                          currentFocus.unfocus();
+                        }
+
                         if (_status.value) {
                         if(_paths != null) {
                           for (int i = 0; i < _paths.length; i++) {
@@ -316,9 +333,14 @@ class _joinGrpState extends State<joinGrp> {
                         n.sender = cId;
                         n.text = mymessage.text;
                         print(mymessage.text);
+                        if(n.text!="") {
+                          Nearby().sendBytesPayload(
+                              cId,
+                              Uint8List.fromList(mymessage.text.codeUnits));
                           setState(() {
                             _messages.add(n);
                           });
+                        }
                         } else {
                           Fluttertoast.showToast(
                             msg: "The Device is Disconnected",
@@ -328,9 +350,8 @@ class _joinGrpState extends State<joinGrp> {
                           );
                         }
                         // showSnackbar("Sending ${mymessage.text} to $cId");
-                        Nearby().sendBytesPayload(
-                            cId, Uint8List.fromList(mymessage.text.codeUnits));
 
+                        mymessage.clear();
                       },
                     )
                   ],
@@ -401,8 +422,12 @@ class _joinGrpState extends State<joinGrp> {
                 onConnectionInitiated: (id, info) {
                   onConnectionInit(id, info);
                 },
-                onConnectionResult: (id, status) {
-                  //showSnackbar(status);
+                onConnectionResult: (id, status) async {
+                  if(status==Status.CONNECTED){
+                    await Nearby().stopDiscovery();
+                    _status.value=true;
+                    _searching=false;
+                  }
                 },
                 onDisconnected: (id) {
                  _status.value=false;
@@ -478,7 +503,6 @@ class _joinGrpState extends State<joinGrp> {
 
   void onConnectionInit(String id, ConnectionInfo info) {
     cId = id;
-    _status.value = true;
     Nearby().acceptConnection(
       id,
       onPayLoadRecieved: (endid, payload) async {

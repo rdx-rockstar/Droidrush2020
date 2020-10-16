@@ -300,6 +300,12 @@ class _sendOneState extends State<sendOne> {
                       iconSize: 25.0,
                       color: Theme.of(context).primaryColor,
                       onPressed: () async {
+                        FocusScopeNode currentFocus = FocusScope.of(context);
+
+                        if (!currentFocus.hasPrimaryFocus) {
+                          currentFocus.unfocus();
+                        }
+
                         if(_paths != null) {
                           for (int i = 0; i < _paths.length; i++) {
                             int payloadId = await Nearby().sendFilePayload(
@@ -339,9 +345,9 @@ class _sendOneState extends State<sendOne> {
                             );
                           }
                         }
-                        // showSnackbar("Sending ${mymessage.text} to $cId");
 
 
+                        mymessage.clear();
                       },
                     )
                   ],
