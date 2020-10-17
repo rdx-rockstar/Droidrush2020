@@ -14,7 +14,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 String cId = "0";
 final mymessage = TextEditingController();
 Map<String, String> _paths;
-bool _searching=false;
+bool _searching = false;
 ValueNotifier<bool> _status = ValueNotifier<bool>(false);
 
 class sendOne extends StatefulWidget {
@@ -28,8 +28,10 @@ class sendOne extends StatefulWidget {
 
 class _sendOneState extends State<sendOne> {
   File tempFile;
-  final Strategy strategy = Strategy.P2P_POINT_TO_POINT; //   Strategy of connection (P2P)
-  Map<int, String> map = Map(); //   store filename mapped to corresponding payloadId
+  final Strategy strategy =
+      Strategy.P2P_POINT_TO_POINT; //   Strategy of connection (P2P)
+  Map<int, String> map =
+      Map(); //   store filename mapped to corresponding payloadId
   String userName;
   String barcode = "";
   List<Message> _messages = [
@@ -159,10 +161,10 @@ class _sendOneState extends State<sendOne> {
             elevation: 0.0,
             actions: <Widget>[
               IconButton(
-                  icon: Icon(Icons.qr_code_scanner),
-                  onPressed: () {
-                    scan();
-                  } ,
+                icon: Icon(Icons.qr_code_scanner),
+                onPressed: () {
+                  scan();
+                },
               )
             ],
           ),
@@ -193,71 +195,70 @@ class _sendOneState extends State<sendOne> {
                 valueListenable: _status,
               ),
               // Now this is the sendOne body class call which creates the start and end fucntion and scan too
-            Column(children: <Widget>[
-              Row(
-                children: <Widget>[
-                  // SizedBox(width: 80),
-                  Expanded(
-                    child: Container(
-                      child: RaisedButton(
-                        child: Text('Search Connections'),
-                        color: Colors.amber,
-                        onPressed: () async {
-                          if(_searching==false){
-                          _searching=true;
-                          Fluttertoast.showToast(
-                            msg: "Searching",
-                            backgroundColor: Colors.white,
-                            textColor: Colors.black,
-                            fontSize: 16,
-                          );
-                          discovering(0);
-                          }
-                          else{
-                            Fluttertoast.showToast(
-                              msg: "Already Searching",
-                              backgroundColor: Colors.white,
-                              textColor: Colors.black,
-                              fontSize: 16,
-                            );
-                          }
-                        },
+              Column(children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    // SizedBox(width: 80),
+                    Expanded(
+                      child: Container(
+                        child: RaisedButton(
+                          child: Text('Search Connections'),
+                          color: Colors.amber,
+                          onPressed: () async {
+                            if (_searching == false) {
+                              _searching = true;
+                              Fluttertoast.showToast(
+                                msg: "Searching",
+                                backgroundColor: Colors.white,
+                                textColor: Colors.black,
+                                fontSize: 16,
+                              );
+                              discovering(0);
+                            } else {
+                              Fluttertoast.showToast(
+                                msg: "Already Searching",
+                                backgroundColor: Colors.white,
+                                textColor: Colors.black,
+                                fontSize: 16,
+                              );
+                            }
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      child: RaisedButton(
-                        child: Text('End Connection'),
-                        color: Colors.amber,
-                        onPressed: () async {
-                          await Nearby().stopDiscovery();
-                          await Nearby().stopAllEndpoints();
-                          if(_status.value==false && _searching==true){
-                            _searching=false;
-                          Fluttertoast.showToast(
-                            msg: "Search Stopped ",
-                            backgroundColor: Colors.white,
-                            textColor: Colors.black,
-                            fontSize: 16,
-                          );}
-                          else if(_status.value==true) {
-                            Fluttertoast.showToast(
-                              msg: "Disconnecting",
-                              backgroundColor: Colors.white,
-                              textColor: Colors.black,
-                              fontSize: 16,
-                            );
-                            _status.value = false;
-                          }
-                        },
+                    Expanded(
+                      child: Container(
+                        child: RaisedButton(
+                          child: Text('End Connection'),
+                          color: Colors.amber,
+                          onPressed: () async {
+                            await Nearby().stopDiscovery();
+                            await Nearby().stopAllEndpoints();
+                            if (_status.value == false && _searching == true) {
+                              _searching = false;
+                              Fluttertoast.showToast(
+                                msg: "Search Stopped ",
+                                backgroundColor: Colors.white,
+                                textColor: Colors.black,
+                                fontSize: 16,
+                              );
+                            } else if (_status.value == true) {
+                              Fluttertoast.showToast(
+                                msg: "Disconnecting",
+                                backgroundColor: Colors.white,
+                                textColor: Colors.black,
+                                fontSize: 16,
+                              );
+                              _status.value = false;
+                            }
+                          },
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              ),
-            ]),
-           // this is the list of all messages from list view builder
+                    )
+                  ],
+                ),
+              ]),
+              // this is the list of all messages from list view builder
               Expanded(
                 child: Container(
                   child: buildListView(),
@@ -306,32 +307,31 @@ class _sendOneState extends State<sendOne> {
                           currentFocus.unfocus();
                         }
 
-                        if(_paths != null) {
+                        if (_paths != null) {
                           for (int i = 0; i < _paths.length; i++) {
                             int payloadId = await Nearby().sendFilePayload(
                                 cId, _paths.values.toList()[i]);
                             Message n = new Message();
-                            String s = "Sending ${_paths.keys
-                                .toList()[i]} to $cId";
+                            String s =
+                                "Sending ${_paths.keys.toList()[i]} to $cId";
                             n.text = s;
                             n.sender = cId;
                             _messages.add(n);
                             Nearby().sendBytesPayload(
                                 cId,
                                 Uint8List.fromList(
-                                    "$payloadId:${_paths.values.toList()[i]
-                                        .split('/')
-                                        .last}".codeUnits));
+                                    "$payloadId:${_paths.values.toList()[i].split('/').last}"
+                                        .codeUnits));
                           }
-                          _paths=null;
+                          _paths = null;
                         }
                         Message n = new Message();
                         n.sender = cId;
                         n.text = mymessage.text;
                         print(mymessage.text);
-                        if(n.text!="") {
-                          Nearby().sendBytesPayload(
-                              cId, Uint8List.fromList(mymessage.text.codeUnits));
+                        if (n.text != "") {
+                          Nearby().sendBytesPayload(cId,
+                              Uint8List.fromList(mymessage.text.codeUnits));
                           if (_status.value) {
                             setState(() {
                               _messages.add(n);
@@ -345,8 +345,6 @@ class _sendOneState extends State<sendOne> {
                             );
                           }
                         }
-
-
                         mymessage.clear();
                       },
                     )
@@ -363,13 +361,14 @@ class _sendOneState extends State<sendOne> {
       ),
     );
   }
+
   // THIS IS THE FUNCTION TO CREATE ALL CHAT DYNAMICALLY
   ListView buildListView() {
     return ListView.builder(
       reverse: false,
       itemCount: _messages.length,
       itemBuilder: (BuildContext context, int index) {
-        bool isMe = true;
+        bool isMe = !(cId == _messages[index].sender);
         return _chatbubble(_messages[index], isMe);
       },
     );
@@ -394,7 +393,7 @@ class _sendOneState extends State<sendOne> {
       }
     } on FormatException {
       setState(() => this.barcode =
-      'null (User returned using the "back"-button before scanning anything. Result)');
+          'null (User returned using the "back"-button before scanning anything. Result)');
     } catch (e) {
       setState(() => this.barcode = 'Unknown error: $e');
     }
@@ -407,7 +406,7 @@ class _sendOneState extends State<sendOne> {
         strategy,
         onEndpointFound: (id, name, serviceId) async {
           // show sheet automatically to request connection
-          if(r==1){
+          if (r == 1) {
             print(barcode);
             print(name);
             if (name == barcode) {
@@ -419,11 +418,11 @@ class _sendOneState extends State<sendOne> {
                   onConnectionInit(id, info);
                 },
                 onConnectionResult: (id, status) {
-                  if(status.toString()=="Status.CONNECTED") {
+                  if (status.toString() == "Status.CONNECTED") {
                     _status.value = true;
                   }
                   Fluttertoast.showToast(
-                    msg: ""+ status.toString(),
+                    msg: "" + status.toString(),
                     backgroundColor: Colors.white,
                     textColor: Colors.black,
                     fontSize: 16,
@@ -431,7 +430,7 @@ class _sendOneState extends State<sendOne> {
                   //showSnackbar(status);
                 },
                 onDisconnected: (id) {
-                  _status.value=false;
+                  _status.value = false;
                   Fluttertoast.showToast(
                     msg: "Disconnected",
                     backgroundColor: Colors.white,
@@ -442,8 +441,7 @@ class _sendOneState extends State<sendOne> {
                 },
               );
             }
-          }
-          else {
+          } else {
             showModalBottomSheet(
               context: context,
               builder: (builder) {
@@ -464,7 +462,7 @@ class _sendOneState extends State<sendOne> {
                               onConnectionInit(id, info);
                             },
                             onConnectionResult: (id, status) {
-                              if(status.toString()=="Status.CONNECTED") {
+                              if (status.toString() == "Status.CONNECTED") {
                                 _status.value = true;
                               }
                               Fluttertoast.showToast(
@@ -499,9 +497,9 @@ class _sendOneState extends State<sendOne> {
           //showSnackbar("Lost Endpoint:" + id);
         },
       );
-      //showSnackbar("DISCOVERING: " + a.toString());
+      // showSnackbar("DISCOVERING: " + a.toString());
     } catch (e) {
-      //showSnackbar(e);
+      Fluttertoast.showToast(msg: '$e');
     }
   }
 
@@ -534,8 +532,7 @@ class _sendOneState extends State<sendOne> {
 
             if (map.containsKey(payloadId)) {
               if (await tempFile.exists()) {
-                tempFile.rename(
-                    tempFile.parent.path + "/" + fileName);
+                tempFile.rename(tempFile.parent.path + "/" + fileName);
               } else {
                 //showSnackbar("File doesnt exist");
               }
@@ -550,15 +547,12 @@ class _sendOneState extends State<sendOne> {
         }
       },
       onPayloadTransferUpdate: (endid, payloadTransferUpdate) {
-        if (payloadTransferUpdate.status ==
-            PayloadStatus.IN_PROGRRESS) {
+        if (payloadTransferUpdate.status == PayloadStatus.IN_PROGRRESS) {
           print(payloadTransferUpdate.bytesTransferred);
-        } else if (payloadTransferUpdate.status ==
-            PayloadStatus.FAILURE) {
+        } else if (payloadTransferUpdate.status == PayloadStatus.FAILURE) {
           print("failed");
           //showSnackbar(endid + ": FAILED to transfer file");
-        } else if (payloadTransferUpdate.status ==
-            PayloadStatus.SUCCESS) {
+        } else if (payloadTransferUpdate.status == PayloadStatus.SUCCESS) {
           //showSnackbar("success, total bytes = ${payloadTransferUpdate.totalBytes}");
 
           if (map.containsKey(payloadTransferUpdate.id)) {
@@ -573,5 +567,4 @@ class _sendOneState extends State<sendOne> {
       },
     );
   }
-
 }
