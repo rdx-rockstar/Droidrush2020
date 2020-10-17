@@ -2,9 +2,13 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:ShareApp/constants/color_constant.dart';
+import 'package:ShareApp/widgets/customAppbar.dart';
 import 'package:ShareApp/widgets/showScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+
+import '../models/user_model.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -19,25 +23,11 @@ class _HomeScreenState extends State<HomeScreen> {
       _selectedIndex = index;
     });
   }
-
-
   @override
   Widget build(BuildContext context) {
+    CustomAppBars appbar = new CustomAppBars(index: this._selectedIndex);
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: mBackgroundColor,
-        elevation: 0,
-        title: SvgPicture.asset(
-          'assets/icons/share.svg',
-          height: 50.0,
-        ),
-        iconTheme: new IconThemeData(color: Colors.blue),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.notifications),
-              onPressed: () => print('To imple')),
-        ],
-      ),
+      appBar: appbar.getAppBar(),
       drawer: new Drawer(
         child: new ListView(
           children: <Widget>[
@@ -54,6 +44,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: new Text("MiA3"),
                 ),
               ),
+            ),
+            ListTile(
+              title: Text("Local Sharing"),
+              leading: Icon(Icons.settings),
+              onTap: () => print('To Implement'),
+            ),
+            ListTile(
+              title: Text("Cloud Storage"),
+              leading: Icon(Icons.settings),
+              onTap: () => print('To Implement'),
+            ),
+            ListTile(
+              title: Text("History"),
+              leading: Icon(Icons.settings),
+              onTap: () => print('To Implement'),
             ),
             ListTile(
               title: Text("Setting"),
