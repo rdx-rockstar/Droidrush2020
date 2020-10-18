@@ -4,7 +4,6 @@ import 'package:ShareApp/screens/CloudStorage/cloudStorage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 class Wrapper extends StatefulWidget {
   @override
   _WrapperState createState() => _WrapperState();
@@ -13,13 +12,11 @@ class Wrapper extends StatefulWidget {
 class _WrapperState extends State<Wrapper> {
   @override
   Widget build(BuildContext context) {
-
     final user = Provider.of<User>(context);
 
-    if (user == null){
+    if (user == null) {
       return Authentication();
-    }
-    else{
+    } else {
       return CloudStorage();
     }
   }
