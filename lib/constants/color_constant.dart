@@ -9,3 +9,14 @@ const mBorderColor = Color(0xFFE8E8F3);
 const mFillColor = Color(0xFFFFFFFF);
 const mCardTitleColor = Color(0xFF2E4ECF);
 const mCardSubtitleColor = mTitleColor;
+
+var textInputDecoration = InputDecoration(
+  fillColor: Colors.white,
+  filled: true,
+  enabledBorder: new OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.black, width: 2.0),
+  ),
+  focusedBorder: new OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.blue, width: 2.0),
+  ),
+);
