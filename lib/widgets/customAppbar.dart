@@ -3,42 +3,41 @@ import 'package:ShareApp/constants/color_constant.dart';
 
 class CustomAppBars {
   int _index;
-  CustomAppBars({ int index }){
+  CustomAppBars({int index}) {
     this._index = index;
   }
 
-  AppBar getAppBar(){
-    if(this._index == 0){
+  AppBar getAppBar() {
+    if (this._index == 0) {
       return AppBar(
+        // backgroundColor: Colors.white,
         title: Text('Local Sharing'),
         elevation: 0.0,
-        iconTheme: new IconThemeData(color: Colors.blue),
+        iconTheme: new IconThemeData(color: Colors.black),
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.notifications),
               onPressed: () => print('To imple')),
         ],
       );
-    }
-    else if(this._index == 2){
+    } else if (this._index == 2) {
       return AppBar(
         backgroundColor: mBackgroundColor,
         elevation: 0,
         title: Text('History'),
-        iconTheme: new IconThemeData(color: Colors.blue),
+        iconTheme: new IconThemeData(color: Colors.black),
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.notifications),
               onPressed: () => print('To imple')),
         ],
       );
-    }
-    else if(this._index == 3){
+    } else if (this._index == 3) {
       return AppBar(
         backgroundColor: mBackgroundColor,
         elevation: 0,
         title: Text('Settings'),
-        iconTheme: new IconThemeData(color: Colors.blue),
+        iconTheme: new IconThemeData(color: Colors.black),
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.notifications),
@@ -48,5 +47,3 @@ class CustomAppBars {
     }
   }
 }
-
-
