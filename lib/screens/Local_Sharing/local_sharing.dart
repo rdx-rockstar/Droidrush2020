@@ -102,13 +102,13 @@ class _Local_SharingState extends State<Local_Sharing> {
                           child: !toggleValue
                               ? Icon(
                                   Icons.person,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                   size: 35.0,
                                   key: UniqueKey(),
                                 )
                               : Icon(
-                                  Icons.person_add,
-                                  color: Colors.black,
+                                  Icons.group,
+                                  color: Colors.white,
                                   size: 35.0,
                                   key: UniqueKey(),
                                 ),

@@ -13,10 +13,10 @@ class CustomAppBars {
         // backgroundColor: Colors.white,
         title: Text('Local Sharing'),
         elevation: 0.0,
-        iconTheme: new IconThemeData(color: Colors.black),
+        iconTheme: new IconThemeData(color: Colors.white),
         actions: <Widget>[
           IconButton(
-              icon: Icon(Icons.notifications),
+              icon: Icon(Icons.notifications_active_outlined),
               onPressed: () => print('To imple')),
         ],
       );
@@ -25,7 +25,7 @@ class CustomAppBars {
         backgroundColor: mBackgroundColor,
         elevation: 0,
         title: Text('History'),
-        iconTheme: new IconThemeData(color: Colors.black),
+        iconTheme: new IconThemeData(color: Colors.white),
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.notifications),
@@ -37,7 +37,7 @@ class CustomAppBars {
         backgroundColor: mBackgroundColor,
         elevation: 0,
         title: Text('Settings'),
-        iconTheme: new IconThemeData(color: Colors.black),
+        iconTheme: new IconThemeData(color: Colors.white),
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.notifications),

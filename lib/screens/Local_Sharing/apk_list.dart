@@ -2,16 +2,14 @@ import 'package:device_apps/device_apps.dart';
 import 'dart:async';
 import 'package:open_file/open_file.dart';
 import 'dart:io';
+import 'package:ShareApp/screens/Local_Sharing/paths_data.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-void main() => runApp(MaterialApp(home: ApkExtractor()));
-
 class ApkExtractor extends StatefulWidget {
-  ApkExtractor({Key key}) : super(key: key);
-
+  ApkExtractor(){}
   @override
   _ApkExtractorState createState() => _ApkExtractorState();
 }
@@ -23,10 +21,12 @@ class _ApkExtractorState extends State<ApkExtractor>
   GlobalKey g1 = new GlobalKey();
   TextEditingController tcont = new TextEditingController();
   String searchText = "";
+  Data pdata=new Data();
   @override
   void initState() {
     super.initState();
     _tabController = new TabController(length: 2, vsync: this);
+    pdata.path={};
   }
   _ApkExtractorState() {
     tcont.addListener(() {
@@ -57,8 +57,9 @@ class _ApkExtractorState extends State<ApkExtractor>
   getArchieved() async {
     // print("Coming at get Archeived");
     Directory dir = await getApplicationDocumentsDirectory();
+    print(dir);
     String path = join(dir.path, 'ApkExtractor');
-    // print(path);
+    print(path);
 
     Directory n = Directory(path);
     bool dec = await n.exists();
@@ -134,6 +135,16 @@ class _ApkExtractorState extends State<ApkExtractor>
                                             ],
                                           )),
                                       SizedBox(height: 20),
+                                      FlatButton.icon(
+                                          icon: Icon(Icons.share),
+                                          label: Text("Share Apk",
+                                              textAlign: TextAlign.left),
+                                          onPressed: () async {
+                                            pdata.path.addAll({app.appName:app.apkFilePath});
+                                            print(app.appName+" "+app.apkFilePath);
+                                            Navigator.pop(context);
+                                            Navigator.pop(context,pdata);
+                                          }),
                                       FlatButton.icon(
                                           icon: Icon(Icons.android),
                                           label: Text(
@@ -222,26 +233,26 @@ class _ApkExtractorState extends State<ApkExtractor>
     return Scaffold(
         appBar: AppBar(
           elevation: 3.0,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.blue,
           title: isSearching
               ? TextField(
             autofocus: true,
             controller: tcont,
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Colors.white),
             decoration: InputDecoration(
-              prefixIcon: Icon(Icons.search, color: Colors.black),
+              prefixIcon: Icon(Icons.search, color: Colors.white),
               hintText: "Search...",
             ),
           )
               : Text(
             "Apk Extractor",
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: Colors.white),
           ),
           actions: <Widget>[
             IconButton(
               icon: isSearching
-                  ? Icon(Icons.close, color: Colors.black)
-                  : Icon(Icons.search, color: Colors.black),
+                  ? Icon(Icons.close, color: Colors.white)
+                  : Icon(Icons.search, color: Colors.white),
               onPressed: () {
                 setState(() {
                   if (isSearching) {
@@ -256,12 +267,12 @@ class _ApkExtractorState extends State<ApkExtractor>
           ],
           bottom: TabBar(
             controller: _tabController,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.black,
+            labelColor: Colors.black,
+            unselectedLabelColor: Colors.white,
             indicatorSize: TabBarIndicatorSize.label,
-            indicatorColor: Colors.white,
+            indicatorColor: Colors.red,
             indicator: BoxDecoration(
-                color: Colors.pink,
+                color: Colors.white,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10),
                   topRight: Radius.circular(10),
@@ -276,7 +287,7 @@ class _ApkExtractorState extends State<ApkExtractor>
                   height: 40,
                   alignment: Alignment.center,
                   width: 110,
-                  child: Text("Archeived")),
+                  child: Text("Extracted Apks")),
             ],
           ),
         ),
@@ -310,10 +321,75 @@ class _ApkExtractorState extends State<ApkExtractor>
                                 name.toLowerCase().startsWith(searchText)) {
                               return InkWell(
                                 onTap: () async {
-                                  await OpenFile.open(
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                            backgroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(30)),
+                                            child: Container(
+                                                margin: EdgeInsets.all(10),
+                                                height: 350,
+                                                child: Column(
+                                                    crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                    children: [
+                                                      Container(
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment.start,
+                                                            children: <Widget>[
+                                                              IconButton(
+                                                                icon: Icon(Icons.arrow_left),
+                                                                onPressed: () {
+                                                                  Navigator.pop(context);
+                                                                },
+                                                                iconSize: 30,
+                                                              ),
+                                                              Center(
+                                                                  child: Text("Choose Option",
+                                                                      style: TextStyle(
+                                                                          color: Colors.grey,
+                                                                          fontSize: 20,
+                                                                          fontWeight:
+                                                                          FontWeight.bold))),
+                                                            ],
+                                                          )),
+                                                      SizedBox(height: 20),
+                                                      FlatButton.icon(
+                                                          icon: Icon(Icons.share),
+                                                          label: Text("Share Apk",
+                                                              textAlign: TextAlign.left),
+                                                          onPressed: () async {
+                                                            print(name+" "+join(li[index].path, 'setup.apk').toString());
+                                                            pdata.path={};
+                                                            pdata.path.addAll({name:join(li[index].path, 'setup.apk')});
+                                                            Navigator.pop(context);
+                                                            Navigator.pop(context,pdata);
+                                                          }),
+                                                      FlatButton.icon(
+                                                          icon: Icon(Icons.download_done_outlined),
+                                                          label: Text(
+                                                            "Download Apk",
+                                                            textAlign: TextAlign.left,
+                                                          ),
+                                                          onPressed: () async {
+                                                            Navigator.pop(context);
+                                                            await OpenFile.open(
+                                                                join(li[index].path, 'setup.apk'))
+                                                                .then((OpenResult value) {});
+                                                            print("File Opened");
+                                                          }),
+                                                    ]
+                                                )
+                                            )
+                                        );
+                                      });
+                                  /*await OpenFile.open(
                                       join(li[index].path, 'setup.apk'))
                                       .then((OpenResult value) {});
-                                  print("File Opened");
+                                  print("File Opened");*/
                                 },
                                 child: ListTile(
                                   title: Text(name),
