@@ -1,9 +1,8 @@
 class Publicfile {
   String File_name;
-  List<String> tags;
   String LUri;
 
-  Publicfile({ this.File_name, this.LUri, this.tags });
+  Publicfile({ this.File_name, this.LUri});
 
   @override
   String toString() {

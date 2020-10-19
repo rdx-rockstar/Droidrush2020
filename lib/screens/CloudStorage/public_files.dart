@@ -27,7 +27,7 @@ class _PublicFilesState extends State<PublicFiles> {
             RaisedButton(
               child: Text('Get Data'),
               onPressed: () async {
-                s.listPublicFiles();
+                s.searchPublicFilesWithTags('kgf');
               },
             )
           ]

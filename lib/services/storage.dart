@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:ShareApp/models/PublicFile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
 class Storage {
@@ -15,7 +14,7 @@ class Storage {
 
   // List all public files ..
   Future<List<Publicfile>> listPublicFiles () async {
-    List<Publicfile> pf;
+    List<Publicfile> pf = new List();
     HttpClient httpClient = new HttpClient();
     List<String> Token;
     try {
@@ -46,7 +45,7 @@ class Storage {
                 print(p.toString());
               }
           );
-          //pf[i] = p;
+          pf.add(p);
 
         }
       }
@@ -84,12 +83,25 @@ class Storage {
     StorageUploadTask task2 = await publicUploadRef.putFile(File(path));   // adding file to storage
   }
 
-  Future downloadPublicFileWithUrl(String FileName) async {
-
+  Future<String> downloadPublicFileWithUrl(String uri) async {
+    StorageReference publicDownloadRef = reference.child("Public_Files/" + uri);
+    var url = publicDownloadRef.getDownloadURL();
+    return url.toString();
   }
 
   Future<List<Publicfile>> searchPublicFilesWithTags(String Tag) async {
-
+    List<Publicfile> pf = new List();
+    await publicCollection.where("Tags", arrayContains: Tag)
+        .snapshots().listen((data) {
+          print(data.documents.length);
+           for(int i=0 ; i<data.documents.length ;i++ ) {
+             Publicfile p = new Publicfile(File_name: data.documents[i].data['File_Name']
+               ,LUri: data.documents[i].data['File']);
+             print(p.toString());
+             pf.add(p);
+           }
+    });
+    return pf;
   }
 
 }
