@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:ShareApp/services/storage.dart';
 import 'package:flutter/material.dart';
 
@@ -9,13 +8,10 @@ class PublicFiles extends StatefulWidget {
 
 class _PublicFilesState extends State<PublicFiles> {
 
-  List File_Names;
-  String content = '';
+  Storage s = new Storage();
 
   @override
   Widget build(BuildContext context) {
-
-
     return MaterialApp(
       title: 'Public Files',
       debugShowCheckedModeBanner: false,
@@ -29,19 +25,11 @@ class _PublicFilesState extends State<PublicFiles> {
               ),
             ),
             RaisedButton(
-              child: Text('Retrieve data'),
+              child: Text('Get Data'),
               onPressed: () async {
-                File_Names = await Storage().listPublicFiles();
-                for(int i=0; i<File_Names.length ; i++){
-                  content += File_Names[i].toString();
-                  content += '\n';
-                }
-                print(content);
-                setState(() {});
-
+                s.listPublicFiles();
               },
-            ),
-            File_Names == null  ?  Text('No files') : Text(content,style: TextStyle(color: Colors.amber, fontSize: 20.0),),
+            )
           ]
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:ShareApp/constants/color_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:ShareApp/services/storage.dart';
 
@@ -38,7 +39,9 @@ class _uploadFilesToCloudState extends State<uploadFilesToCloud> {
             RaisedButton(
               child: Text('Upload Publicly'),
               onPressed: () async {
-                st.uploadFileToPublic('new.jpg', widget.path.values.toList()[0]);
+                await publicUploadDialog();
+                Navigator.of(context).pop();
+                // st.uploadFileToPublic('new.jpg', widget.path.values.toList()[0], tags);
               },
             ),
             RaisedButton(
@@ -54,7 +57,9 @@ class _uploadFilesToCloudState extends State<uploadFilesToCloud> {
   }
 
   Future<void> publicUploadDialog() async {
-
+    String File_name;
+    List<String> tags;
+    final _formKey = GlobalKey<FormState>();
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -62,7 +67,7 @@ class _uploadFilesToCloudState extends State<uploadFilesToCloud> {
         return AlertDialog(
           title: Row(
             children: <Widget>[
-              Text("QR Code"),
+              Text("Public Uploads"),
               Spacer(
                 flex: 2,
               ),
@@ -75,11 +80,44 @@ class _uploadFilesToCloudState extends State<uploadFilesToCloud> {
             ],
           ),
           content: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                children: <Widget>[
-                  Text(widget.path.length.toString()),
-                ],
+            child: Container(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      decoration: textInputDecoration.copyWith(hintText: 'File Name'),
+                      validator: (val) =>
+                      val.isEmpty ? 'Enter File Name' : null,
+                      onChanged: (val) {
+                        // get File name
+                        setState(() => File_name = val);
+                      },
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    TextFormField(
+                      decoration: textInputDecoration.copyWith(hintText: 'Tags'),
+                      validator: (val) =>
+                      val.isEmpty ? 'Enter Tags' : null,
+                      onChanged: (val) {
+                        // get Tags
+                        setState(() => tags = val.split(" "));
+                      },
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    RaisedButton(
+                      child: Text('Upload'),
+                      onPressed: () async {
+                        await st.uploadFileToPublic(File_name, widget.path.values.toList()[0], tags);
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
