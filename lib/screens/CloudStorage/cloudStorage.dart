@@ -1,7 +1,10 @@
-import 'package:ShareApp/screens/private_files.dart';
-import 'package:ShareApp/screens/public_files.dart';
+import 'package:ShareApp/screens/CloudStorage/private_files.dart';
+import 'package:ShareApp/screens/CloudStorage/public_files.dart';
 import 'package:ShareApp/services/auth.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+
+import 'uploadFilesToCloud.dart';
 
 class CloudStorage extends StatefulWidget {
   @override
@@ -74,7 +77,16 @@ class _CloudStorageState extends State<CloudStorage> {
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.upload_sharp),
-          onPressed: () {},
+          onPressed: () async {
+            // upload file
+            var _path = await FilePicker.getMultiFilePath();
+            if(_path != null ){
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => uploadFilesToCloud( path: _path )));
+            }
+          },
           backgroundColor: Colors.blue,
         ),
       ),
