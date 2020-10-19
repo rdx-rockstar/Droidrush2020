@@ -1,3 +1,4 @@
+import 'package:ShareApp/models/user_model.dart';
 import 'package:ShareApp/screens/CloudStorage/private_files.dart';
 import 'package:ShareApp/screens/CloudStorage/public_files.dart';
 import 'package:ShareApp/services/auth.dart';
@@ -7,6 +8,10 @@ import 'package:flutter/material.dart';
 import 'uploadFilesToCloud.dart';
 
 class CloudStorage extends StatefulWidget {
+
+  final User user;
+  CloudStorage({ this.user });
+
   @override
   _CloudStorageState createState() => _CloudStorageState();
 }
@@ -72,7 +77,7 @@ class _CloudStorageState extends State<CloudStorage> {
         body: TabBarView(
           children: <Widget>[
             PublicFiles(),
-            PrivateFiles(),
+            PrivateFiles(user: widget.user),
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -84,7 +89,7 @@ class _CloudStorageState extends State<CloudStorage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => uploadFilesToCloud( path: _path )));
+                      builder: (context) => uploadFilesToCloud( path: _path ,uid: widget.user.uid)));
             }
           },
           backgroundColor: Colors.blue,

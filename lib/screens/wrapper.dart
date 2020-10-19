@@ -17,7 +17,7 @@ class _WrapperState extends State<Wrapper> {
     if (user == null) {
       return Authentication();
     } else {
-      return CloudStorage();
+      return CloudStorage(user: user);
     }
   }
 }

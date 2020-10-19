@@ -1,3 +1,4 @@
+import 'package:ShareApp/models/Cloudfile.dart';
 import 'package:ShareApp/services/storage.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,7 @@ class PublicFiles extends StatefulWidget {
 class _PublicFilesState extends State<PublicFiles> {
 
   Storage s = new Storage();
+  List<Cloudfile> pf;
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +29,19 @@ class _PublicFilesState extends State<PublicFiles> {
             RaisedButton(
               child: Text('Get Data'),
               onPressed: () async {
-                s.searchPublicFilesWithTags('kgf');
+                getFiles();
               },
             )
           ]
         ),
       ),
     );
+  }
+
+  void getFiles() async {
+    await s.listPublicFiles().then((List<Cloudfile> value){
+      pf = value;
+      setState(() {});
+    });
   }
 }

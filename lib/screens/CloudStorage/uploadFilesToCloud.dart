@@ -5,7 +5,8 @@ import 'package:ShareApp/services/storage.dart';
 class uploadFilesToCloud extends StatefulWidget {
 
   var path;
-  uploadFilesToCloud({ this.path });
+  String uid;
+  uploadFilesToCloud({ this.path, this.uid });
 
   @override
   _uploadFilesToCloudState createState() => _uploadFilesToCloudState();
@@ -47,7 +48,8 @@ class _uploadFilesToCloudState extends State<uploadFilesToCloud> {
             RaisedButton(
               child: Text('Uplaod Privately'),
               onPressed: () async {
-
+                await privateUploadDialog();
+                Navigator.of(context).pop();
               },
             )
           ],
@@ -113,6 +115,63 @@ class _uploadFilesToCloudState extends State<uploadFilesToCloud> {
                       child: Text('Upload'),
                       onPressed: () async {
                         await st.uploadFileToPublic(File_name, widget.path.values.toList()[0], tags);
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> privateUploadDialog() async {
+    String File_name;
+    final _formKey = GlobalKey<FormState>();
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: <Widget>[
+              Text("Private Uploads"),
+              Spacer(
+                flex: 2,
+              ),
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Container(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      decoration: textInputDecoration.copyWith(hintText: 'File Name'),
+                      validator: (val) =>
+                      val.isEmpty ? 'Enter File Name' : null,
+                      onChanged: (val) {
+                        // get File name
+                        setState(() => File_name = val);
+                      },
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    RaisedButton(
+                      child: Text('Upload'),
+                      onPressed: () async {
+                        await st.uploadFileToPrivate(File_name, widget.path.values.toList()[0], widget.uid);
                         Navigator.of(context).pop();
                       },
                     ),
