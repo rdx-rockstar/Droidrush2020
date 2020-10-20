@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:ShareApp/screens/Local_Sharing/paths_data.dart';
+import 'package:ShareApp/screens/Local_Sharing/apk_list.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:ShareApp/models/message_model.dart';
@@ -159,6 +161,12 @@ class _createGrpState extends State<createGrp> {
                   _showMyDialog();
                 },
               ),
+              IconButton(
+                icon: Icon(Icons.android_outlined),
+                onPressed: () {
+                  getapkpaths();
+                },
+              )
             ],
           ),
         ),
@@ -342,6 +350,21 @@ class _createGrpState extends State<createGrp> {
           ),
         );
       },
+    );
+  }
+  void getapkpaths()async{
+    final dataFromSecondPage = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ApkExtractor()),
+    ) as Data;
+    _paths=dataFromSecondPage.path;
+    print(_paths);
+    Fluttertoast.showToast(
+      msg: "click send to send apk",
+      toastLength: Toast.LENGTH_LONG,
+      backgroundColor: Colors.white,
+      textColor: Colors.black,
+      fontSize: 16,
     );
   }
   Future<void> _showMyDialog() async {

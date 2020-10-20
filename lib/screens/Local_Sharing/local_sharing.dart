@@ -210,6 +210,7 @@ class _Local_SharingState extends State<Local_Sharing> {
                 }
               },
               child: ButtonTapped(icon: Icons.share),
+
             )),
             Expanded(
                 child: GestureDetector(

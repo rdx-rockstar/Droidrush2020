@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:ShareApp/screens/Local_Sharing/paths_data.dart';
+import 'package:ShareApp/screens/Local_Sharing/apk_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -155,6 +156,12 @@ class _recieveOneState extends State<recieveOne> {
                   _showMyDialog();
                 },
               ),
+              IconButton(
+                icon: Icon(Icons.android_outlined),
+                onPressed: () {
+                  getapkpaths();
+                },
+              )
             ],
           ),
         ),
@@ -296,7 +303,21 @@ class _recieveOneState extends State<recieveOne> {
       ),
     );
   }
-
+  void getapkpaths()async{
+    final dataFromSecondPage = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ApkExtractor()),
+    ) as Data;
+    _paths=dataFromSecondPage.path;
+    print(_paths);
+    Fluttertoast.showToast(
+      msg: "click send to send apk",
+      toastLength: Toast.LENGTH_LONG,
+      backgroundColor: Colors.white,
+      textColor: Colors.black,
+      fontSize: 16,
+    );
+  }
   Future<void> _showMyDialog() async {
 
     return showDialog<void>(

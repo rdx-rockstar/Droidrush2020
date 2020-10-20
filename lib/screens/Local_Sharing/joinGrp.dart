@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:ShareApp/models/message_model.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:ShareApp/screens/Local_Sharing/paths_data.dart';
+import 'package:ShareApp/screens/Local_Sharing/apk_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
@@ -165,6 +167,12 @@ class _joinGrpState extends State<joinGrp> {
                 onPressed: () {
                   scan();
                 } ,
+              ),
+              IconButton(
+                icon: Icon(Icons.android_outlined),
+                onPressed: () {
+                  getapkpaths();
+                },
               )
             ],
           ),
@@ -365,6 +373,21 @@ class _joinGrpState extends State<joinGrp> {
         // ),
         // body: sendOneBody(userName, barcode),
       ),
+    );
+  }
+  void getapkpaths()async{
+    final dataFromSecondPage = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ApkExtractor()),
+    ) as Data;
+    _paths=dataFromSecondPage.path;
+    print(_paths);
+    Fluttertoast.showToast(
+      msg: "click send to send apk",
+      toastLength: Toast.LENGTH_LONG,
+      backgroundColor: Colors.white,
+      textColor: Colors.black,
+      fontSize: 16,
     );
   }
   // THIS IS THE FUNCTION TO CREATE ALL CHAT DYNAMICALLY
