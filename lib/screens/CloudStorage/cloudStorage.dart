@@ -8,9 +8,8 @@ import 'package:flutter/material.dart';
 import 'uploadFilesToCloud.dart';
 
 class CloudStorage extends StatefulWidget {
-
   final User user;
-  CloudStorage({ this.user });
+  CloudStorage({this.user});
 
   @override
   _CloudStorageState createState() => _CloudStorageState();
@@ -85,11 +84,12 @@ class _CloudStorageState extends State<CloudStorage> {
           onPressed: () async {
             // upload file
             var _path = await FilePicker.getMultiFilePath();
-            if(_path != null ){
+            if (_path != null) {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => uploadFilesToCloud( path: _path ,uid: widget.user.uid)));
+                      builder: (context) => uploadFilesToCloud(
+                          path: _path, uid: widget.user.uid)));
             }
           },
           backgroundColor: Colors.blue,

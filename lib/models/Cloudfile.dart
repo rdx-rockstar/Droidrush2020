@@ -2,7 +2,11 @@ class Cloudfile {
   String File_name;
   String LUri;
 
-  Cloudfile({ this.File_name, this.LUri});
+  Cloudfile({this.File_name, this.LUri});
+
+  String name() {
+    return this.File_name;
+  }
 
   @override
   String toString() {
