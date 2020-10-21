@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:ShareApp/constants/color_constant.dart';
@@ -6,9 +5,6 @@ import 'package:ShareApp/widgets/customAppbar.dart';
 import 'package:ShareApp/widgets/showScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
-
-import '../models/user_model.dart';
 
 class HomeScreen extends StatefulWidget {
   @override

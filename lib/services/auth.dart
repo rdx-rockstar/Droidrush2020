@@ -1,5 +1,4 @@
 import 'package:ShareApp/models/user_model.dart';
-import 'package:ShareApp/services/storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
@@ -45,7 +44,6 @@ class AuthService {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
-      Storage().createMetadata(user.uid);
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());
