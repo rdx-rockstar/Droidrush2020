@@ -1,6 +1,7 @@
 import 'package:ShareApp/constants/color_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:ShareApp/services/storage.dart';
+import 'package:ShareApp/models/buttontapped.dart';
 
 class uploadFilesToCloud extends StatefulWidget {
   var path;
@@ -13,7 +14,13 @@ class uploadFilesToCloud extends StatefulWidget {
 
 class _uploadFilesToCloudState extends State<uploadFilesToCloud> {
   Storage st = new Storage();
-
+  String file_name = "";
+  List<String> tag = [];
+  String tagString = "";
+  List<String> _choices = ['PublicUpload', 'PrivateUpload'];
+  int _defaultSelectedIndex = 0;
+  final TextEditingController _controller = new TextEditingController();
+  final TextEditingController _controllerTag = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     String content = "", names = "";
@@ -21,10 +28,12 @@ class _uploadFilesToCloudState extends State<uploadFilesToCloud> {
       content += widget.path.values.toList()[i];
       names += widget.path.keys.toList()[i];
     }
+    _controller.text = names;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: Text('Upload Files to Cloud'),
           elevation: 0.0,
         ),
@@ -32,26 +41,147 @@ class _uploadFilesToCloudState extends State<uploadFilesToCloud> {
           children: <Widget>[
             Row(
               children: <Widget>[
-                SizedBox(height: 10),
-                Icon(Icons.file_present),
-                Text(names, overflow: TextOverflow.clip),
+                SizedBox(width: MediaQuery.of(context).size.width / 3),
+                ChoiceChip(
+                  label: Text(_choices[0]),
+                  selected: _defaultSelectedIndex == 0,
+                  onSelected: (bool selected) {
+                    setState(() {
+                      _defaultSelectedIndex = selected ? 0 : 0;
+                      print(_defaultSelectedIndex);
+                    });
+                  },
+                ),
+                SizedBox(width: 10),
+                ChoiceChip(
+                  label: Text(_choices[1]),
+                  selected: _defaultSelectedIndex == 1,
+                  onSelected: (bool selected) {
+                    setState(() {
+                      _defaultSelectedIndex = selected ? 1 : 0;
+                      print(_defaultSelectedIndex);
+                    });
+                  },
+                ),
               ],
             ),
-            RaisedButton(
-              child: Text('Upload Publicly'),
-              onPressed: () async {
-                await publicUploadDialog();
-                Navigator.of(context).pop();
-                // st.uploadFileToPublic('new.jpg', widget.path.values.toList()[0], tags);
-              },
+            // SizedBox(
+            //   height: 100,
+            //   child: ListView.builder(
+            //     itemCount: _choices.length,
+            //     itemBuilder: (context, index) {
+            //       return ChoiceChip(
+            //         label: Text(_choices[index]),
+            //         selected: _defaultSelectedIndex == index,
+            //         selectedColor: Colors.green,
+            //         onSelected: (bool selected) {
+            //           setState(() {
+            //             _defaultSelectedIndex = selected ? index : 0;
+            //           });
+            //         },
+            //         backgroundColor: Colors.blue,
+            //         labelStyle: TextStyle(color: Colors.white),
+            //       );
+            //     },
+            //   ),
+            // ),
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(6, 20, 6, 10),
+              child: Container(
+                child: TextFormField(
+                  controller: _controller,
+                  decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                      onPressed: () => _controller.clear(),
+                      icon: Icon(Icons.clear_rounded),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(24)),
+                    ),
+                    prefixIcon: Icon(Icons.file_copy),
+                    hintText: 'Name of the file',
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                  ),
+                  onChanged: (val) {
+                    file_name = val;
+                  },
+                ),
+              ),
             ),
-            RaisedButton(
-              child: Text('Uplaod Privately'),
-              onPressed: () async {
-                await privateUploadDialog();
-                Navigator.of(context).pop();
-              },
-            )
+            if (_defaultSelectedIndex == 0)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(6, 20, 6, 10),
+                child: Container(
+                  child: TextFormField(
+                    controller: _controllerTag,
+                    decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                        onPressed: () => _controllerTag.clear(),
+                        icon: Icon(Icons.clear_rounded),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(24)),
+                      ),
+                      hintText: 'Tag for the file',
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                    ),
+                    onChanged: (val) {
+                      tagString = val;
+                    },
+                  ),
+                ),
+              ),
+            if (_defaultSelectedIndex == 1) SizedBox(height: 89),
+            SizedBox(height: 20),
+            Row(
+              children: <Widget>[
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: Center(
+                    child: GestureDetector(
+                      onTap: () async {
+                        if (_defaultSelectedIndex == 0) {
+                          tag = tagString.split(" ");
+                          await st.uploadFileToPublic(
+                              file_name, widget.path.values.toList()[0], tag);
+                        } else {
+                          await st.uploadFileToPrivate(file_name,
+                              widget.path.values.toList()[0], widget.uid);
+                        }
+                        Navigator.of(context).pop();
+                      },
+                      child: ButtonTapped(icon: Icons.upload_sharp),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // Row(
+            //   children: <Widget>[
+            //     SizedBox(height: 10),
+            //     Icon(Icons.file_present),
+            //     Text(names, overflow: TextOverflow.clip),
+            //   ],
+            // ),
+            // RaisedButton(
+            //   child: Text('Upload Publicly'),
+            //   onPressed: () async {
+            //     await publicUploadDialog();
+            //     Navigator.of(context).pop();
+            //     // st.uploadFileToPublic('new.jpg', widget.path.values.toList()[0], tags);
+            //   },
+            // ),
+            // RaisedButton(
+            //   child: Text('Uplaod Privately'),
+            //   onPressed: () async {
+            //     await privateUploadDialog();
+            //     Navigator.of(context).pop();
+            //   },
+            // )
           ],
         ),
       ),

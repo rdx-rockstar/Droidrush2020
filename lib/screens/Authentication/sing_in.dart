@@ -30,12 +30,14 @@ class _SignInState extends State<SignIn> {
               elevation: 0.0,
               actions: <Widget>[
                 FlatButton.icon(
-                  icon: Icon(Icons.person,color: Colors.white),
-                  label: Text('Register',
+                  icon: Icon(Icons.person, color: Colors.white),
+                  label: Text(
+                    'Register',
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.white,
-                    ),),
+                    ),
+                  ),
                   onPressed: () {
                     widget.toggelView();
                   },
@@ -53,8 +55,8 @@ class _SignInState extends State<SignIn> {
                         height: 20.0,
                       ),
                       TextFormField(
-                        decoration:
-                            textInputDecoration.copyWith(hintText: 'Email'),
+                        decoration: textInputDecoration.copyWith(
+                            hintText: 'Email', labelText: 'Email'),
                         validator: (val) =>
                             val.isEmpty ? 'Enter an email' : null,
                         onChanged: (val) {
@@ -66,8 +68,8 @@ class _SignInState extends State<SignIn> {
                         height: 20.0,
                       ),
                       TextFormField(
-                        decoration:
-                            textInputDecoration.copyWith(hintText: 'Password'),
+                        decoration: textInputDecoration.copyWith(
+                            hintText: 'Password', labelText: 'Password'),
                         validator: (val) => val.length < 6
                             ? 'Enter a password 6 chars long'
                             : null,

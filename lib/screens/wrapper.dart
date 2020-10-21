@@ -17,6 +17,7 @@ class _WrapperState extends State<Wrapper> {
     if (user == null) {
       return Authentication();
     } else {
+      print('The user which is entering the CloudStorage ${user.toString()}');
       return CloudStorage(user: user);
     }
   }

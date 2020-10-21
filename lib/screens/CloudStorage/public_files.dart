@@ -31,20 +31,24 @@ class _PublicFilesState extends State<PublicFiles> {
         Center(
           child: Row(
             children: <Widget>[
-              RaisedButton(
-                child: Text('Get Data'),
-                onPressed: () async {
-                  s.searchPublicFilesWithTags('kgf');
-                },
+              Expanded(
+                child: RaisedButton(
+                  child: Text('Get Data'),
+                  onPressed: () async {
+                    s.searchPublicFilesWithTags('kgf');
+                  },
+                ),
               ),
-              RaisedButton(
-                child: Text('Refersh the list'),
-                onPressed: () {
-                  var latestList = Storage().listPublicFiles();
-                  setState(() {
-                    record = latestList;
-                  });
-                },
+              Expanded(
+                child: RaisedButton(
+                  child: Text('Refersh the list'),
+                  onPressed: () {
+                    var latestList = Storage().listPublicFiles();
+                    setState(() {
+                      record = latestList;
+                    });
+                  },
+                ),
               ),
             ],
           ),
@@ -56,8 +60,8 @@ class _PublicFilesState extends State<PublicFiles> {
                 snapshot.connectionState == ConnectionState.done) {
               return Row(children: <Widget>[
                 Expanded(
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height / 2 + 100,
+                  child: SingleChildScrollView(
+                    // height: MediaQuery.of(context).size.height / 2 + 100,
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: snapshot.data.length,

@@ -125,18 +125,18 @@ class Storage {
     StorageReference privateRefMetadata = FirebaseStorage.instance
         .ref()
         .child("Private_Files/" + uid + "/metadata");
-    List<Cloudfile> pf = new List();
+    List<Cloudfile> pf = [];
     HttpClient httpClient = new HttpClient();
     List<String> Token;
     try {
       var myUrl = await privateRefMetadata.getDownloadURL();
-      print(myUrl);
+      // print(myUrl);
       var request = await httpClient.getUrl(Uri.parse(myUrl.toString()));
       var response = await request.close();
       if (response.statusCode == 200) {
         var bytes = await consolidateHttpClientResponseBytes(response);
         Token = utf8.decode(bytes).split("\n");
-        print(Token);
+        // print(Token);
       }
     } catch (ex) {
       print(ex);
@@ -153,8 +153,8 @@ class Storage {
               .listen((data) {
             p.File_name = data.documents[0].data['File_Name'];
             p.LUri = data.documents[0].data['File'];
-            //print("IN Storage");
-            //print(p.toString());
+            print("IN Storage for private files :: ");
+            print(p.toString());
             pf.add(p);
           });
         }
