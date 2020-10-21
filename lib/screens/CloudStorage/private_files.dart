@@ -4,6 +4,14 @@ import 'package:ShareApp/services/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:ShareApp/constants/color_constant.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+// import 'package:flutter_downloader/flutter_downloader.dart';
 
 class PrivateFiles extends StatefulWidget {
   final User user;
@@ -15,6 +23,7 @@ class PrivateFiles extends StatefulWidget {
 
 class _PrivateFilesState extends State<PrivateFiles> {
   List<Cloudfile> pf;
+  String _localPath;
   var url;
   bool theFirstOne = true;
   void listFromPF() async {
@@ -27,8 +36,17 @@ class _PrivateFilesState extends State<PrivateFiles> {
     });
   }
 
+  // Future<String> _findLocalPath() async {
+  //   // final directory = widget.platform == TargetPlatform.android
+  //   //     ? await getExternalStorageDirectory()
+  //   //     : await getApplicationDocumentsDirectory();
+  //   final directory = await getExternalStorageDirectories()
+  //   return directory.path;
+  // }
+
   String getTheDownloadURI() {
     String File_name;
+    // dynamic url;
     final _formKey = GlobalKey<FormState>();
     showDialog<void>(
       context: context,
@@ -37,7 +55,7 @@ class _PrivateFilesState extends State<PrivateFiles> {
         return AlertDialog(
           title: Row(
             children: <Widget>[
-              Text("DownloadKeyOfFile"),
+              Text("Key Of File"),
               Spacer(
                 flex: 2,
               ),
@@ -67,6 +85,101 @@ class _PrivateFilesState extends State<PrivateFiles> {
                     ),
                     SizedBox(
                       height: 10.0,
+                    ),
+                    RaisedButton(
+                      child: Text('Download'),
+                      onPressed: () async {
+                        // await st.uploadFileToPrivate(File_name,
+                        //     widget.path.values.toList()[0], widget.uid);
+                        // url = Storage()
+                        //     .downloadPrivateFileWithUrl(s, widget.user.uid);
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    return File_name;
+  }
+// code to download files without using the external library
+// Future<String> downloadFile(String url, String fileName, String dir) async {
+//         HttpClient httpClient = new HttpClient();
+//         File file;
+//         String filePath = '';
+//         String myUrl = '';
+
+//         try {
+//           myUrl = url+'/'+fileName;
+//           var request = await httpClient.getUrl(Uri.parse(myUrl));
+//           var response = await request.close();
+//           if(response.statusCode == 200) {
+//             var bytes = await consolidateHttpClientResponseBytes(response);
+//             filePath = '$dir/$fileName';
+//             file = File(filePath);
+//             await file.writeAsBytes(bytes);
+//           }
+//           else
+//             filePath = 'Error code: '+response.statusCode.toString();
+//         }
+//         catch(ex){
+//           filePath = 'Can not fetch url';
+//         }
+
+//         return filePath;
+//       }
+
+  String getFileFunction() {
+    String File_name;
+    // dynamic url;
+    final _formKey = GlobalKey<FormState>();
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: <Widget>[
+              Text("Key Of File"),
+              Spacer(
+                flex: 2,
+              ),
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Container(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      decoration:
+                          textInputDecoration.copyWith(hintText: 'File Name'),
+                      validator: (val) =>
+                          val.isEmpty ? 'Enter File Name' : null,
+                      onChanged: (val) {
+                        // get File name
+                        setState(() => File_name = val);
+                      },
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    RaisedButton(
+                      child: Text('Download'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
                     ),
                   ],
                 ),
@@ -109,9 +222,9 @@ class _PrivateFilesState extends State<PrivateFiles> {
               child: RaisedButton(
                 child: Text('DownloadURl'),
                 onPressed: () async {
-                  String s = await getTheDownloadURI();
-                  url = await Storage()
-                      .downloadPrivateFileWithUrl(s, widget.user.uid);
+                  String s = getTheDownloadURI();
+                  url =
+                      Storage().downloadPrivateFileWithUrl(s, widget.user.uid);
                   if (url == null) {
                     Fluttertoast.showToast(
                       msg: "Please provide a valid String",
@@ -119,8 +232,20 @@ class _PrivateFilesState extends State<PrivateFiles> {
                       textColor: Colors.black,
                       fontSize: 16,
                     );
-                  } else
-                    setState(() {});
+                  } else {
+                    // to find the external directory to the files it is platform specific
+                    final directory = await getExternalStorageDirectories();
+                    String location = directory.toString() + 'Download';
+                    // final taskId = await FlutterDownloader.enqueue(
+                    //   url: url,
+                    //   savedDir: location,
+                    //   showNotification:
+                    //       true, // show download progress in status bar (for Android)
+                    //   openFileFromNotification:
+                    //       true, // click on notification to open downloaded file (for Android)
+                    // );
+                    print(url.toString());
+                  }
                 },
               ),
             ),
@@ -129,12 +254,29 @@ class _PrivateFilesState extends State<PrivateFiles> {
               child: RaisedButton(
                 child: Text('FileFromKey'),
                 onPressed: () async {
-                  url = await Storage().fetchFileFromKey(
-                      "rG6nFH0BJuYPddOmG1PEbFlxRwA2:1603139309967");
-                  setState(() {
+                  String toSend = getFileFunction();
+                  url = await Storage().fetchFileFromKey(toSend);
+                  if (url == null) {
+                    Fluttertoast.showToast(
+                      msg: "Please provide a valid String",
+                      backgroundColor: Colors.white,
+                      textColor: Colors.black,
+                      fontSize: 16,
+                    );
+                  } else {
                     print("url: ");
                     print(url);
-                  });
+                    // final taskId = await FlutterDownloader.enqueue(
+                    //   url: url,
+                    //   // this has to be updated
+                    //   savedDir:
+                    //       'the path of directory where you want to save downloaded files',
+                    //   showNotification:
+                    //       true, // show download progress in status bar (for Android)
+                    //   openFileFromNotification:
+                    //       true, // click on notification to open downloaded file (for Android)
+                    // );
+                  }
                 },
               ),
             ),
