@@ -335,8 +335,11 @@ class _RegisterState extends State<Register> {
                                   if (result == null) {
                                     setState(() =>
                                         error = 'please supply a valid email');
-                                    loading = false;
                                   }
+                                  else{
+                                    setState(() => error = 'Email Has been send to ' + email);
+                                  }
+                                  loading = false;
                                 }
                               },
                               child: FadeAnimation(

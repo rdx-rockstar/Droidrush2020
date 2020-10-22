@@ -1,14 +1,12 @@
-// import 'package:ShareApp/constants/data_search.dart';
 import 'package:ShareApp/models/Cloudfile.dart';
-import 'package:ShareApp/models/user_model.dart';
 import 'package:ShareApp/screens/CloudStorage/private_files.dart';
 import 'package:ShareApp/screens/CloudStorage/public_files.dart';
 import 'package:ShareApp/services/auth.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'uploadFilesToCloud.dart';
 import 'package:ShareApp/services/storage.dart';
-import 'package:ShareApp/screens/CloudStorage/public_files.dart';
 
 List<Cloudfile> recordsPublic;
 List<Cloudfile> recordsPrivate;
@@ -24,8 +22,8 @@ class Screens {
 // ];
 
 class CloudStorage extends StatefulWidget {
-  final User user;
-  CloudStorage({this.user});
+  final FirebaseUser user;
+  CloudStorage({ this.user });
 
   @override
   _CloudStorageState createState() => _CloudStorageState();

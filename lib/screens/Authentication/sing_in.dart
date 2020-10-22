@@ -302,8 +302,12 @@ class _SignInState extends State<SignIn> {
                                   if (result == null) {
                                     setState(() => error =
                                         'Could not signIn with those credentials');
-                                    loading = false;
                                   }
+                                  else{
+                                    setState(() => error =
+                                        'Please verify your email');
+                                  }
+                                  loading = false;
                                 }
                               },
                               child: FadeAnimation(
