@@ -144,7 +144,7 @@ class _PrivateFilesState extends State<PrivateFiles> {
         return AlertDialog(
           title: Row(
             children: <Widget>[
-              Text("Key Of File"),
+              Text("Download File"),
               Spacer(
                 flex: 2,
               ),
@@ -194,7 +194,7 @@ class _PrivateFilesState extends State<PrivateFiles> {
 
   @override
   Widget build(BuildContext context) {
-    print('This is the user id that we calling from ${widget.user.uid}');
+    // print('This is the user id that we calling from ${widget.user.uid}');
     Future<List<Cloudfile>> privateRecords =
         Storage().listPrivateFiles(widget.user.uid);
     return MaterialApp(

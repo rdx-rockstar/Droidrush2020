@@ -1,9 +1,7 @@
 import 'package:ShareApp/models/Cloudfile.dart';
 import 'package:ShareApp/services/storage.dart';
 import 'package:flutter/material.dart';
-// import 'package:ShareApp/models/PublicFile.dart';
-import 'package:ShareApp/screens/Authentication/Loading.dart';
-import 'package:ShareApp/models/Cloudfile.dart';
+// import 'package:ShareApp/constants/data_search.dart';
 
 class PublicFiles extends StatefulWidget {
   @override
@@ -11,10 +9,15 @@ class PublicFiles extends StatefulWidget {
 }
 
 class _PublicFilesState extends State<PublicFiles> {
-  Storage s = new Storage();
-  List<Cloudfile> pf;
-  Future<List<Cloudfile>> record = Storage().listPublicFiles();
-  // List<Publicfile> listPublicFiles = [];
+  //List<Cloudfile> pf = new List();
+  Future<List<Cloudfile>> record;
+
+  @override
+  void initState() {
+    super.initState();
+    // this should not be done in build method.
+    record = Storage().listPublicFiles();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,32 +31,30 @@ class _PublicFilesState extends State<PublicFiles> {
   Center buildListView() {
     return Center(
       child: Column(children: <Widget>[
-        Center(
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: RaisedButton(
-                  child: Text('Get Data'),
-                  onPressed: () async {
-                    s.searchPublicFilesWithTags('kgf');
-                  },
-                ),
-              ),
-              Expanded(
-                child: RaisedButton(
-                  child: Text('Refersh the list'),
-                  onPressed: () {
-                    var latestList = Storage().listPublicFiles();
-                    setState(() {
-                      record = latestList;
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-        FutureBuilder(
+        // Center(
+        //   child: Row(
+        //     children: <Widget>[
+        //       Expanded(
+        //         child: RaisedButton(
+        //           child: Text('Get Data'),
+        //           onPressed: () async {
+        //             Storage().searchPublicFilesWithTags('kgf');
+        //           },
+        //         ),
+        //       ),
+        //       Expanded(
+        //         child: RaisedButton(
+        //           child: Text('Refersh the list'),
+        //           onPressed: () async {
+        //             var p = await Storage().listPublicFiles();
+        //             print(p.length);
+        //           },
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
+        FutureBuilder<List<Cloudfile>>(
           future: record,
           builder: (context, snapshot) {
             if (snapshot.hasData &&
@@ -126,12 +127,5 @@ class _PublicFilesState extends State<PublicFiles> {
         // ),
       ]),
     );
-  }
-
-  void getFiles() async {
-    await s.listPublicFiles().then((List<Cloudfile> value) {
-      pf = value;
-      setState(() {});
-    });
   }
 }

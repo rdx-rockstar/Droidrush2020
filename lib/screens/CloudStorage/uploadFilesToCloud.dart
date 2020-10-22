@@ -36,12 +36,18 @@ class _uploadFilesToCloudState extends State<uploadFilesToCloud> {
           centerTitle: true,
           title: Text('Upload Files to Cloud'),
           elevation: 0.0,
+          leading: IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
         ),
         body: Column(
           children: <Widget>[
             Row(
               children: <Widget>[
-                SizedBox(width: MediaQuery.of(context).size.width / 3),
+                SizedBox(width: MediaQuery.of(context).size.width / 3 - 30),
                 ChoiceChip(
                   label: Text(_choices[0]),
                   selected: _defaultSelectedIndex == 0,
@@ -65,26 +71,6 @@ class _uploadFilesToCloudState extends State<uploadFilesToCloud> {
                 ),
               ],
             ),
-            // SizedBox(
-            //   height: 100,
-            //   child: ListView.builder(
-            //     itemCount: _choices.length,
-            //     itemBuilder: (context, index) {
-            //       return ChoiceChip(
-            //         label: Text(_choices[index]),
-            //         selected: _defaultSelectedIndex == index,
-            //         selectedColor: Colors.green,
-            //         onSelected: (bool selected) {
-            //           setState(() {
-            //             _defaultSelectedIndex = selected ? index : 0;
-            //           });
-            //         },
-            //         backgroundColor: Colors.blue,
-            //         labelStyle: TextStyle(color: Colors.white),
-            //       );
-            //     },
-            //   ),
-            // ),
 
             Padding(
               padding: const EdgeInsets.fromLTRB(6, 20, 6, 10),
