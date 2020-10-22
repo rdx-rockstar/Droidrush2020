@@ -97,25 +97,21 @@ class _HomeScreenState extends State<HomeScreen> {
         child: BottomNavigationBar(
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-                icon: _selectedIndex == 0
-                    ? new SvgPicture.asset('assets/icons/home_colored.svg')
-                    : new SvgPicture.asset('assets/icons/home.svg'),
-                label: "Home"),
+              icon: Icon(Icons.home),
+              title: Text("Home"),
+            ),
             BottomNavigationBarItem(
-                icon: _selectedIndex == 1
-                    ? new SvgPicture.asset('assets/icons/order_colored.svg')
-                    : new SvgPicture.asset('assets/icons/order.svg'),
-                label: "Chats"),
+              icon: Icon(Icons.cloud),
+              title: Text("CloudStorage"),
+            ),
             BottomNavigationBarItem(
-                icon: _selectedIndex == 2
-                    ? new SvgPicture.asset('assets/icons/watch_colored.svg')
-                    : new SvgPicture.asset('assets/icons/watch.svg'),
-                label: "History"),
+              icon: Icon(Icons.history_toggle_off_outlined),
+              title: Text("History"),
+            ),
             BottomNavigationBarItem(
-                icon: _selectedIndex == 3
-                    ? new SvgPicture.asset('assets/icons/account_colored.svg')
-                    : new SvgPicture.asset('assets/icons/account.svg'),
-                label: "Accounts"),
+              icon: Icon(Icons.account_circle),
+              title: Text("Accounts"),
+            ),
           ],
           currentIndex: _selectedIndex,
           selectedItemColor: mBlueColor,
@@ -123,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: _onItemTapped,
           backgroundColor: Colors.transparent,
           type: BottomNavigationBarType.fixed,
-          selectedFontSize: 12,
+          selectedFontSize: 15,
           showUnselectedLabels: true,
           elevation: 0,
         ),

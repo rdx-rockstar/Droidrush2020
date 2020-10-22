@@ -36,6 +36,12 @@ class _uploadFilesToCloudState extends State<uploadFilesToCloud> {
           centerTitle: true,
           title: Text('Upload Files to Cloud'),
           elevation: 0.0,
+          leading: IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
         ),
         body: Column(
           children: <Widget>[

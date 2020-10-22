@@ -144,7 +144,7 @@ class _PrivateFilesState extends State<PrivateFiles> {
         return AlertDialog(
           title: Row(
             children: <Widget>[
-              Text("Key Of File"),
+              Text("Download File"),
               Spacer(
                 flex: 2,
               ),
