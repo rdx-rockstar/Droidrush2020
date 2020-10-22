@@ -390,13 +390,14 @@ class _SignInState extends State<SignIn> {
                                   GestureDetector(
                                     onTap: () {},
                                     child: Text(
-                                      "Register with ",
+                                      "Sign In with ",
                                       style: TextStyle(
                                           color:
                                               Color.fromRGBO(143, 148, 251, 1)),
                                     ),
                                   ),
                                 ),
+                                // ON tap function for google and facebook images
                                 FadeAnimation(
                                   1.5,
                                   GestureDetector(

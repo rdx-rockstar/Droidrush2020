@@ -89,10 +89,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 blurRadius: 15,
                 offset: Offset(0, 5))
           ],
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-          ),
+          // borderRadius: BorderRadius.only(
+          //   topLeft: Radius.circular(24),
+          //   topRight: Radius.circular(24),
+          // ),
         ),
         child: BottomNavigationBar(
           items: <BottomNavigationBarItem>[

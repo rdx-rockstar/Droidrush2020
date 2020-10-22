@@ -1,6 +1,7 @@
 import 'package:ShareApp/models/Cloudfile.dart';
 import 'package:ShareApp/services/storage.dart';
 import 'package:flutter/material.dart';
+// import 'package:ShareApp/constants/data_search.dart';
 
 class PublicFiles extends StatefulWidget {
   @override
@@ -30,29 +31,29 @@ class _PublicFilesState extends State<PublicFiles> {
   Center buildListView() {
     return Center(
       child: Column(children: <Widget>[
-        Center(
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: RaisedButton(
-                  child: Text('Get Data'),
-                  onPressed: () async {
-                    Storage().searchPublicFilesWithTags('kgf');
-                  },
-                ),
-              ),
-              Expanded(
-                child: RaisedButton(
-                  child: Text('Refersh the list'),
-                  onPressed: () async {
-                    var p = await Storage().listPublicFiles();
-                    print(p.length);
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
+        // Center(
+        //   child: Row(
+        //     children: <Widget>[
+        //       Expanded(
+        //         child: RaisedButton(
+        //           child: Text('Get Data'),
+        //           onPressed: () async {
+        //             Storage().searchPublicFilesWithTags('kgf');
+        //           },
+        //         ),
+        //       ),
+        //       Expanded(
+        //         child: RaisedButton(
+        //           child: Text('Refersh the list'),
+        //           onPressed: () async {
+        //             var p = await Storage().listPublicFiles();
+        //             print(p.length);
+        //           },
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
         FutureBuilder<List<Cloudfile>>(
           future: record,
           builder: (context, snapshot) {
@@ -127,11 +128,4 @@ class _PublicFilesState extends State<PublicFiles> {
       ]),
     );
   }
-
-  // void getFiles() async {
-  //   await s.listPublicFiles().then((value) {
-  //     pf = value;
-  //     setState(() {});
-  //   });
-  // }
 }
