@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:ShareApp/constants/color_constant.dart';
+import 'package:flutter/services.dart';
 
 class ftpServer extends StatefulWidget {
 
   @override
   ftpState createState() => ftpState();
 }
-
 class ftpState extends State<ftpServer> {
+  static const MethodChannel _channel = MethodChannel("ftp");
   final infoctrl = TextEditingController();
   final _FormKey = GlobalKey<FormState>();
   ValueNotifier<bool> _status = ValueNotifier<bool>(false);
@@ -28,13 +29,22 @@ class ftpState extends State<ftpServer> {
               if (_FormKey.currentState.validate()) {
                 if (_status.value) {
                   _status.value = false;
-                  print("to imple");
+                  check().then((value)
+                      {print(value);
+                      print("huu");
+                      }
+                  );
                   infoctrl.text="";
                 }
                 else {
-                  _status.value = true;
-                  print("to imple");
-                  infoctrl.text="a\nb";
+                  try {
+                    _status.value = true;
+                    print(check());
+                    infoctrl.text = "a\nb";
+                  }
+                  catch(Exception){
+
+                  }
                 }
                 setState(() {
                 });
@@ -123,5 +133,8 @@ class ftpState extends State<ftpServer> {
           ),
         ),
     );
+  }
+  static Future<String> check()async {
+    return _channel.invokeMethod("check");
   }
 }
