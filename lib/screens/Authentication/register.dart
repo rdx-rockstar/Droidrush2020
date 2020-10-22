@@ -333,13 +333,14 @@ class _RegisterState extends State<Register> {
                                       await _auth.registerWithEmailAndPassword(
                                           email, password);
                                   if (result == null) {
+                                    loading = false;
                                     setState(() =>
                                         error = 'please supply a valid email');
                                   }
                                   else{
+                                    loading = false;
                                     setState(() => error = 'Email Has been send to ' + email);
                                   }
-                                  loading = false;
                                 }
                               },
                               child: FadeAnimation(

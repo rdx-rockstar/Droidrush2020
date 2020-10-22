@@ -300,14 +300,15 @@ class _SignInState extends State<SignIn> {
                                       await _auth.signInWithEmailAndPassword(
                                           email, password);
                                   if (result == null) {
+                                    loading = false;
                                     setState(() => error =
                                         'Could not signIn with those credentials');
                                   }
                                   else{
+                                    loading = false;
                                     setState(() => error =
                                         'Please verify your email');
                                   }
-                                  loading = false;
                                 }
                               },
                               child: FadeAnimation(
