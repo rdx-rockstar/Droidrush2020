@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'uploadFilesToCloud.dart';
 import 'package:ShareApp/services/storage.dart';
+import 'package:ShareApp/constants/color_constant.dart';
 
 List<Cloudfile> recordsPublic;
 List<Cloudfile> recordsPrivate;
@@ -17,13 +18,9 @@ class Screens {
   Screens({this.screen, this.title});
 }
 
-// List<Screens> list = [
-//   Screens(screen: PublicFiles(), ),
-// ];
-
 class CloudStorage extends StatefulWidget {
   final FirebaseUser user;
-  CloudStorage({ this.user });
+  CloudStorage({this.user});
 
   @override
   _CloudStorageState createState() => _CloudStorageState();
@@ -34,39 +31,68 @@ class _CloudStorageState extends State<CloudStorage> {
   PopupMenuItemSelected onSelected;
   // TabController _tabController;
   int current_index = 0;
-  // Future<List<Cloudfile>> recordsPublic;
-  // Future<List<Cloudfile>> recordsPrivate;
 
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   // recordsPublic = Storage().listPublicFiles();
-  //   // recordsPrivate = Storage().listPrivateFiles(uid);
-  //   // await Storage()
-  //   //     .listPrivateFiles(widget.user.uid)
-  //   //     .then((List<Cloudfile> value) {
-  //   //   recordsPrivate = value;
-  //   // });
-  //   // await Storage().listPublicFiles().then((List<Cloudfile> value) {
-  //   //   recordsPublic = value;
-  //   // });
-  //   // print(recordsPrivate.length);
-  //   // print(recordsPublic.length);
-  // }
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   // _tabController = new TabController(vsync: this, length: 2);
-  // }
-
-  // @override
-  // void dispose() {
-  //   // TODO: implement dispose
-  //   super.dispose();
-  //   _tabController.dispose();
-  // }
+  String getFileKey() {
+    TextEditingController controller = new TextEditingController();
+    String File_name;
+    final _formKey = GlobalKey<FormState>();
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: <Widget>[
+              Text("Enter File Key"),
+              Spacer(
+                flex: 2,
+              ),
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Container(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    TextFormField(
+                      controller: controller,
+                      decoration:
+                          textInputDecoration.copyWith(hintText: 'File Name'),
+                      validator: (val) =>
+                          val.isEmpty ? 'Enter File Name' : null,
+                      onChanged: (val) {
+                        File_name = val;
+                        setState(() {});
+                      },
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    RaisedButton(
+                      child: Text('Get'),
+                      onPressed: () {
+                        File_name = controller.text;
+                        Navigator.of(context).pop();
+                        return File_name;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    return File_name;
+  }
 
   void initialize() async {
     await Storage()
@@ -102,7 +128,7 @@ class _CloudStorageState extends State<CloudStorage> {
           bottom: TabBar(
             onTap: (index) {
               current_index = index;
-              print('this is the current index which we are w $index');
+              setState(() {});
             },
             // isScrollable: true,
             indicatorColor: Colors.white,
@@ -119,16 +145,6 @@ class _CloudStorageState extends State<CloudStorage> {
           actions: <Widget>[
             IconButton(
               onPressed: () {
-                // final TabController tabController =
-                //     DefaultTabController.of(context);
-                // tabController.addListener(() {
-                //   if (!tabController.indexIsChanging) {
-                //     index = tabController.index;
-                //     print('index');
-                //   }
-                // // });
-                // print('This is onPressed Function in search');
-                // print(index);
                 print(current_index);
                 if (current_index == 0)
                   showSearch(context: context, delegate: DataSearchPub());
@@ -143,6 +159,15 @@ class _CloudStorageState extends State<CloudStorage> {
                 setState(() {});
               },
             ),
+            current_index != 0
+                ? IconButton(
+                    icon: Icon(Icons.file_copy),
+                    onPressed: () async {
+                      String fileKey = await getFileKey();
+                      print(fileKey);
+                    },
+                  )
+                : SizedBox(width: 1),
             PopupMenuButton<String>(
               icon: Icon(Icons.more_vert),
               itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
