@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:ShareApp/constants/color_constant.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomAppBars {
   int _index;
   CustomAppBars({int index}) {
     this._index = index;
+  }
+
+  toReloadSP() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.reload();
+  }
+
+  toClearSP() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.remove('check');
   }
 
   AppBar getAppBar() {
@@ -22,14 +33,16 @@ class CustomAppBars {
       );
     } else if (this._index == 2) {
       return AppBar(
-        backgroundColor: mBackgroundColor,
+        backgroundColor: mBlueColor,
         elevation: 0,
         title: Text('History'),
-        iconTheme: new IconThemeData(color: Colors.white),
+        iconTheme: new IconThemeData(color: Colors.black),
         actions: <Widget>[
           IconButton(
-              icon: Icon(Icons.notifications),
-              onPressed: () => print('To imple')),
+              icon: Icon(Icons.refresh_rounded),
+              onPressed: () {
+                toReloadSP();
+              }),
         ],
       );
     } else if (this._index == 3) {

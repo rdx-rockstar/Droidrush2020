@@ -112,7 +112,7 @@ import 'package:ShareApp/constants/Fade_animation.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggelView;
-  SignIn({ this.toggelView });
+  SignIn({this.toggelView});
   @override
   _SignInState createState() => _SignInState();
 }
@@ -303,11 +303,10 @@ class _SignInState extends State<SignIn> {
                                     loading = false;
                                     setState(() => error =
                                         'Could not signIn with those credentials');
-                                  }
-                                  else{
+                                  } else {
                                     loading = false;
-                                    setState(() => error =
-                                        'Please verify your email');
+                                    setState(() =>
+                                        error = 'Please verify your email');
                                   }
                                 }
                               },
@@ -420,13 +419,13 @@ class _SignInState extends State<SignIn> {
                                       onTap: () async {
                                         // Sign in through google
                                         setState(() => loading = true);
-                                        dynamic result = await _auth.signInWithGoogle();
+                                        dynamic result =
+                                            await _auth.signInWithGoogle();
                                         //print(result);
                                         print(result.toString());
                                         if (result == null) {
                                           setState(() => loading = false);
-                                        }
-                                        else{
+                                        } else {
                                           print("we get the google user");
                                         }
                                       }),

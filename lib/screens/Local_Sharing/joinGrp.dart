@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:ShareApp/models/add_history.dart';
 import 'package:ShareApp/models/message_model.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,14 +11,15 @@ import 'package:ShareApp/screens/Local_Sharing/apk_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //   Recieve Main APP bar
 
 String cId = "0";
-bool _searching=false;
+bool _searching = false;
 final mymessage = TextEditingController();
 Map<String, String> _paths;
 ValueNotifier<bool> _status = ValueNotifier<bool>(false);
@@ -33,7 +36,8 @@ class joinGrp extends StatefulWidget {
 class _joinGrpState extends State<joinGrp> {
   File tempFile;
   final Strategy strategy = Strategy.P2P_STAR; //   Strategy of connection (P2P)
-  Map<int, String> map = Map(); //   store filename mapped to corresponding payloadId
+  Map<int, String> map =
+      Map(); //   store filename mapped to corresponding payloadId
   String userName;
   String barcode = "";
   List<Message> _messages = [
@@ -46,6 +50,45 @@ class _joinGrpState extends State<joinGrp> {
     //    Constructor
     this.userName = uname;
   }
+
+  // List to save data
+  List<SaveData> check = [];
+  SharedPreferences sharedPreferences;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadSP();
+  }
+
+  // LOADING THE SHARED PREFERENCES
+  void loadSP() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    setState(() {
+      saveData();
+    });
+  }
+
+  // AND SAVING THE DATA TO SHAREDPREFERENCES
+  void saveData() {
+    List<String> spList = check.map((e) => jsonEncode(e.toMap())).toList();
+    sharedPreferences.setStringList('check', spList);
+  }
+
+  // TO SAVE THE DATA IN check LIST OF SAVEDATA TYPE
+  void appendList(String fileName, String whichSide, String otherUserId) {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(now);
+    check.add(
+      SaveData(
+          fileName: fileName,
+          whichSide: whichSide,
+          dateTime: formattedDate,
+          otherUserId: otherUserId),
+    );
+    saveData();
+  }
+
   @override
   void dispose() {
     //   TextField
@@ -70,7 +113,7 @@ class _joinGrpState extends State<joinGrp> {
                   padding: EdgeInsets.all(8),
                   margin: EdgeInsets.symmetric(vertical: 8),
                   decoration:
-                  BoxDecoration(color: Colors.blue[100], boxShadow: [
+                      BoxDecoration(color: Colors.blue[100], boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 2,
@@ -109,7 +152,7 @@ class _joinGrpState extends State<joinGrp> {
                   padding: EdgeInsets.all(8),
                   margin: EdgeInsets.symmetric(vertical: 8),
                   decoration:
-                  BoxDecoration(color: Colors.blue[100], boxShadow: [
+                      BoxDecoration(color: Colors.blue[100], boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 2,
@@ -166,7 +209,7 @@ class _joinGrpState extends State<joinGrp> {
                 icon: Icon(Icons.qr_code_scanner),
                 onPressed: () {
                   scan();
-                } ,
+                },
               ),
               IconButton(
                 icon: Icon(Icons.android_outlined),
@@ -194,7 +237,7 @@ class _joinGrpState extends State<joinGrp> {
                           color: value ? Colors.green : Colors.grey,
                           child: Center(
                               child:
-                              Text(value ? "Connected" : "Disconnected")),
+                                  Text(value ? "Connected" : "Disconnected")),
                         ),
                       ),
                     ],
@@ -213,17 +256,16 @@ class _joinGrpState extends State<joinGrp> {
                           child: Text('Search Groups'),
                           color: Colors.amber,
                           onPressed: () async {
-                            if(_searching==false){
-                            _searching=true;
-                            Fluttertoast.showToast(
-                              msg: "Searching",
-                              backgroundColor: Colors.white,
-                              textColor: Colors.black,
-                              fontSize: 16,
-                            );
-                            discovering(0);
-                            }
-                            else{
+                            if (_searching == false) {
+                              _searching = true;
+                              Fluttertoast.showToast(
+                                msg: "Searching",
+                                backgroundColor: Colors.white,
+                                textColor: Colors.black,
+                                fontSize: 16,
+                              );
+                              discovering(0);
+                            } else {
                               Fluttertoast.showToast(
                                 msg: "Already Searching",
                                 backgroundColor: Colors.white,
@@ -243,15 +285,15 @@ class _joinGrpState extends State<joinGrp> {
                           onPressed: () async {
                             await Nearby().stopDiscovery();
                             await Nearby().stopAllEndpoints();
-                            if(_status.value==false && _searching==true){
-                              _searching=false;
+                            if (_status.value == false && _searching == true) {
+                              _searching = false;
                               Fluttertoast.showToast(
                                 msg: "Search Stopped ",
                                 backgroundColor: Colors.white,
                                 textColor: Colors.black,
                                 fontSize: 16,
-                              );}
-                            else if(_status.value==true) {
+                              );
+                            } else if (_status.value == true) {
                               Fluttertoast.showToast(
                                 msg: "Disconnecting",
                                 backgroundColor: Colors.white,
@@ -309,7 +351,6 @@ class _joinGrpState extends State<joinGrp> {
                       icon: Icon(Icons.send),
                       iconSize: 25.0,
                       color: Theme.of(context).primaryColor,
-
                       onPressed: () async {
                         FocusScopeNode currentFocus = FocusScope.of(context);
 
@@ -318,37 +359,36 @@ class _joinGrpState extends State<joinGrp> {
                         }
 
                         if (_status.value) {
-                        if(_paths != null) {
-                          for (int i = 0; i < _paths.length; i++) {
-                            int payloadId = await Nearby().sendFilePayload(
-                                cId, _paths.values.toList()[i]);
-                            Message n = new Message();
-                            String s = "Sending ${_paths.keys
-                                .toList()[i]} to $cId";
-                            n.text = s;
-                            n.sender = cId;
-                            _messages.add(n);
-                            Nearby().sendBytesPayload(
-                                cId,
-                                Uint8List.fromList(
-                                    "$payloadId:${_paths.values.toList()[i]
-                                        .split('/')
-                                        .last}".codeUnits));
+                          if (_paths != null) {
+                            for (int i = 0; i < _paths.length; i++) {
+                              int payloadId = await Nearby().sendFilePayload(
+                                  cId, _paths.values.toList()[i]);
+                              Message n = new Message();
+                              String s =
+                                  "Sending ${_paths.keys.toList()[i]} to $cId";
+                              n.text = s;
+                              n.sender = cId;
+                              _messages.add(n);
+                              appendList(_paths.keys.toList()[i], "Send", cId);
+                              Nearby().sendBytesPayload(
+                                  cId,
+                                  Uint8List.fromList(
+                                      "$payloadId:${_paths.values.toList()[i].split('/').last}"
+                                          .codeUnits));
+                            }
+                            _paths = null;
                           }
-                          _paths=null;
-                        }
-                        Message n = new Message();
-                        n.sender = cId;
-                        n.text = mymessage.text;
-                        print(mymessage.text);
-                        if(n.text!="") {
-                          Nearby().sendBytesPayload(
-                              cId,
-                              Uint8List.fromList(mymessage.text.codeUnits));
-                          setState(() {
-                            _messages.add(n);
-                          });
-                        }
+                          Message n = new Message();
+                          n.sender = cId;
+                          n.text = mymessage.text;
+                          print(mymessage.text);
+                          if (n.text != "") {
+                            Nearby().sendBytesPayload(cId,
+                                Uint8List.fromList(mymessage.text.codeUnits));
+                            setState(() {
+                              _messages.add(n);
+                            });
+                          }
                         } else {
                           Fluttertoast.showToast(
                             msg: "The Device is Disconnected",
@@ -375,12 +415,13 @@ class _joinGrpState extends State<joinGrp> {
       ),
     );
   }
-  void getapkpaths()async{
+
+  void getapkpaths() async {
     final dataFromSecondPage = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => ApkExtractor()),
     ) as Data;
-    _paths=dataFromSecondPage.path;
+    _paths = dataFromSecondPage.path;
     print(_paths);
     Fluttertoast.showToast(
       msg: "click send to send apk",
@@ -390,6 +431,7 @@ class _joinGrpState extends State<joinGrp> {
       fontSize: 16,
     );
   }
+
   // THIS IS THE FUNCTION TO CREATE ALL CHAT DYNAMICALLY
   ListView buildListView() {
     return ListView.builder(
@@ -421,7 +463,7 @@ class _joinGrpState extends State<joinGrp> {
       }
     } on FormatException {
       setState(() => this.barcode =
-      'null (User returned using the "back"-button before scanning anything. Result)');
+          'null (User returned using the "back"-button before scanning anything. Result)');
     } catch (e) {
       setState(() => this.barcode = 'Unknown error: $e');
     }
@@ -434,7 +476,7 @@ class _joinGrpState extends State<joinGrp> {
         strategy,
         onEndpointFound: (id, name, serviceId) async {
           // show sheet automatically to request connection
-          if(r==1){
+          if (r == 1) {
             print(barcode);
             print(name);
             if (name == barcode) {
@@ -446,25 +488,24 @@ class _joinGrpState extends State<joinGrp> {
                   onConnectionInit(id, info);
                 },
                 onConnectionResult: (id, status) async {
-                  if(status==Status.CONNECTED){
+                  if (status == Status.CONNECTED) {
                     await Nearby().stopDiscovery();
-                    _status.value=true;
-                    _searching=false;
+                    _status.value = true;
+                    _searching = false;
                   }
                 },
                 onDisconnected: (id) {
-                 _status.value=false;
-                 Fluttertoast.showToast(
-                   msg: "The Device is Disconnected",
-                   backgroundColor: Colors.white,
-                   textColor: Colors.black,
-                   fontSize: 16,
-                 );
+                  _status.value = false;
+                  Fluttertoast.showToast(
+                    msg: "The Device is Disconnected",
+                    backgroundColor: Colors.white,
+                    textColor: Colors.black,
+                    fontSize: 16,
+                  );
                 },
               );
             }
-          }
-          else {
+          } else {
             showModalBottomSheet(
               context: context,
               builder: (builder) {
@@ -546,8 +587,7 @@ class _joinGrpState extends State<joinGrp> {
 
             if (map.containsKey(payloadId)) {
               if (await tempFile.exists()) {
-                tempFile.rename(
-                    tempFile.parent.path + "/" + fileName);
+                tempFile.rename(tempFile.parent.path + "/" + fileName);
               } else {
                 //showSnackbar("File doesnt exist");
               }
@@ -562,15 +602,12 @@ class _joinGrpState extends State<joinGrp> {
         }
       },
       onPayloadTransferUpdate: (endid, payloadTransferUpdate) {
-        if (payloadTransferUpdate.status ==
-            PayloadStatus.IN_PROGRRESS) {
+        if (payloadTransferUpdate.status == PayloadStatus.IN_PROGRRESS) {
           print(payloadTransferUpdate.bytesTransferred);
-        } else if (payloadTransferUpdate.status ==
-            PayloadStatus.FAILURE) {
+        } else if (payloadTransferUpdate.status == PayloadStatus.FAILURE) {
           print("failed");
           //showSnackbar(endid + ": FAILED to transfer file");
-        } else if (payloadTransferUpdate.status ==
-            PayloadStatus.SUCCESS) {
+        } else if (payloadTransferUpdate.status == PayloadStatus.SUCCESS) {
           //showSnackbar("success, total bytes = ${payloadTransferUpdate.totalBytes}");
 
           if (map.containsKey(payloadTransferUpdate.id)) {
@@ -585,5 +622,4 @@ class _joinGrpState extends State<joinGrp> {
       },
     );
   }
-
 }

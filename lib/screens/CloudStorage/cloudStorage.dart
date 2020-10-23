@@ -33,7 +33,6 @@ class _CloudStorageState extends State<CloudStorage> {
   int current_index = 0;
 
   String getFileKey() {
-    TextEditingController controller = new TextEditingController();
     String File_name;
     final _formKey = GlobalKey<FormState>();
     showDialog<void>(
@@ -62,14 +61,12 @@ class _CloudStorageState extends State<CloudStorage> {
                 child: Column(
                   children: <Widget>[
                     TextFormField(
-                      controller: controller,
                       decoration:
                           textInputDecoration.copyWith(hintText: 'File Name'),
                       validator: (val) =>
                           val.isEmpty ? 'Enter File Name' : null,
                       onChanged: (val) {
                         File_name = val;
-                        setState(() {});
                       },
                     ),
                     SizedBox(
@@ -78,7 +75,6 @@ class _CloudStorageState extends State<CloudStorage> {
                     RaisedButton(
                       child: Text('Get'),
                       onPressed: () {
-                        File_name = controller.text;
                         Navigator.of(context).pop();
                         return File_name;
                       },

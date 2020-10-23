@@ -337,10 +337,10 @@ class _RegisterState extends State<Register> {
                                     loading = false;
                                     setState(() =>
                                         error = 'please supply a valid email');
-                                  }
-                                  else{
+                                  } else {
                                     loading = false;
-                                    setState(() => error = 'Email Has been send to ' + email);
+                                    setState(() => error =
+                                        'Email Has been send to ' + email);
                                   }
                                 }
                               },
@@ -419,15 +419,17 @@ class _RegisterState extends State<Register> {
                                           decoration: BoxDecoration(
                                             // color: Colors.black,
                                             image: DecorationImage(
-                                                image: AssetImage(
-                                                    "assets/images/google.jpg"),
-                                                fit: BoxFit.cover,),
+                                              image: AssetImage(
+                                                  "assets/images/google.jpg"),
+                                              fit: BoxFit.cover,
+                                            ),
                                             //  child: Text("clickMe") // button text
                                           )),
                                       onTap: () async {
                                         // Sign in through google
                                         setState(() => loading = true);
-                                        dynamic result = await _auth.signInWithGoogle();
+                                        dynamic result =
+                                            await _auth.signInWithGoogle();
                                         print(result);
                                         if (result == null) {
                                           setState(() => loading = false);
@@ -449,7 +451,7 @@ class _RegisterState extends State<Register> {
                                                 fit: BoxFit.cover),
                                             //  child: Text("clickMe") // button text
                                           )),
-                                      onTap: () {
+                                      onTap: () async {
                                         // Sign in through google
                                         //print("vxstcxybnnxi");
                                       }),
