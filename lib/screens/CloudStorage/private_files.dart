@@ -175,7 +175,6 @@ class _PrivateFilesState extends State<PrivateFiles> {
               separatorBuilder: (context, index) => Divider(),
               itemBuilder: (context, index) {
                 Cloudfile project = snapshot.data[index];
-                print(project.toString());
                 return ListTile(
                   title: Text(project.File_name),
                   leading: Icon(Icons.image),

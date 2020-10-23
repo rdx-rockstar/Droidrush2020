@@ -1,22 +1,21 @@
 import 'package:ShareApp/models/Cloudfile.dart';
+import 'package:ShareApp/screens/CloudStorage/previewPrivate.dart';
+import 'package:ShareApp/screens/CloudStorage/previewpagePublic.dart';
 import 'package:ShareApp/screens/CloudStorage/private_files.dart';
 import 'package:ShareApp/screens/CloudStorage/public_files.dart';
 import 'package:ShareApp/services/auth.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'uploadFilesToCloud.dart';
 import 'package:ShareApp/services/storage.dart';
 import 'package:ShareApp/constants/color_constant.dart';
 
 List<Cloudfile> recordsPublic;
 List<Cloudfile> recordsPrivate;
-
-class Screens {
-  MaterialApp screen;
-  String title;
-  Screens({this.screen, this.title});
-}
+List<Cloudfile> recordstag;
 
 class CloudStorage extends StatefulWidget {
   final FirebaseUser user;
@@ -145,7 +144,9 @@ class _CloudStorageState extends State<CloudStorage> {
                 if (current_index == 0)
                   showSearch(context: context, delegate: DataSearchPub());
                 else
-                  showSearch(context: context, delegate: DataSearchPri());
+                  showSearch(
+                      context: context,
+                      delegate: DataSearchPri(user: widget.user));
               },
               icon: Icon(Icons.search),
             ),
@@ -169,20 +170,18 @@ class _CloudStorageState extends State<CloudStorage> {
               itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
                 PopupMenuItem<String>(
                   value: "1",
-                  child: Text('Create New Folder'),
+                  child: Text('Search with tag'),
                 ),
                 PopupMenuItem<String>(
                   value: "2",
-                  child: Text('Sort By'),
-                ),
-                PopupMenuItem<String>(
-                  value: "3",
-                  child: Text('Logout'),
+                  child: Text('Log out'),
                 ),
               ],
               onSelected: (value) {
-                if (value == '3') {
+                if (value == '2') {
                   _auth.signOut();
+                } else if (value == '1') {
+                  showSearch(context: context, delegate: DataSearchPub());
                 }
               },
             ),
@@ -213,8 +212,108 @@ class _CloudStorageState extends State<CloudStorage> {
     ));
   }
 }
+
 // This is the class which is used to implement search operation using
 // inbuilt SearchDelegate in flutter
+class DataSearchTag extends SearchDelegate<String> {
+  List<Cloudfile> listPublic = recordsPublic;
+  List<Cloudfile> listTag = new List();
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    // TODO: implement buildActions
+    // throw UnimplementedError();
+    return [
+      IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: () {
+            query = "";
+          }),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    // TODO: implement buildLeading
+    // throw UnimplementedError();
+    return IconButton(
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.menu_arrow,
+        progress: transitionAnimation,
+      ),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    // TODO: implement buildResults
+    // throw UnimplementedError();
+  }
+
+  loadData(String query) async {
+    await Storage()
+        .searchPublicFilesWithTags(query)
+        .then((List<Cloudfile> value) {
+      listTag = value;
+    });
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    List<Cloudfile> s;
+    if (query.isEmpty) {
+      s = listPublic;
+    } else {
+      loadData(query);
+      s = listTag;
+    }
+    return ListView.builder(
+      itemCount: s.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(s[index].File_name),
+          leading: Icon(Icons.image),
+          subtitle: Text(s[index].LUri),
+          trailing: GestureDetector(
+            onTap: () async {
+              // url
+              String urlInString =
+                  await Storage().downloadPublicFileWithUrl(s[index].LUri);
+              // setState(() {});
+              Fluttertoast.showToast(
+                  msg: "The File URL is downloaded",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+              Clipboard.setData(new ClipboardData(text: urlInString));
+              Fluttertoast.showToast(
+                  msg: "The URL is copied to clipboard",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+            },
+            child: Icon(Icons.download_rounded),
+          ),
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        pageToViewImagep(cloudfile: s[index])));
+          },
+        );
+      },
+    );
+  }
+}
 
 class DataSearchPub extends SearchDelegate<String> {
   List<Cloudfile> listPublic = recordsPublic;
@@ -269,11 +368,42 @@ class DataSearchPub extends SearchDelegate<String> {
       itemCount: s.length,
       itemBuilder: (context, index) {
         return ListTile(
-          onTap: () {
-            // showResults(context, s[index]);
-          },
           title: Text(s[index].File_name),
           leading: Icon(Icons.image),
+          subtitle: Text(s[index].LUri),
+          trailing: GestureDetector(
+            onTap: () async {
+              // url
+              String urlInString =
+                  await Storage().downloadPublicFileWithUrl(s[index].LUri);
+              // setState(() {});
+              Fluttertoast.showToast(
+                  msg: "The File URL is downloaded",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+              Clipboard.setData(new ClipboardData(text: urlInString));
+              Fluttertoast.showToast(
+                  msg: "The URL is copied to clipboard",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+            },
+            child: Icon(Icons.download_rounded),
+          ),
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        pageToViewImagep(cloudfile: s[index])));
+          },
         );
       },
     );
@@ -281,6 +411,9 @@ class DataSearchPub extends SearchDelegate<String> {
 }
 
 class DataSearchPri extends SearchDelegate<String> {
+  final FirebaseUser user;
+  DataSearchPri({this.user});
+
   List<Cloudfile> listPublic = recordsPrivate;
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -333,11 +466,61 @@ class DataSearchPri extends SearchDelegate<String> {
       itemCount: s.length,
       itemBuilder: (context, index) {
         return ListTile(
-          onTap: () {
-            // showResults(context, s[index]);
-          },
           title: Text(s[index].File_name),
           leading: Icon(Icons.image),
+          trailing: Wrap(
+            spacing: 5,
+            children: [
+              IconButton(
+                icon: Icon(Icons.vpn_key_rounded),
+                onPressed: () {
+                  String file_key = s[index].Key;
+                  print(file_key);
+                  Clipboard.setData(new ClipboardData(text: file_key));
+                  Fluttertoast.showToast(
+                      msg: "The key is copied to the clipboard",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.black,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.download_rounded),
+                onPressed: () async {
+                  String urlInString = await Storage()
+                      .downloadPrivateFileWithUrl(s[index].LUri, user.uid);
+
+                  Fluttertoast.showToast(
+                      msg: "The File URL is downloaded",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.black,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                  Clipboard.setData(new ClipboardData(text: urlInString));
+                  Fluttertoast.showToast(
+                      msg: "URL is copied to the clipboard",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.black,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                },
+              ),
+            ],
+          ),
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        pageToViewImage(cloudfile: s[index], user: user)));
+          },
         );
       },
     );
