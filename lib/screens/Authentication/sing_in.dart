@@ -345,7 +345,7 @@ class _SignInState extends State<SignIn> {
                                       GestureDetector(
                                         // ON tap funtion for forget password
                                         onTap: () {
-                                          print('Forget password');
+                                          _showResetPssword();
                                         },
                                         child: Text(
                                           "Forget Password",
@@ -461,5 +461,52 @@ class _SignInState extends State<SignIn> {
                 ),
               ),
             ));
+  }
+  void _showResetPssword() async {
+
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: <Widget>[
+              Text("Forget Password"),
+              Spacer(
+                flex: 2,
+              ),
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  TextField(
+                    decoration: InputDecoration(
+                      hintText: email,
+                    ),
+                    onChanged: (val) {
+                      email = val;
+                    },
+                  ),
+                  RaisedButton(
+                    child: Text('Send Password Reset Link'),
+                    onPressed: () {
+                      _auth.resetPassword(email);
+                    },
+                  )
+                ],
+              )
+            ),
+          ),
+        );
+      },
+    );
   }
 }
