@@ -37,13 +37,6 @@ class CustomAppBars {
         elevation: 0,
         title: Text('History'),
         iconTheme: new IconThemeData(color: Colors.black),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.refresh_rounded),
-              onPressed: () {
-                toReloadSP();
-              }),
-        ],
       );
     } else if (this._index == 3) {
       return AppBar(

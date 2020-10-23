@@ -373,7 +373,7 @@ class _RegisterState extends State<Register> {
                                 SizedBox(
                                   width:
                                       (MediaQuery.of(context).size.width / 2 -
-                                          60),
+                                          30),
                                   child: Center(
                                     child: FadeAnimation(
                                         1.5,
@@ -398,18 +398,7 @@ class _RegisterState extends State<Register> {
                                 //     width: 50,
                                 //   ),
                                 // ),
-                                FadeAnimation(
-                                  1.5,
-                                  GestureDetector(
-                                    onTap: () {},
-                                    child: Text(
-                                      "Register with ",
-                                      style: TextStyle(
-                                          color:
-                                              Color.fromRGBO(143, 148, 251, 1)),
-                                    ),
-                                  ),
-                                ),
+
                                 FadeAnimation(
                                   1.5,
                                   GestureDetector(
@@ -440,21 +429,22 @@ class _RegisterState extends State<Register> {
                                 FadeAnimation(
                                   1.5,
                                   GestureDetector(
-                                      child: Container(
-                                          width: 30,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                            // color: Colors.black,
-                                            image: DecorationImage(
-                                                image: AssetImage(
-                                                    "assets/images/download.png"),
-                                                fit: BoxFit.cover),
-                                            //  child: Text("clickMe") // button text
-                                          )),
-                                      onTap: () async {
-                                        // Sign in through google
-                                        //print("vxstcxybnnxi");
-                                      }),
+                                    onTap: () async {
+                                      setState(() => loading = true);
+                                      dynamic result =
+                                          await _auth.signInWithGoogle();
+                                      print(result);
+                                      if (result == null) {
+                                        setState(() => loading = false);
+                                      }
+                                    },
+                                    child: Text(
+                                      "Register with ",
+                                      style: TextStyle(
+                                          color:
+                                              Color.fromRGBO(143, 148, 251, 1)),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),

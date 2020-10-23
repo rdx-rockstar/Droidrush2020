@@ -3,7 +3,7 @@ import 'package:ShareApp/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ShareApp/constants/color_constant.dart';
 import 'package:ShareApp/constants/Fade_animation.dart';
-
+// import 'package:flutter/src/widgets/focus_scope.dart';
 // class SignIn extends StatefulWidget {
 //   final Function toggelView;
 //   SignIn({this.toggelView});
@@ -364,7 +364,7 @@ class _SignInState extends State<SignIn> {
                                 SizedBox(
                                   width:
                                       (MediaQuery.of(context).size.width / 2 -
-                                          60),
+                                          30),
                                   child: Center(
                                     child: FadeAnimation(
                                         1.5,
@@ -389,18 +389,7 @@ class _SignInState extends State<SignIn> {
                                 //     width: 50,
                                 //   ),
                                 // ),
-                                FadeAnimation(
-                                  1.5,
-                                  GestureDetector(
-                                    onTap: () {},
-                                    child: Text(
-                                      "Sign In with ",
-                                      style: TextStyle(
-                                          color:
-                                              Color.fromRGBO(143, 148, 251, 1)),
-                                    ),
-                                  ),
-                                ),
+
                                 // ON tap function for google and facebook images
                                 FadeAnimation(
                                   1.5,
@@ -434,21 +423,26 @@ class _SignInState extends State<SignIn> {
                                 FadeAnimation(
                                   1.5,
                                   GestureDetector(
-                                      child: Container(
-                                          width: 30,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                            // color: Colors.black,
-                                            image: DecorationImage(
-                                                image: AssetImage(
-                                                    "assets/images/download.png"),
-                                                fit: BoxFit.cover),
-                                            //  child: Text("clickMe") // button text
-                                          )),
-                                      onTap: () {
-                                        // Sign in through google
-                                        print("you clicked my");
-                                      }),
+                                    onTap: () async {
+                                      // Sign in through google
+                                      setState(() => loading = true);
+                                      dynamic result =
+                                          await _auth.signInWithGoogle();
+                                      //print(result);
+                                      print(result.toString());
+                                      if (result == null) {
+                                        setState(() => loading = false);
+                                      } else {
+                                        print("we get the google user");
+                                      }
+                                    },
+                                    child: Text(
+                                      "Sign In with Google",
+                                      style: TextStyle(
+                                          color:
+                                              Color.fromRGBO(143, 148, 251, 1)),
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -461,8 +455,8 @@ class _SignInState extends State<SignIn> {
               ),
             ));
   }
-  void _showResetPssword() async {
 
+  void _showResetPssword() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -484,25 +478,24 @@ class _SignInState extends State<SignIn> {
           ),
           content: SingleChildScrollView(
             child: Center(
-              child: Column(
-                children: <Widget>[
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: email,
-                    ),
-                    onChanged: (val) {
-                      email = val;
-                    },
+                child: Column(
+              children: <Widget>[
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: email,
                   ),
-                  RaisedButton(
-                    child: Text('Send Password Reset Link'),
-                    onPressed: () {
-                      _auth.resetPassword(email);
-                    },
-                  )
-                ],
-              )
-            ),
+                  onChanged: (val) {
+                    email = val;
+                  },
+                ),
+                RaisedButton(
+                  child: Text('Send Password Reset Link'),
+                  onPressed: () {
+                    _auth.resetPassword(email);
+                  },
+                )
+              ],
+            )),
           ),
         );
       },

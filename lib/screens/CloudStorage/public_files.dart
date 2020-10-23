@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ShareApp/models/Cloudfile.dart';
+import 'package:ShareApp/screens/CloudStorage/previewpagePublic.dart';
 import 'package:ShareApp/services/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -61,21 +62,25 @@ class _PublicFilesState extends State<PublicFiles> {
                         backgroundColor: Colors.black,
                         textColor: Colors.white,
                         fontSize: 16.0);
-                    print('This is the url $urlInString');
-                    // sleep(Duration(milliseconds: 100));
-                    // Clipboard.setData(new ClipboardData(text: urlInString));
-                    // Fluttertoast.showToast(
-                    //     msg: "URL is copied to the clipboard",
-                    //     toastLength: Toast.LENGTH_SHORT,
-                    //     gravity: ToastGravity.BOTTOM,
-                    //     timeInSecForIosWeb: 1,
-                    //     backgroundColor: Colors.black,
-                    //     textColor: Colors.white,
-                    //     fontSize: 16.0);
+                    Clipboard.setData(new ClipboardData(text: urlInString));
+                    Fluttertoast.showToast(
+                        msg: "The URL is copied to clipboard",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.black,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
                   },
                   child: Icon(Icons.download_rounded),
                 ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              pageToViewImagep(cloudfile: project)));
+                },
               );
             },
           );
