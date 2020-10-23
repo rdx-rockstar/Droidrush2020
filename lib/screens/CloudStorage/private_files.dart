@@ -198,10 +198,10 @@ class _PrivateFilesState extends State<PrivateFiles> {
     // print('This is the user id that we calling from ${widget.user.uid}');
     Future<List<Cloudfile>> privateRecords =
         Storage().listPrivateFiles(widget.user.uid);
-    return MaterialApp(
-      title: 'Private Files',
-      debugShowCheckedModeBanner: false,
-      home: Align(
+    return Scaffold(
+      // title: 'Private Files',
+      // debugShowCheckedModeBanner: false,
+      body: Align(
         alignment: Alignment.topCenter,
         child: Column(children: <Widget>[
           Row(children: <Widget>[
