@@ -112,7 +112,7 @@ import 'package:ShareApp/constants/Fade_animation.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggelView;
-  SignIn({this.toggelView});
+  SignIn({ this.toggelView });
   @override
   _SignInState createState() => _SignInState();
 }
@@ -417,9 +417,18 @@ class _SignInState extends State<SignIn> {
                                                 fit: BoxFit.cover),
                                             //  child: Text("clickMe") // button text
                                           )),
-                                      onTap: () {
+                                      onTap: () async {
                                         // Sign in through google
-                                        print("you clicked my");
+                                        setState(() => loading = true);
+                                        dynamic result = await _auth.signInWithGoogle();
+                                        //print(result);
+                                        print(result.toString());
+                                        if (result == null) {
+                                          setState(() => loading = false);
+                                        }
+                                        else{
+                                          print("we get the google user");
+                                        }
                                       }),
                                 ),
                                 SizedBox(width: 10),

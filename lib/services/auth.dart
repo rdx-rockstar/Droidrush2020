@@ -1,10 +1,10 @@
 import 'package:ShareApp/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
 
   // auth change stream
   Stream<FirebaseUser> get user {
@@ -51,10 +51,36 @@ class AuthService {
   // sign out
   Future signOut() async {
     try {
+      if(await googleSignIn.isSignedIn()){
+        return await googleSignIn.signOut();
+      }
       return await _auth.signOut();
     } catch(e) {
       print(e.toString());
       return null;
+    }
+  }
+
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+
+  Future<FirebaseUser> signInWithGoogle() async {
+    print("Signed in with goole");
+    try {
+      GoogleSignInAccount account = await googleSignIn.signIn();
+      if (account == null){
+        return null;
+      }
+      AuthResult res = await _auth.signInWithCredential(GoogleAuthProvider.getCredential(
+        idToken: (await account.authentication).idToken,
+        accessToken: (await account.authentication).accessToken,
+      ));
+      if(res == null){
+        return null;
+      }
+      print("user recieved");
+      return res.user;
+    } catch (e) {
+      print(e);
     }
   }
 

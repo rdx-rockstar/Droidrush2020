@@ -329,6 +329,7 @@ class _RegisterState extends State<Register> {
                               onTap: () async {
                                 setState(() => loading = true);
                                 if (_formKey.currentState.validate()) {
+                                  setState(() => loading = true);
                                   dynamic result =
                                       await _auth.registerWithEmailAndPassword(
                                           email, password);
@@ -420,12 +421,17 @@ class _RegisterState extends State<Register> {
                                             image: DecorationImage(
                                                 image: AssetImage(
                                                     "assets/images/google.jpg"),
-                                                fit: BoxFit.cover),
+                                                fit: BoxFit.cover,),
                                             //  child: Text("clickMe") // button text
                                           )),
-                                      onTap: () {
+                                      onTap: () async {
                                         // Sign in through google
-                                        print("you clicked my");
+                                        setState(() => loading = true);
+                                        dynamic result = await _auth.signInWithGoogle();
+                                        print(result);
+                                        if (result == null) {
+                                          setState(() => loading = false);
+                                        }
                                       }),
                                 ),
                                 SizedBox(width: 10),
@@ -445,7 +451,7 @@ class _RegisterState extends State<Register> {
                                           )),
                                       onTap: () {
                                         // Sign in through google
-                                        print("you clicked my");
+                                        //print("vxstcxybnnxi");
                                       }),
                                 ),
                               ],

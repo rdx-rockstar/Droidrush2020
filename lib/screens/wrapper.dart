@@ -5,6 +5,7 @@ import 'package:ShareApp/screens/CloudStorage/cloudStorage.dart';
 import 'package:ShareApp/services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
 class Wrapper extends StatefulWidget {
@@ -46,7 +47,6 @@ class _WrapperState extends State<Wrapper> {
   Widget build(BuildContext context) {
     FirebaseUser user = Provider.of<FirebaseUser>(context);
     print(user);
-
     if (user == null || !_isUserEmailVerified ) {
       return Authentication();
     }
