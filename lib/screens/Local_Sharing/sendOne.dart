@@ -10,7 +10,10 @@ import 'package:ShareApp/screens/Local_Sharing/paths_data.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ShareApp/models/add_history.dart';
+import 'package:intl/intl.dart';
+import 'dart:convert';
 //   Recieve Main APP bar
 
 String cId = "0";
@@ -46,11 +49,47 @@ class _sendOneState extends State<sendOne> {
     //    Constructor
     this.userName = uname;
   }
+  // List to save data
+  List<SaveData> check = [];
+  SharedPreferences sharedPreferences;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadSP();
+  }
+
+  // LOADING THE SHARED PREFERENCES
+  void loadSP() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    setState(() {
+      saveData();
+    });
+  }
+
+  // AND SAVING THE DATA TO SHAREDPREFERENCES
+  void saveData() {
+    List<String> spList = check.map((e) => jsonEncode(e.toMap())).toList();
+    sharedPreferences.setStringList('check', spList);
+  }
+
+  // TO SAVE THE DATA IN check LIST OF SAVEDATA TYPE
+  void appendList(String fileName, String whichSide, String otherUserId) {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(now);
+    check.add(
+      SaveData(
+          fileName: fileName,
+          whichSide: whichSide,
+          dateTime: formattedDate,
+          otherUserId: otherUserId),
+    );
+    saveData();
+  }
+
   @override
   void dispose() {
     //   TextField
-    // Clean up the controller when the widget is disposed.
-    //mymessage.dispose();
     super.dispose();
   }
 
@@ -140,6 +179,48 @@ class _sendOneState extends State<sendOne> {
 
   @override
   Widget build(BuildContext context) {
+    /*
+    // CODE TO SAVE DATA MAUNUALLY
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(now);
+    check.add(SaveData(
+        fileName: "sendOne",
+        whichSide: "Send",
+        dateTime: formattedDate,
+        otherUserId: "This"));
+    check.add(SaveData(
+        fileName: "sendOne",
+        whichSide: "Send",
+        dateTime: formattedDate,
+        otherUserId: "This"));
+    check.add(SaveData(
+        fileName: "sendOne",
+        whichSide: "Send",
+        dateTime: formattedDate,
+        otherUserId: "This"));
+    check.add(SaveData(
+        fileName: "sendOne",
+        whichSide: "Send",
+        dateTime: formattedDate,
+        otherUserId: "This"));
+    check.add(SaveData(
+        fileName: "sendOne",
+        whichSide: "Send",
+        dateTime: formattedDate,
+        otherUserId: "This"));
+    check.add(SaveData(
+        fileName: "sendOne",
+        whichSide: "Snd",
+        dateTime: formattedDate,
+        otherUserId: "This"));
+    check.add(SaveData(
+        fileName: "sendOne",
+        whichSide: "Send",
+        dateTime: formattedDate,
+        otherUserId: "This"));
+    saveData();
+    */
+    appendList("This is a just Dummy message", "Send", "ng67e");
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -325,6 +406,7 @@ class _sendOneState extends State<sendOne> {
                             n.text = s;
                             n.sender = cId;
                             _messages.add(n);
+                            appendList(_paths.keys.toList()[i], "Send", cId);
                             Nearby().sendBytesPayload(
                                 cId,
                                 Uint8List.fromList(
@@ -369,12 +451,13 @@ class _sendOneState extends State<sendOne> {
       ),
     );
   }
-  void getapkpaths()async{
+
+  void getapkpaths() async {
     final dataFromSecondPage = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => ApkExtractor()),
     ) as Data;
-    _paths=dataFromSecondPage.path;
+    _paths = dataFromSecondPage.path;
     print(_paths);
     Fluttertoast.showToast(
       msg: "click send to send apk",

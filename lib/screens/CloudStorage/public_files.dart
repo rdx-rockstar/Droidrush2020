@@ -21,15 +21,16 @@ class _PublicFilesState extends State<PublicFiles> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Public Files',
-      debugShowCheckedModeBanner: false,
-      home: buildListView(),
+    return Scaffold(
+      // title: 'Public Files',
+      // debugShowCheckedModeBanner: false,
+      body: buildListView(),
     );
   }
 
-  Center buildListView() {
-    return Center(
+  Widget buildListView() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
       child: Column(children: <Widget>[
         // Center(
         //   child: Row(

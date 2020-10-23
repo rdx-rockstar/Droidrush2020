@@ -23,7 +23,7 @@ class Screens {
 
 class CloudStorage extends StatefulWidget {
   final FirebaseUser user;
-  CloudStorage({ this.user });
+  CloudStorage({this.user});
 
   @override
   _CloudStorageState createState() => _CloudStorageState();
@@ -119,16 +119,6 @@ class _CloudStorageState extends State<CloudStorage> {
           actions: <Widget>[
             IconButton(
               onPressed: () {
-                // final TabController tabController =
-                //     DefaultTabController.of(context);
-                // tabController.addListener(() {
-                //   if (!tabController.indexIsChanging) {
-                //     index = tabController.index;
-                //     print('index');
-                //   }
-                // // });
-                // print('This is onPressed Function in search');
-                // print(index);
                 print(current_index);
                 if (current_index == 0)
                   showSearch(context: context, delegate: DataSearchPub());

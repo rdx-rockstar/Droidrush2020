@@ -6,15 +6,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:ShareApp/models/message_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ShareApp/models/add_history.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 String cId = "0";
 final mymessage = TextEditingController();
 Map<String, String> _paths;
-bool _isadvertising=false;
+bool _isadvertising = false;
 ValueNotifier<bool> _status = ValueNotifier<bool>(false);
 List<Message> messages = [
   Message(
@@ -39,7 +43,6 @@ class _recieveOneState extends State<recieveOne> {
   _recieveOneState(String uname) {
     //    Constructor
     this.userName = uname;
-
   }
   _chatbubble(Message message, bool isMe) {
     if (isMe) {
@@ -247,27 +250,30 @@ class _recieveOneState extends State<recieveOne> {
                         }
 
                         if (_status.value) {
-
-                          if(_paths!=null) {
+                          if (_paths != null) {
                             for (int i = 0; i < _paths.length; i++) {
                               int payloadId = await Nearby().sendFilePayload(
                                   cId, _paths.values.toList()[i]);
                               Message n = new Message();
-                              String s = "Sending ${_paths.keys
-                                  .toList()[i]} to $cId";
+                              String s =
+                                  "Sending ${_paths.keys.toList()[i]} to $cId";
                               n.text = s;
                               n.sender = cId;
                               messages.add(n);
-                              Nearby().sendBytesPayload(cId, Uint8List.fromList("$payloadId:${_paths.values.toList()[i].split('/').last}".codeUnits));
+                              Nearby().sendBytesPayload(
+                                  cId,
+                                  Uint8List.fromList(
+                                      "$payloadId:${_paths.values.toList()[i].split('/').last}"
+                                          .codeUnits));
                             }
-                            _paths=null;
+                            _paths = null;
                           }
                           Message n = new Message();
                           String s = mymessage.text;
                           n.text = s;
                           n.sender = cId;
 
-                          if(n.text!="") {
+                          if (n.text != "") {
                             Nearby().sendBytesPayload(cId,
                                 Uint8List.fromList(mymessage.text.codeUnits));
                             messages.add(n);
@@ -279,10 +285,8 @@ class _recieveOneState extends State<recieveOne> {
                               textColor: Colors.black,
                               fontSize: 16,
                             );
-
                           }
-                        }
-                        else {
+                        } else {
                           Fluttertoast.showToast(
                             msg: "Device is not Connected",
                             toastLength: Toast.LENGTH_SHORT,
@@ -303,12 +307,13 @@ class _recieveOneState extends State<recieveOne> {
       ),
     );
   }
-  void getapkpaths()async{
+
+  void getapkpaths() async {
     final dataFromSecondPage = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => ApkExtractor()),
     ) as Data;
-    _paths=dataFromSecondPage.path;
+    _paths = dataFromSecondPage.path;
     print(_paths);
     Fluttertoast.showToast(
       msg: "click send to send apk",
@@ -318,8 +323,8 @@ class _recieveOneState extends State<recieveOne> {
       fontSize: 16,
     );
   }
-  Future<void> _showMyDialog() async {
 
+  Future<void> _showMyDialog() async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -369,7 +374,8 @@ class recvOneBody extends StatefulWidget {
 class _recvOneBodyState extends State<recvOneBody> {
   String userName; //   username
   // final mymessage = TextEditingController(); //   Sending message
-  final Strategy strategy = Strategy.P2P_POINT_TO_POINT; //   Strategy of connection (P2P)
+  final Strategy strategy =
+      Strategy.P2P_POINT_TO_POINT; //   Strategy of connection (P2P)
   // String cId = "0"; //   currently connected device ID
   File tempFile; //   reference to the file currently being transferred
   Map<int, String> map =
@@ -380,6 +386,44 @@ class _recvOneBodyState extends State<recvOneBody> {
   _recvOneBodyState(String uname) {
     //    Constructor
     this.userName = uname;
+  }
+
+  // List to save data
+  List<SaveData> check = [];
+  SharedPreferences sharedPreferences;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadSP();
+  }
+
+  // LOADING THE SHARED PREFERENCES
+  void loadSP() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    setState(() {
+      saveData();
+    });
+  }
+
+  // AND SAVING THE DATA TO SHAREDPREFERENCES
+  void saveData() {
+    List<String> spList = check.map((e) => jsonEncode(e.toMap())).toList();
+    sharedPreferences.setStringList('check', spList);
+  }
+
+  // TO SAVE THE DATA IN check LIST OF SAVEDATA TYPE
+  void appendList(String fileName, String whichSide, String otherUserId) {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(now);
+    check.add(
+      SaveData(
+          fileName: fileName,
+          whichSide: whichSide,
+          dateTime: formattedDate,
+          otherUserId: otherUserId),
+    );
+    saveData();
   }
 
   @override
@@ -401,49 +445,48 @@ class _recvOneBodyState extends State<recvOneBody> {
                 child: Text('Open Connection'),
                 color: Colors.amber,
                 onPressed: () async {
-                if(_isadvertising==false){
-                  try {
-                    _isadvertising=true;
+                  if (_isadvertising == false) {
+                    try {
+                      _isadvertising = true;
+                      Fluttertoast.showToast(
+                        msg: "advertising",
+                        backgroundColor: Colors.white,
+                        textColor: Colors.black,
+                        fontSize: 16,
+                      );
+                      print("Advertisement starts");
+                      bool a = await Nearby().startAdvertising(
+                        userName,
+                        strategy,
+                        onConnectionInitiated: onrecv_ConnectionInit,
+                        onConnectionResult: (id, status) {
+                          if (status.toString() == "Status.CONNECTED") {
+                            _status.value = true;
+                          }
+                        },
+                        onDisconnected: (id) {
+                          _status.value = false;
+                          Fluttertoast.showToast(
+                            msg: "Disconnected",
+                            backgroundColor: Colors.white,
+                            textColor: Colors.black,
+                            fontSize: 16,
+                          );
+                          showSnackbar("Disconnected: " + id);
+                        },
+                      );
+                      showSnackbar("ADVERTISING: " + a.toString());
+                    } catch (exception) {
+                      showSnackbar(exception);
+                    }
+                  } else {
                     Fluttertoast.showToast(
-                      msg: "advertising",
+                      msg: "Already advertising",
                       backgroundColor: Colors.white,
                       textColor: Colors.black,
                       fontSize: 16,
                     );
-                    print("Advertisement starts");
-                    bool a = await Nearby().startAdvertising(
-                      userName,
-                      strategy,
-                      onConnectionInitiated: onrecv_ConnectionInit,
-                      onConnectionResult: (id, status) {
-                        if(status.toString()=="Status.CONNECTED") {
-                          _status.value = true;
-                        }
-                      },
-                      onDisconnected: (id) {
-                        _status.value=false;
-                        Fluttertoast.showToast(
-                          msg: "Disconnected",
-                          backgroundColor: Colors.white,
-                          textColor: Colors.black,
-                          fontSize: 16,
-                        );
-                        showSnackbar("Disconnected: " + id);
-                      },
-                    );
-                    showSnackbar("ADVERTISING: " + a.toString());
-                  } catch (exception) {
-                    showSnackbar(exception);
                   }
-                  }
-                else{
-                  Fluttertoast.showToast(
-                    msg: "Already advertising",
-                    backgroundColor: Colors.white,
-                    textColor: Colors.black,
-                    fontSize: 16,
-                  );
-                }
                 },
               ),
             ),
@@ -455,14 +498,14 @@ class _recvOneBodyState extends State<recvOneBody> {
                 color: Colors.amber,
                 onPressed: () async {
                   await Nearby().stopAllEndpoints();
-                  if(_isadvertising&&_status.value==false){
+                  if (_isadvertising && _status.value == false) {
                     Fluttertoast.showToast(
                       msg: "Stopped Advertising",
                       backgroundColor: Colors.white,
                       textColor: Colors.black,
                       fontSize: 16,
-                    );}
-                  else if(_status.value){
+                    );
+                  } else if (_status.value) {
                     Fluttertoast.showToast(
                       msg: "Disconnecting",
                       backgroundColor: Colors.white,
@@ -470,7 +513,7 @@ class _recvOneBodyState extends State<recvOneBody> {
                       fontSize: 16,
                     );
                   }
-                  _isadvertising=false;
+                  _isadvertising = false;
                   _status.value = false;
                 },
               ),
@@ -550,7 +593,7 @@ class _recvOneBodyState extends State<recvOneBody> {
                         n.text = str;
                         n.sender = endid;
                         messages.add(n);
-                        setState((){});
+                        setState(() {});
                         //showSnackbar(endid + ": " + str);
 
                         if (str.contains(':')) {
@@ -561,7 +604,8 @@ class _recvOneBodyState extends State<recvOneBody> {
 
                           if (map.containsKey(payloadId)) {
                             if (await tempFile.exists()) {
-                              tempFile.rename(tempFile.parent.path + "/" + fileName);
+                              tempFile.rename(
+                                  tempFile.parent.path + "/" + fileName);
                             } else {
                               showSnackbar("File doesnt exist");
                             }
@@ -571,6 +615,7 @@ class _recvOneBodyState extends State<recvOneBody> {
                           }
                         }
                       } else if (payload.type == PayloadType.FILE) {
+                        appendList(payload.filePath, "Recieve", id);
                         showSnackbar(endid + ": File transfer started");
                         tempFile = File(payload.filePath);
                       }
@@ -595,6 +640,6 @@ class _recvOneBodyState extends State<recvOneBody> {
       },
     );
   }
-    //  on receiver side
+  //  on receiver side
 
 }

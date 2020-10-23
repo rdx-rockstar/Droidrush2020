@@ -1,10 +1,15 @@
 import 'dart:ui';
 
 import 'package:ShareApp/constants/color_constant.dart';
+// import 'package:ShareApp/screens/Authentication/Loading.dart';
 import 'package:ShareApp/widgets/customAppbar.dart';
 import 'package:ShareApp/widgets/showScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:intl/intl.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:ShareApp/models/add_history.dart';
+// import 'dart:convert';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -20,8 +25,50 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  // List to save data
+  // List<SaveData> check = [
+  //   // SaveData(fileName: "This is a Just Dummy message", whichSide: "Send", dateTime: "", otherUserId: "i889H"),
+  // ];
+  // SharedPreferences sharedPreferences;
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   loadSP();
+  // }
+
+  // // LOADING THE SHARED PREFERENCES
+  // void loadSP() async {
+  //   sharedPreferences = await SharedPreferences.getInstance();
+  //   setState(() {
+  //     saveData();
+  //   });
+  // }
+
+  // // AND SAVING THE DATA TO SHAREDPREFERENCES
+  // void saveData() {
+  //   List<String> spList = check.map((e) => jsonEncode(e.toMap())).toList();
+  //   sharedPreferences.setStringList('check', spList);
+  //   setState(() {});
+  // }
+
+  // // TO SAVE THE DATA IN check LIST OF SAVEDATA TYPE
+  // void appendList(String fileName, String whichSide, String otherUserId) {
+  //   DateTime now = DateTime.now();
+  //   String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(now);
+  //   check.add(
+  //     SaveData(
+  //         fileName: fileName,
+  //         whichSide: whichSide,
+  //         dateTime: formattedDate,
+  //         otherUserId: otherUserId),
+  //   );
+  //   saveData();
+  // }
+
   @override
   Widget build(BuildContext context) {
+    // appendList("This is a just Dummy message", "Send", "ng67e");
     CustomAppBars appbar = new CustomAppBars(index: this._selectedIndex);
     return Scaffold(
       appBar: appbar.getAppBar(),
