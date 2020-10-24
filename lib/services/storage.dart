@@ -20,20 +20,21 @@ class Storage {
         .where('Key', isEqualTo: "public")
         .snapshots()
         .listen((data) {
-          // print(data.documents.length);
+      // print(data.documents.length);
 
-          for(int i=0; i< data.documents.length; i++){
-            Cloudfile p = new Cloudfile();
-            p.LUri = data.documents[i].data['File'];
-            p.File_name = data.documents[i].data['File_Name'];
-            p.Key = data.documents[i].data['Key'];
-            pd.add(p);
-          }
+      for (int i = 0; i < data.documents.length; i++) {
+        Cloudfile p = new Cloudfile();
+        p.LUri = data.documents[i].data['File'];
+        p.File_name = data.documents[i].data['File_Name'];
+        p.Key = data.documents[i].data['Key'];
+        pd.add(p);
+      }
     });
     return pd;
   }
 
-  Future uploadFileToPublic(String File_Name, String path, List<String> tags) async {
+  Future uploadFileToPublic(
+      String File_Name, String path, List<String> tags) async {
     var stamp = DateTime.now().millisecondsSinceEpoch.toString();
     await publicCollection.document(stamp).setData({
       'File_Name': File_Name,
@@ -41,14 +42,16 @@ class Storage {
       'Key': "public",
       'Tags': tags,
     });
-    StorageReference publicUploadRef = reference.child("Public_Files/" + File_Name + stamp);// adding name to metadata.txt
-    StorageUploadTask task = await publicUploadRef.putFile(File(path)); // adding file to storage
+    StorageReference publicUploadRef = reference.child(
+        "Public_Files/" + File_Name + stamp); // adding name to metadata.txt
+    StorageUploadTask task =
+        await publicUploadRef.putFile(File(path)); // adding file to storage
   }
 
-  Future<String> downloadPublicFileWithUrl(String uri) async {
+  Future<dynamic> downloadPublicFileWithUrl(String uri) async {
     StorageReference publicDownloadRef = reference.child("Public_Files/" + uri);
     var url = publicDownloadRef.getDownloadURL();
-    return url.toString();
+    return url;
   }
 
   Future<List<Cloudfile>> searchPublicFilesWithTags(String Tag) async {
@@ -57,18 +60,19 @@ class Storage {
         .where("Tags", arrayContains: Tag)
         .snapshots()
         .listen((data) {
-          for (int i = 0; i < data.documents.length; i++) {
-            Cloudfile p = new Cloudfile(
+      for (int i = 0; i < data.documents.length; i++) {
+        Cloudfile p = new Cloudfile(
             File_name: data.documents[i].data['File_Name'],
             LUri: data.documents[i].data['File']);
-            pf.add(p);
-          }
+        pf.add(p);
+      }
     });
     return pf;
   }
 
   //  for private files ..
-  CollectionReference privateCollection = Firestore.instance.collection('Private');
+  CollectionReference privateCollection =
+      Firestore.instance.collection('Private');
 
   Future<List<Cloudfile>> listPrivateFiles(String uid) async {
     List<Cloudfile> pf = new List();
@@ -76,14 +80,14 @@ class Storage {
         .where('uid', isEqualTo: uid)
         .snapshots()
         .listen((data) {
-          print(data.documents.length);
-          for (int i=0; i < data.documents.length; i++){
-            Cloudfile p = new Cloudfile();
-            p.File_name = data.documents[i].data['File_Name'];
-            p.LUri = data.documents[i].data['File'];
-            p.Key = data.documents[i].data['Key'];
-            pf.add(p);
-          }
+      print(data.documents.length);
+      for (int i = 0; i < data.documents.length; i++) {
+        Cloudfile p = new Cloudfile();
+        p.File_name = data.documents[i].data['File_Name'];
+        p.LUri = data.documents[i].data['File'];
+        p.Key = data.documents[i].data['Key'];
+        pf.add(p);
+      }
     });
     return pf;
   }
@@ -96,8 +100,11 @@ class Storage {
       'File': File_Name + stamp,
       'Key': uid + ":" + stamp,
     });
-    StorageReference privateUploadRef =
-        reference.child("Private_Files/" + uid + "/" + File_Name + stamp);// adding name to metadata.txt
+    StorageReference privateUploadRef = reference.child("Private_Files/" +
+        uid +
+        "/" +
+        File_Name +
+        stamp); // adding name to metadata.txt
     StorageUploadTask task =
         await privateUploadRef.putFile(File(path)); // adding file to sto
   }

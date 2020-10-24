@@ -10,11 +10,75 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Switch;
+import android.widget.TextView;
+
+import net.rdrei.android.dirchooser.DirectoryChooserActivity;
+import net.rdrei.android.dirchooser.DirectoryChooserConfig;
+
+import org.apache.ftpserver.FtpServer;
+import org.apache.ftpserver.FtpServerFactory;
+import org.apache.ftpserver.ftplet.Authority;
+import org.apache.ftpserver.ftplet.FtpException;
+import org.apache.ftpserver.ftplet.FtpReply;
+import org.apache.ftpserver.ftplet.FtpRequest;
+import org.apache.ftpserver.ftplet.FtpSession;
+import org.apache.ftpserver.ftplet.Ftplet;
+import org.apache.ftpserver.ftplet.FtpletContext;
+import org.apache.ftpserver.ftplet.FtpletResult;
+import org.apache.ftpserver.ftplet.UserManager;
+import org.apache.ftpserver.listener.ListenerFactory;
+import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
+import org.apache.ftpserver.usermanager.SaltedPasswordEncryptor;
+import org.apache.ftpserver.usermanager.impl.BaseUser;
+import org.apache.ftpserver.usermanager.impl.WritePermission;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * NearbyConnectionsPlugin
  */
 public class FtpChannal extends FlutterActivity {
     private static MethodChannel channel;
+
+    //variables
+    static String pass;
+    final int MY_PERMISSIONS_REQUEST = 2203;
+    final int REQUEST_DIRECTORY = 2108;
+    FtpServerFactory serverFactory = new FtpServerFactory();
+    ListenerFactory factory = new ListenerFactory();
+    PropertiesUserManagerFactory userManagerFactory = new PropertiesUserManagerFactory();
+    FtpServer finalServer;
 
     @Override
     public void configureFlutterEngine(FlutterEngine flutterEngine) {
@@ -31,5 +95,203 @@ public class FtpChannal extends FlutterActivity {
                             }
                         }
                 );
+    }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //CHECK WIFI AND HOTSPOT ENABLED
+    private boolean wifiHotspotEnabled(Context context) throws InvocationTargetException, IllegalAccessException {
+        WifiManager manager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        Method method = null;
+        try {
+            method = manager.getClass().getDeclaredMethod("isWifiApEnabled");
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        method.setAccessible(true); //in the case of visibility change in future APIs
+        return (Boolean) method.invoke(manager);
+    }
+
+    private boolean checkWifiOnAndConnected(Context context) {
+        WifiManager wifiMgr = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        assert wifiMgr != null;
+        if (wifiMgr.isWifiEnabled()) { // Wi-Fi adapter is ON
+
+            WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+
+            return wifiInfo.getNetworkId() != -1;
+        }
+        else {
+            return false; // Wi-Fi adapter is OFF
+        }
+    }
+    //GET WIFI ADDRESS
+    private String wifiIpAddress(Context context) {
+        try {
+            if (wifiHotspotEnabled(context)) {
+                return "192.168.43.1";
+            }
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return Utils.getIPAddress(true);
+    }
+    //CREATE SERVER
+    private  void create(){
+        finalServer = serverFactory.createServer();
+    }
+    //ADDRESS
+    private String winAddr(){
+        return (String.format("ftp://%s:2121", wifiIpAddress(this)));
+    }
+    private String macAddr(){
+        return (String.format("ftp://ftp:ftp@%s:2121", wifiIpAddress(this)));
+    }
+    //START SERVER
+    private boolean start(){
+        try {
+            if (checkWifiOnAndConnected(this) || wifiHotspotEnabled(this)) {
+                FtpChannal.this.serverControl();
+                return "1";
+            }
+            return "wifi";
+        }
+        catch (Exception e) {
+            return (e.getCause().toString());
+        }
+    }
+    void serverControl() {
+        STring ans;
+        if (finalServer.isStopped()) {
+
+            String user = "";
+            String passwd = "";
+            if (user.isEmpty()) {
+                user = "ftp";
+            }
+            if (passwd.isEmpty()) {
+                passwd = "ftp";
+            }
+            String subLoc = "";
+
+            pass = passwd;
+            try {
+                setupStart(user, passwd, subLoc);
+            } catch (FileNotFoundException fnfe) {
+                /*if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage(R.string.dialog_message_error).setTitle(R.string.dialog_title);
+                    builder.setPositiveButton("OK", (dialog, id) -> {
+                        dialog.dismiss();
+                        justStarted = false;
+                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST);
+                    });
+                    builder.show();
+                } else {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST);
+                }*/
+            }
+
+            try {
+
+                finalServer.start();
+                ans="1";
+
+            } catch (FtpException e) {
+                e.printStackTrace();
+                ans=e.toString();
+            }
+        } else if (finalServer.isSuspended()) {
+
+            finalServer.resume();
+            ans="1";
+
+        } else {
+            finalServer.suspend();
+            ans="0";
+
+        }
+
+    }
+    private void setupStart(String username, String password, String subLoc) throws FileNotFoundException {
+        factory.setPort(2121);
+        serverFactory.addListener("default", factory.createListener());
+        File files = new File(Environment.getExternalStorageDirectory().getPath() + "/users.properties");
+        if (!files.exists()) {
+            try {
+                files.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        userManagerFactory.setFile(files);
+        userManagerFactory.setPasswordEncryptor(new SaltedPasswordEncryptor());
+        UserManager um = userManagerFactory.createUserManager();
+        BaseUser user = new BaseUser();
+        user.setName(username);
+        user.setPassword(password);
+        String home = Environment.getExternalStorageDirectory().getPath() + "/" + subLoc;
+        user.setHomeDirectory(home);
+
+        List<Authority> auths = new ArrayList<>();
+        Authority auth = new WritePermission();
+        auths.add(auth);
+        user.setAuthorities(auths);
+
+        try {
+            um.save(user);
+        } catch (FtpException e1) {
+            e1.printStackTrace();
+        }
+
+        serverFactory.setUserManager(um);
+        Map<String, Ftplet> m = new HashMap<>();
+        m.put("miaFtplet", new Ftplet()
+        {
+            @Override
+            public void init(FtpletContext ftpletContext) throws FtpException {
+
+            }
+
+            @Override
+            public void destroy() {
+
+            }
+
+            @Override
+            public FtpletResult beforeCommand(FtpSession session, FtpRequest request) throws FtpException, IOException
+            {
+                return FtpletResult.DEFAULT;
+            }
+
+            @Override
+            public FtpletResult afterCommand(FtpSession session, FtpRequest request, FtpReply reply) throws FtpException, IOException
+            {
+                return FtpletResult.DEFAULT;
+            }
+
+            @Override
+            public FtpletResult onConnect(FtpSession session) throws FtpException, IOException
+            {
+                return FtpletResult.DEFAULT;
+            }
+
+            @Override
+            public FtpletResult onDisconnect(FtpSession session) throws FtpException, IOException
+            {
+                return FtpletResult.DEFAULT;
+            }
+        });
+        serverFactory.setFtplets(m);
+    }
+    //Stop
+    private String stop(){
+        try {
+            finalServer.stop();
+            return "1";
+        } catch (Exception e) {
+            return (e.getCause().toString());
+        }
     }
 }

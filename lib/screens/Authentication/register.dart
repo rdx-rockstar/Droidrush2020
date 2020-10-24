@@ -329,13 +329,18 @@ class _RegisterState extends State<Register> {
                               onTap: () async {
                                 setState(() => loading = true);
                                 if (_formKey.currentState.validate()) {
+                                  setState(() => loading = true);
                                   dynamic result =
                                       await _auth.registerWithEmailAndPassword(
                                           email, password);
                                   if (result == null) {
+                                    loading = false;
                                     setState(() =>
                                         error = 'please supply a valid email');
+                                  } else {
                                     loading = false;
+                                    setState(() => error =
+                                        'Email Has been send to ' + email);
                                   }
                                 }
                               },
@@ -368,7 +373,7 @@ class _RegisterState extends State<Register> {
                                 SizedBox(
                                   width:
                                       (MediaQuery.of(context).size.width / 2 -
-                                          60),
+                                          30),
                                   child: Center(
                                     child: FadeAnimation(
                                         1.5,
@@ -393,10 +398,46 @@ class _RegisterState extends State<Register> {
                                 //     width: 50,
                                 //   ),
                                 // ),
+
                                 FadeAnimation(
                                   1.5,
                                   GestureDetector(
-                                    onTap: () {},
+                                      child: Container(
+                                          width: 30,
+                                          height: 30,
+                                          decoration: BoxDecoration(
+                                            // color: Colors.black,
+                                            image: DecorationImage(
+                                              image: AssetImage(
+                                                  "assets/images/google.jpg"),
+                                              fit: BoxFit.cover,
+                                            ),
+                                            //  child: Text("clickMe") // button text
+                                          )),
+                                      onTap: () async {
+                                        // Sign in through google
+                                        setState(() => loading = true);
+                                        dynamic result =
+                                            await _auth.signInWithGoogle();
+                                        print(result);
+                                        if (result == null) {
+                                          setState(() => loading = false);
+                                        }
+                                      }),
+                                ),
+                                SizedBox(width: 10),
+                                FadeAnimation(
+                                  1.5,
+                                  GestureDetector(
+                                    onTap: () async {
+                                      setState(() => loading = true);
+                                      dynamic result =
+                                          await _auth.signInWithGoogle();
+                                      print(result);
+                                      if (result == null) {
+                                        setState(() => loading = false);
+                                      }
+                                    },
                                     child: Text(
                                       "Register with ",
                                       style: TextStyle(
@@ -404,45 +445,6 @@ class _RegisterState extends State<Register> {
                                               Color.fromRGBO(143, 148, 251, 1)),
                                     ),
                                   ),
-                                ),
-                                FadeAnimation(
-                                  1.5,
-                                  GestureDetector(
-                                      child: Container(
-                                          width: 30,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                            // color: Colors.black,
-                                            image: DecorationImage(
-                                                image: AssetImage(
-                                                    "assets/images/google.jpg"),
-                                                fit: BoxFit.cover),
-                                            //  child: Text("clickMe") // button text
-                                          )),
-                                      onTap: () {
-                                        // Sign in through google
-                                        print("you clicked my");
-                                      }),
-                                ),
-                                SizedBox(width: 10),
-                                FadeAnimation(
-                                  1.5,
-                                  GestureDetector(
-                                      child: Container(
-                                          width: 30,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                            // color: Colors.black,
-                                            image: DecorationImage(
-                                                image: AssetImage(
-                                                    "assets/images/download.png"),
-                                                fit: BoxFit.cover),
-                                            //  child: Text("clickMe") // button text
-                                          )),
-                                      onTap: () {
-                                        // Sign in through google
-                                        print("you clicked my");
-                                      }),
                                 ),
                               ],
                             ),

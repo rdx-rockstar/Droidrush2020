@@ -3,6 +3,7 @@ import 'package:ShareApp/screens/Authentication/sing_in.dart';
 import 'package:flutter/material.dart';
 
 class Authentication extends StatefulWidget {
+
   @override
   _AuthenticationState createState() => _AuthenticationState();
 }
