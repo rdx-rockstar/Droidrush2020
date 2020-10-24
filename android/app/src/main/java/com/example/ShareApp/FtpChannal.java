@@ -87,8 +87,20 @@ public class FtpChannal extends FlutterActivity {
                 .setMethodCallHandler(
                         (call, result) -> {
                             switch (call.method) {
-                                case "check":
-                                    result.success("done and dusted");
+                                case "create":
+                                    result.success(create());
+                                    break;
+                                case "start":
+                                    result.success(start(call.argument("u"),call.argument("p"),call.argument("l")));
+                                    break;
+                                case "stop":
+                                    result.success(stop());
+                                    break;
+                                case "wad":
+                                    result.success(winAddr());
+                                    break;
+                                case"mad":
+                                    result.success(macAddr());
                                     break;
                                 default:
                                     result.notImplemented();
@@ -138,8 +150,12 @@ public class FtpChannal extends FlutterActivity {
         return Utils.getIPAddress(true);
     }
     //CREATE SERVER
-    private  void create(){
-        finalServer = serverFactory.createServer();
+    private  int create(){
+        try {
+            finalServer = serverFactory.createServer();
+            return 1;
+        }
+        return 0;
     }
     //ADDRESS
     private String winAddr(){
@@ -149,32 +165,31 @@ public class FtpChannal extends FlutterActivity {
         return (String.format("ftp://ftp:ftp@%s:2121", wifiIpAddress(this)));
     }
     //START SERVER
-    private boolean start(){
+    private int start(String u,String p,String l){
         try {
             if (checkWifiOnAndConnected(this) || wifiHotspotEnabled(this)) {
-                FtpChannal.this.serverControl();
-                return "1";
+                return FtpChannal.this.serverControl(u,p,l);
             }
-            return "wifi";
+            return -1;
         }
         catch (Exception e) {
-            return (e.getCause().toString());
+            print (e.getCause().toString());
+            return -2;
         }
     }
-    void serverControl() {
-        STring ans;
+    int serverControl(String u,String p,String l) {
+        int ans;
         if (finalServer.isStopped()) {
 
-            String user = "";
-            String passwd = "";
+            String user = u;
+            String passwd = p;
             if (user.isEmpty()) {
                 user = "ftp";
             }
             if (passwd.isEmpty()) {
                 passwd = "ftp";
             }
-            String subLoc = "";
-
+            String subLoc = l;
             pass = passwd;
             try {
                 setupStart(user, passwd, subLoc);
@@ -196,7 +211,7 @@ public class FtpChannal extends FlutterActivity {
             try {
 
                 finalServer.start();
-                ans="1";
+                ans=1;
 
             } catch (FtpException e) {
                 e.printStackTrace();
@@ -205,14 +220,14 @@ public class FtpChannal extends FlutterActivity {
         } else if (finalServer.isSuspended()) {
 
             finalServer.resume();
-            ans="1";
+            ans=1;
 
         } else {
             finalServer.suspend();
-            ans="0";
+            ans=0;
 
         }
-
+        return ans;
     }
     private void setupStart(String username, String password, String subLoc) throws FileNotFoundException {
         factory.setPort(2121);
@@ -286,12 +301,13 @@ public class FtpChannal extends FlutterActivity {
         serverFactory.setFtplets(m);
     }
     //Stop
-    private String stop(){
+    private int stop(){
         try {
             finalServer.stop();
-            return "1";
+            return 1;
         } catch (Exception e) {
-            return (e.getCause().toString());
+            print (e.getCause().toString());
+            return 0;
         }
     }
 }

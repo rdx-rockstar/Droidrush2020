@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ShareApp/constants/color_constant.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ftpServer extends StatefulWidget {
 
@@ -12,9 +13,31 @@ class ftpState extends State<ftpServer> {
   final infoctrl = TextEditingController();
   final _FormKey = GlobalKey<FormState>();
   ValueNotifier<bool> _status = ValueNotifier<bool>(false);
-  String name = '';
-  String password = '';
-  String dir = '';
+  static String name = '';
+  static String password = '';
+  static String dir = '';
+  ftpState(){
+    create().then((value){
+      if(value==1){
+        Fluttertoast.showToast(
+          msg: "server created",
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          fontSize: 16,
+        );
+      }
+      else{
+        Fluttertoast.showToast(
+          msg: "server not created",
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          fontSize: 16,
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +52,26 @@ class ftpState extends State<ftpServer> {
               if (_FormKey.currentState.validate()) {
                 if (_status.value) {
                   _status.value = false;
-                  check().then((value)
-                      {print(value);
-                      print("huu");
+                  start().then((value)
+                      {if(value==0){
+                        Fluttertoast.showToast(
+                          msg: "succesfully suspended",
+                          toastLength: Toast.LENGTH_LONG,
+                          backgroundColor: Colors.white,
+                          textColor: Colors.black,
+                          fontSize: 16,
+                        );
+                        infoctrl.text = "";
+                      }
+                      else{
+                        Fluttertoast.showToast(
+                          msg: "error1",
+                          toastLength: Toast.LENGTH_LONG,
+                          backgroundColor: Colors.white,
+                          textColor: Colors.black,
+                          fontSize: 16,
+                        );
+                      }
                       }
                   );
                   infoctrl.text="";
@@ -39,8 +79,39 @@ class ftpState extends State<ftpServer> {
                 else {
                   try {
                     _status.value = true;
-                    print(check());
-                    infoctrl.text = "a\nb";
+                    start().then((value){
+                      if(value==1){
+                        Fluttertoast.showToast(
+                          msg: "server started",
+                          toastLength: Toast.LENGTH_LONG,
+                          backgroundColor: Colors.white,
+                          textColor: Colors.black,
+                          fontSize: 16,
+                        );
+                        String w,m;
+                        mad().then((value) => m=value);
+                        wad().then((value) => w=value);
+                        infoctrl.text = "search adresses:\n for mac:"+m+"\n for others:"+w;
+                      }
+                      else if(value==-1){
+                        Fluttertoast.showToast(
+                          msg: "connect wifi or hotspot",
+                          toastLength: Toast.LENGTH_LONG,
+                          backgroundColor: Colors.white,
+                          textColor: Colors.black,
+                          fontSize: 16,
+                        );
+                      }
+                      else{
+                        Fluttertoast.showToast(
+                          msg: "error0",
+                          toastLength: Toast.LENGTH_LONG,
+                          backgroundColor: Colors.white,
+                          textColor: Colors.black,
+                          fontSize: 16,
+                        );
+                      }
+                    });
                   }
                   catch(Exception){
 
@@ -134,7 +205,25 @@ class ftpState extends State<ftpServer> {
         ),
     );
   }
-  static Future<String> check()async {
-    return _channel.invokeMethod("check");
+  ////INVOKE MEATHODS
+  static Future<int> create()async {
+    return _channel.invokeMethod("create");
+  }
+  static Future<int> start()async {
+
+    return _channel.invokeMethod("start",<String, dynamic>{
+      's': name,
+      'p': password,
+      'l': dir,
+    });
+  }
+  static Future<int> stop()async {
+    return _channel.invokeMethod("stop");
+  }
+  static Future<String> wad()async {
+    return _channel.invokeMethod("wad");
+  }
+  static Future<String> mad()async {
+    return _channel.invokeMethod("mad");
   }
 }
