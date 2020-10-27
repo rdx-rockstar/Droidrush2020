@@ -49,6 +49,17 @@ class ftpState extends State<ftpServer> {
           IconButton(
             icon: Icon(Icons.power_settings_new_outlined, color: Colors.white),
             onPressed: () {
+
+//            _channel.invokeMethod("test").then((value){
+//    Fluttertoast.showToast(
+//                          msg: value,
+//                          toastLength: Toast.LENGTH_LONG,
+//                          backgroundColor: Colors.white,
+//                          textColor: Colors.black,
+//                          fontSize: 16,
+//                        );
+//    });
+//    }
               if (_FormKey.currentState.validate()) {
                 if (_status.value) {
                   _status.value = false;
@@ -195,6 +206,18 @@ class ftpState extends State<ftpServer> {
                                 enabled: false,
                                 controller:infoctrl,
                               ),
+                              IconButton(icon: Icon(Icons.android),
+                                  color: Colors.greenAccent, onPressed:  () {
+                                _channel.invokeMethod("test").then((value){
+                                  Fluttertoast.showToast(
+                                    msg: value,
+                                    toastLength: Toast.LENGTH_LONG,
+                                    backgroundColor: Colors.white,
+                                    textColor: Colors.black,
+                                    fontSize: 16,
+                                  );
+                                });
+                              })
                             ]
                         ),
                       )

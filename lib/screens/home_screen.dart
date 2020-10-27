@@ -5,6 +5,8 @@ import 'package:ShareApp/constants/color_constant.dart';
 import 'package:ShareApp/widgets/customAppbar.dart';
 import 'package:ShareApp/widgets/showScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:nearby_connections/nearby_connections.dart';
+import 'package:ShareApp/screens/Local_Sharing/ftpServer.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 // import 'package:intl/intl.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
@@ -172,6 +174,78 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: ShowScreen(index: _selectedIndex),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          if (await Nearby().checkLocationPermission()) {
+            if (await Nearby().checkExternalStoragePermission()) {
+              if (await Nearby().checkLocationEnabled()) {
+                //Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ftpServer()));
+              } else {
+                if (await Nearby().enableLocationServices()) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ftpServer()));
+                }
+              }
+            } else {
+              Nearby().askExternalStoragePermission();
+              if (await Nearby().checkLocationEnabled()) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ftpServer()));
+              } else {
+                if (await Nearby().enableLocationServices()) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ftpServer()));
+                }
+              }
+            }
+          } else {
+            if (await Nearby().askLocationPermission()) {
+              if (await Nearby().checkExternalStoragePermission()) {
+                if (await Nearby().checkLocationEnabled()) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ftpServer()));
+                } else {
+                  if (await Nearby().enableLocationServices()) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ftpServer()));
+                  }
+                }
+              } else {
+                Nearby().askExternalStoragePermission();
+                if (await Nearby().checkLocationEnabled()) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>ftpServer()));
+                } else {
+                  if (await Nearby().enableLocationServices()) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ftpServer()));
+                  }
+                }
+              }
+            }
+          }
+        },
+        tooltip: 'Increment',
+        child: Icon(Icons.add),
+      ),
     );
   }
 }

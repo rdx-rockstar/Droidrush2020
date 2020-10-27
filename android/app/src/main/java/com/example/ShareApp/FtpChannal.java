@@ -18,25 +18,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Switch;
-import android.widget.TextView;
-
-import net.rdrei.android.dirchooser.DirectoryChooserActivity;
-import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
@@ -87,6 +69,9 @@ public class FtpChannal extends FlutterActivity {
                 .setMethodCallHandler(
                         (call, result) -> {
                             switch (call.method) {
+                                case "test":
+                                    result.success("testing");
+                                    break;
                                 case "create":
                                     result.success(create());
                                     break;
@@ -155,7 +140,9 @@ public class FtpChannal extends FlutterActivity {
             finalServer = serverFactory.createServer();
             return 1;
         }
-        return 0;
+        catch (Exception e) {
+            return 0;
+        }
     }
     //ADDRESS
     private String winAddr(){
@@ -173,7 +160,6 @@ public class FtpChannal extends FlutterActivity {
             return -1;
         }
         catch (Exception e) {
-            print (e.getCause().toString());
             return -2;
         }
     }
@@ -215,7 +201,7 @@ public class FtpChannal extends FlutterActivity {
 
             } catch (FtpException e) {
                 e.printStackTrace();
-                ans=e.toString();
+                ans=-2;
             }
         } else if (finalServer.isSuspended()) {
 
@@ -306,7 +292,6 @@ public class FtpChannal extends FlutterActivity {
             finalServer.stop();
             return 1;
         } catch (Exception e) {
-            print (e.getCause().toString());
             return 0;
         }
     }
