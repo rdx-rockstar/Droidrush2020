@@ -4,6 +4,8 @@ import android.Manifest;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.android.FlutterActivity;
 import android.app.Activity;
+import android.os.Bundle;
+import android.os.Environment;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -52,15 +54,15 @@ import java.util.Map;
  */
 public class FtpChannal extends FlutterActivity {
     private static MethodChannel channel;
-
     //variables
-    static String pass;
+    static String pass="";
+    static String usr="";
     final int MY_PERMISSIONS_REQUEST = 2203;
     final int REQUEST_DIRECTORY = 2108;
-    FtpServerFactory serverFactory = new FtpServerFactory();
-    ListenerFactory factory = new ListenerFactory();
-    PropertiesUserManagerFactory userManagerFactory = new PropertiesUserManagerFactory();
-    FtpServer finalServer;
+    static FtpServerFactory serverFactory = new FtpServerFactory();
+    static ListenerFactory factory = new ListenerFactory();
+    static PropertiesUserManagerFactory userManagerFactory = new PropertiesUserManagerFactory();
+    static FtpServer finalServer;
 
     @Override
     public void configureFlutterEngine(FlutterEngine flutterEngine) {
@@ -70,13 +72,15 @@ public class FtpChannal extends FlutterActivity {
                         (call, result) -> {
                             switch (call.method) {
                                 case "test":
-                                    result.success("testing");
+                                    result.success("working");
                                     break;
                                 case "create":
                                     result.success(create());
                                     break;
                                 case "start":
-                                    result.success(start(call.argument("u"),call.argument("p"),call.argument("l")));
+                                    usr = ""+call.argument("u");
+                                    pass = ""+call.argument("p");
+                                    result.success(start(usr,pass,""+call.argument("l")));
                                     break;
                                 case "stop":
                                     result.success(stop());
@@ -146,39 +150,36 @@ public class FtpChannal extends FlutterActivity {
     }
     //ADDRESS
     private String winAddr(){
-        return (String.format("ftp://%s:2121", wifiIpAddress(this)));
+        return (String.format("ftp://%s:2133", wifiIpAddress(this)));
     }
     private String macAddr(){
-        return (String.format("ftp://ftp:ftp@%s:2121", wifiIpAddress(this)));
+        return (String.format("ftp://%s:%s@%s:2133",usr,pass,wifiIpAddress(this)));
     }
     //START SERVER
-    private int start(String u,String p,String l){
+    private String start(String u,String p,String l){
         try {
             if (checkWifiOnAndConnected(this) || wifiHotspotEnabled(this)) {
-                return FtpChannal.this.serverControl(u,p,l);
+                return (""+serverControl(u,p,l));
             }
-            return -1;
+            return "-1";
         }
         catch (Exception e) {
-            return -2;
+
+            return e.toString();
         }
     }
     int serverControl(String u,String p,String l) {
         int ans;
         if (finalServer.isStopped()) {
-
-            String user = u;
-            String passwd = p;
-            if (user.isEmpty()) {
-                user = "ftp";
-            }
-            if (passwd.isEmpty()) {
-                passwd = "ftp";
-            }
-            String subLoc = l;
-            pass = passwd;
+//            if (usr.isEmpty()) {
+//                usr = "ftp";
+//            }
+//            if (pass.isEmpty()) {
+//                pass = "ftp";
+//            }
+//            String subLoc = "";
             try {
-                setupStart(user, passwd, subLoc);
+                setupStart(usr, pass, "");
             } catch (FileNotFoundException fnfe) {
                 /*if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -204,20 +205,30 @@ public class FtpChannal extends FlutterActivity {
                 ans=-2;
             }
         } else if (finalServer.isSuspended()) {
-
+            try{
             finalServer.resume();
-            ans=1;
+            ans=2;} catch (Exception e) {
+                e.printStackTrace();
+                ans=-2;
+            }
 
         } else {
+            try{
             finalServer.suspend();
             ans=0;
+            } catch (Exception e) {
+                e.printStackTrace();
+                ans=-2;
+            }
 
         }
         return ans;
     }
     private void setupStart(String username, String password, String subLoc) throws FileNotFoundException {
-        factory.setPort(2121);
+        factory.setPort(2133);
         serverFactory.addListener("default", factory.createListener());
+      //  File files = new File(this.getFilesDir(), "users.properties");
+
         File files = new File(Environment.getExternalStorageDirectory().getPath() + "/users.properties");
         if (!files.exists()) {
             try {
@@ -232,9 +243,8 @@ public class FtpChannal extends FlutterActivity {
         BaseUser user = new BaseUser();
         user.setName(username);
         user.setPassword(password);
-        String home = Environment.getExternalStorageDirectory().getPath() + "/" + subLoc;
+        String home = Environment.getExternalStorageDirectory().getPath() + "/";
         user.setHomeDirectory(home);
-
         List<Authority> auths = new ArrayList<>();
         Authority auth = new WritePermission();
         auths.add(auth);
