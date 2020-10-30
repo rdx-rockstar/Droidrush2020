@@ -23,17 +23,7 @@ class ftpState extends State<ftpServer> {
   static String dir = '';
   ftpState(){
     c=0;
-    stop().then((value){
-      if(value==1){
-        Fluttertoast.showToast(
-          msg: "server stopped",
-          toastLength: Toast.LENGTH_LONG,
-          backgroundColor: Colors.white,
-          textColor: Colors.black,
-          fontSize: 16,
-        );
-      }
-    });
+    stop().then((value){});
     create().then((value){
       if(value==1){
         Fluttertoast.showToast(
@@ -54,6 +44,21 @@ class ftpState extends State<ftpServer> {
         );
       }
     });
+  }
+  @override
+  void dispose() {
+    stop().then((value){
+      if(value==1){
+        Fluttertoast.showToast(
+          msg: "server stopped",
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          fontSize: 16,
+        );
+      }
+    });
+    super.dispose();
   }
 
   @override
@@ -241,92 +246,63 @@ class ftpState extends State<ftpServer> {
                                 enabled: false,
                                 controller:infoctrl,
                               ),
-                              IconButton(icon: Icon(Icons.android),
-                                  color: Colors.greenAccent, onPressed:  ()async {
-                                _channel.invokeMethod("test").then((value) async {
-                                  Fluttertoast.showToast(
-                                    msg: value,
-                                    toastLength: Toast.LENGTH_LONG,
-                                    backgroundColor: Colors.white,
-                                    textColor: Colors.black,
-                                    fontSize: 16,
-                                  );
-                                  getApplicationDocumentsDirectory().then((value) {
-                                    value.list(recursive: true, followLinks: false)
-                                        .listen((FileSystemEntity entity) {
-                                      print(entity.path);
-                                    });
-                                  });
-                                });
-                              }),
-                              IconButton(icon: Icon(Icons.file_copy),
+                              IconButton(icon: Icon(Icons.perm_device_information),
                                   color: Colors.greenAccent, onPressed:  ()async {
                                     var dir = await getExternalStorageDirectory();
                                     var status = await Permission.storage.status;
                                     if (!status.isGranted) {
-                                      print("noooot granted");
+                                      print("permission not granted");
                                       await Permission.storage.request();
                                     }
                                     else{
-                                      print("granted");
-                                    }
-                                    if(!Directory("/storage/emulated/0/lol").existsSync()){
-                                      print("noooo");
-                                      Directory("/storage/emulated/0/lol").createSync(recursive: true);
+                                    if(!File("/storage/emulated/0/test.txt").existsSync()){
+                                      try {
+                                        File("/storage/emulated/0/test.txt")
+                                            .createSync(recursive: true);
+                                        Fluttertoast.showToast(
+                                          msg: "permissions allowed",
+                                          toastLength: Toast.LENGTH_LONG,
+                                          backgroundColor: Colors.white,
+                                          textColor: Colors.black,
+                                          fontSize: 16,
+                                        );
+                                      }
+                                      catch(e){
+                                        Fluttertoast.showToast(
+                                          msg: "permission not granted",
+                                          toastLength: Toast.LENGTH_LONG,
+                                          backgroundColor: Colors.white,
+                                          textColor: Colors.black,
+                                          fontSize: 16,
+                                        );
+                                      }
                                     }
                                     else{
-                                      print("present");
-                                    }
-                                  }),
-                              IconButton(icon: Icon(Icons.file_copy_outlined),
-                                  color: Colors.greenAccent, onPressed:  ()async {
-                                    var dir = await getExternalStorageDirectory();
-                                    var status = await Permission.storage.status;
-                                    if (!status.isGranted) {
-                                      print("noooot granted");
-                                      await Permission.storage.request();
-                                    }
-                                    else{
-                                      print("granted");
-                                    }
+                                      try {
+                                        File("/storage/emulated/0/lol/lol.txt")
+                                            .writeAsString(
+                                            "testing permissions//share it");
+                                        Fluttertoast.showToast(
+                                          msg: "permissions allowed",
+                                          toastLength: Toast.LENGTH_LONG,
+                                          backgroundColor: Colors.white,
+                                          textColor: Colors.black,
+                                          fontSize: 16,
+                                        );
 
-                                    if(!File("/storage/emulated/0/lol/lol.txt").existsSync()){
-                                      print("noooof");
-                                      File("/storage/emulated/0/lol/lol.txt").createSync(recursive: true);
+                                      }
+                                      catch(e){
+                                        Fluttertoast.showToast(
+                                          msg: "permission not granted",
+                                          toastLength: Toast.LENGTH_LONG,
+                                          backgroundColor: Colors.white,
+                                          textColor: Colors.black,
+                                          fontSize: 16,
+                                        );
+                                      }
                                     }
-                                    else{
-                                      print("presentf");
-                                    }
-                                  }),
-                              IconButton(icon: Icon(Icons.mark_chat_unread),
-                                  color: Colors.greenAccent, onPressed:  ()async {
-                                    var dir = await getExternalStorageDirectory();
-                                    if(File("/storage/emulated/0/lol/lol.txt").existsSync()){
-                                      print("exists1");
-                                      var txt=File("/storage/emulated/0/lol/lol.txt").readAsString();
-                                      txt.then((value) {Fluttertoast.showToast(
-                                        msg:value ,
-                                        toastLength: Toast.LENGTH_LONG,
-                                        backgroundColor: Colors.white,
-                                        textColor: Colors.black,
-                                        fontSize: 16,
-                                      );});
-                                    }
-                                    else{
-                                      print("noooo1");
                                     }
                                   }),
-                              IconButton(icon: Icon(Icons.text_fields),
-                                  color: Colors.greenAccent, onPressed:  ()async {
-                                    var dir = await getExternalStorageDirectory();
-                                    if(File("/storage/emulated/0/lol/lol.txt").existsSync()){
-                                      print("exists2");
-                                      File("/storage/emulated/0/lol/lol.txt").writeAsString(name);
-                                    }
-                                    else{
-                                      print("noooo2");
-                                    }
-                                  })
                             ]
                         ),
                       )
