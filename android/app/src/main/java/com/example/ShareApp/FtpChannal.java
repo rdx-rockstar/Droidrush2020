@@ -171,8 +171,10 @@ public class FtpChannal extends FlutterActivity {
     int serverControl(String u,String p,String l) {
         int ans;
         if (finalServer.isStopped()) {
-            if(l.l)
-            String subLoc = l.toString().substring(20);
+            String subLoc="";
+            if(l.length()>20) {
+                subLoc = l.toString().substring(20);
+            }
             try {
                 setupStart(usr, pass, subLoc);
             } catch (FileNotFoundException fnfe) {
