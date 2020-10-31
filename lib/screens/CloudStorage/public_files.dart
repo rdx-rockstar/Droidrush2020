@@ -6,6 +6,7 @@ import 'package:ShareApp/services/storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ShareApp/services/download_file.dart';
 // import 'package:ShareApp/constants/data_search.dart';
 
 class PublicFiles extends StatefulWidget {
@@ -32,6 +33,7 @@ class _PublicFilesState extends State<PublicFiles> {
   }
 
   Widget buildListView() {
+    final platform = Theme.of(context).platform;
     return FutureBuilder<List<Cloudfile>>(
       future: record,
       builder: (context, snapshot) {
@@ -54,6 +56,15 @@ class _PublicFilesState extends State<PublicFiles> {
                     String urlInString =
                         await Storage().downloadPublicFileWithUrl(project.LUri);
                     setState(() {});
+                    // Code to downlaod files to save one external storage
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MyHomePage(
+                              platform: platform,
+                              title: project.File_name,
+                              urlToDownlaod: urlInString)),
+                    );
                     Fluttertoast.showToast(
                         msg: "The File URL is downloaded",
                         toastLength: Toast.LENGTH_SHORT,
@@ -62,6 +73,7 @@ class _PublicFilesState extends State<PublicFiles> {
                         backgroundColor: Colors.black,
                         textColor: Colors.white,
                         fontSize: 16.0);
+
                     Clipboard.setData(new ClipboardData(text: urlInString));
                     Fluttertoast.showToast(
                         msg: "The URL is copied to clipboard",

@@ -1,5 +1,6 @@
 import 'package:ShareApp/models/Cloudfile.dart';
 import 'package:ShareApp/models/user_model.dart';
+import 'package:ShareApp/services/download_file.dart';
 import 'package:ShareApp/services/storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -159,6 +160,7 @@ class _PrivateFilesState extends State<PrivateFiles> {
 
   @override
   Widget build(BuildContext context) {
+    final platform = Theme.of(context).platform;
     // print('This is the user id that we calling from ${widget.user.uid}');
     Future<List<Cloudfile>> privateRecords =
         Storage().listPrivateFiles(widget.user.uid);
@@ -212,6 +214,15 @@ class _PrivateFilesState extends State<PrivateFiles> {
                               backgroundColor: Colors.black,
                               textColor: Colors.white,
                               fontSize: 16.0);
+                          // Code to downlaod files to save one external storage
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyHomePage(
+                                    platform: platform,
+                                    title: project.File_name,
+                                    urlToDownlaod: urlInString)),
+                          );
                           Clipboard.setData(
                               new ClipboardData(text: urlInString));
                           Fluttertoast.showToast(
