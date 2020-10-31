@@ -55,7 +55,7 @@ class _HistoryState extends State<History> {
         return SmartRefresher(
           // onLoading: _onLoading(),
           enablePullDown: true,
-          enablePullUp: true,
+          enablePullUp: false,
           header: WaterDropHeader(),
           controller: _refreshController,
           onRefresh: _onRefresh,
