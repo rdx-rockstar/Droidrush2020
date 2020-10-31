@@ -28,6 +28,9 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 android {
     compileSdkVersion 29
 
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+    }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
@@ -59,7 +62,10 @@ flutter {
 }
 
 dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation group: 'org.apache.ftpserver', name: 'ftpserver', version: '1.1.1', ext: 'pom'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

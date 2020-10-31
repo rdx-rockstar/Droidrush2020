@@ -71,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // appendList("This is a just Dummy message", "Send", "ng67e");
     CustomAppBars appbar = new CustomAppBars(index: this._selectedIndex);
     return Scaffold(
-      appBar: appbar.getAppBar(),
+      appBar: appbar.getAppBar(context),
       drawer: new Drawer(
         child: new ListView(
           children: <Widget>[
