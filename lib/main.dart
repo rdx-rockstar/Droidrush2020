@@ -4,6 +4,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'FirstTimeUser/main.dart';
+import 'services/onBoardScreen.dart';
+
+// setVisiting() async {
+//   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+//   sharedPreferences.setBool('first', true);
+// }
+
+// getVisiting() async {
+//   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+//   bool visiting = sharedPreferences.getBool('first') ?? false;
+//   return visiting;
+// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,15 +1,10 @@
 import 'dart:ui';
 
 import 'package:ShareApp/constants/color_constant.dart';
-// import 'package:ShareApp/screens/Authentication/Loading.dart';
 import 'package:ShareApp/widgets/customAppbar.dart';
 import 'package:ShareApp/widgets/showScreen.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
-// import 'package:intl/intl.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:ShareApp/models/add_history.dart';
-// import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -17,8 +12,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  SharedPreferences sharedPreferences;
   int _selectedIndex = 0;
-
+  String userName;
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -30,45 +26,23 @@ class _HomeScreenState extends State<HomeScreen> {
   //   // SaveData(fileName: "This is a Just Dummy message", whichSide: "Send", dateTime: "", otherUserId: "i889H"),
   // ];
   // SharedPreferences sharedPreferences;
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   loadSP();
-  // }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadSP();
+  }
 
-  // // LOADING THE SHARED PREFERENCES
-  // void loadSP() async {
-  //   sharedPreferences = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     saveData();
-  //   });
-  // }
-
-  // // AND SAVING THE DATA TO SHAREDPREFERENCES
-  // void saveData() {
-  //   List<String> spList = check.map((e) => jsonEncode(e.toMap())).toList();
-  //   sharedPreferences.setStringList('check', spList);
-  //   setState(() {});
-  // }
-
-  // // TO SAVE THE DATA IN check LIST OF SAVEDATA TYPE
-  // void appendList(String fileName, String whichSide, String otherUserId) {
-  //   DateTime now = DateTime.now();
-  //   String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(now);
-  //   check.add(
-  //     SaveData(
-  //         fileName: fileName,
-  //         whichSide: whichSide,
-  //         dateTime: formattedDate,
-  //         otherUserId: otherUserId),
-  //   );
-  //   saveData();
-  // }
+  // LOADING THE SHARED PREFERENCES
+  void loadSP() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    userName = sharedPreferences.getString("userName");
+  }
 
   @override
   Widget build(BuildContext context) {
     // appendList("This is a just Dummy message", "Send", "ng67e");
+    // String userName = sharedPreferences.getString('userName');
     CustomAppBars appbar = new CustomAppBars(index: this._selectedIndex);
     return Scaffold(
       appBar: appbar.getAppBar(context),
@@ -76,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: new ListView(
           children: <Widget>[
             new UserAccountsDrawerHeader(
-              accountName: Text("MiA3"),
+              accountName: Text("userName"),
               accountEmail: Text("fetchfrom@firebase.com"),
               currentAccountPicture: new GestureDetector(
                 onTap: () => print('To implement This Function'),
@@ -136,10 +110,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 blurRadius: 15,
                 offset: Offset(0, 5))
           ],
-          // borderRadius: BorderRadius.only(
-          //   topLeft: Radius.circular(24),
-          //   topRight: Radius.circular(24),
-          // ),
         ),
         child: BottomNavigationBar(
           items: <BottomNavigationBarItem>[
