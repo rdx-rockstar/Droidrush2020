@@ -171,6 +171,7 @@ public class FtpChannal extends FlutterActivity {
     int serverControl(String u,String p,String l) {
         int ans;
         if (finalServer.isStopped()) {
+            if(l.l)
             String subLoc = l.toString().substring(20);
             try {
                 setupStart(usr, pass, subLoc);
