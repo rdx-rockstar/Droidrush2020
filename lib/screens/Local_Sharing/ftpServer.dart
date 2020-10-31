@@ -251,7 +251,7 @@ class ftpState extends State<ftpServer> {
                                     var dir = await getExternalStorageDirectory();
                                     var status = await Permission.storage.status;
                                     if (!status.isGranted) {
-                                      print("permission not granted");
+                                      print("permission not granted 1.0");
                                       await Permission.storage.request();
                                     }
                                     else{
@@ -266,10 +266,15 @@ class ftpState extends State<ftpServer> {
                                           textColor: Colors.black,
                                           fontSize: 16,
                                         );
+//                                        PermissionStatus permissionResult = await SimplePermissions.requestPermission(Permission. WriteExternalStorage);
+//                                        if (permissionResult == PermissionStatus.authorized){
+//                                          // code of read or write file in external storage (SD card)
+//                                        }
                                       }
                                       catch(e){
+                                        print(e);
                                         Fluttertoast.showToast(
-                                          msg: "permission not granted",
+                                          msg: "permission not granted 1.1",
                                           toastLength: Toast.LENGTH_LONG,
                                           backgroundColor: Colors.white,
                                           textColor: Colors.black,
@@ -292,8 +297,9 @@ class ftpState extends State<ftpServer> {
 
                                       }
                                       catch(e){
+                                        print (e);
                                         Fluttertoast.showToast(
-                                          msg: "permission not granted",
+                                          msg: "permission not granted 1.2",
                                           toastLength: Toast.LENGTH_LONG,
                                           backgroundColor: Colors.white,
                                           textColor: Colors.black,

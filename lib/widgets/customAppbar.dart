@@ -3,6 +3,7 @@ import 'package:ShareApp/constants/color_constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:ShareApp/screens/Local_Sharing/ftpServer.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class CustomAppBars {
   int _index;
@@ -31,6 +32,11 @@ class CustomAppBars {
       IconButton(
       icon: Icon(Icons.computer_outlined),
     onPressed:() async {
+      var status = await Permission.storage.status;
+      if (!status.isGranted) {
+        print("permission not granted 1.0");
+        await Permission.storage.request();
+      }
     if (await Nearby().checkLocationPermission()) {
     if (await Nearby().checkExternalStoragePermission()) {
     if (await Nearby().checkLocationEnabled()) {
