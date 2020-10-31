@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       value: AuthService().user,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'File Sharing App',
+        title: 'Digital Shareing App',
         home: HomeScreen(),
       ),
     );

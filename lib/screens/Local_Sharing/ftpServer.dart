@@ -22,7 +22,7 @@ class ftpState extends State<ftpServer> {
   ValueNotifier<bool> _status = ValueNotifier<bool>(false);
   static String name = '';
   static String password = '';
-  static String dir = '';
+  static String dir = '/storage/emulator/0/';
   static String temp="";
   ftpState(){
     c=0;
