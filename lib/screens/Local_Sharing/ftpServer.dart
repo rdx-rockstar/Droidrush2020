@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:file_picker/file_picker.dart';
 
 class ftpServer extends StatefulWidget {
 
@@ -16,14 +17,17 @@ class ftpState extends State<ftpServer> {
   static String w,m;
   static int c=0;
   final infoctrl = TextEditingController();
+  final dirctrl = TextEditingController();
   final _FormKey = GlobalKey<FormState>();
   ValueNotifier<bool> _status = ValueNotifier<bool>(false);
   static String name = '';
   static String password = '';
   static String dir = '';
+  static String temp="";
   ftpState(){
     c=0;
     stop().then((value){});
+    dirctrl.text="/storage/emulator/0/";
     create().then((value){
       if(value==1){
         Fluttertoast.showToast(
@@ -241,6 +245,28 @@ class ftpState extends State<ftpServer> {
                               SizedBox(
                                 height: 20.0,
                               ),
+                              Row(
+                                  children: <Widget>[
+                                    IconButton(
+                                      icon: Icon(Icons.home),
+                                      color:Colors.greenAccent,
+                                      focusColor: Colors.blue,
+                                      iconSize: 25.0,
+                                      onPressed: () async {
+                                        dir = await FilePicker.getDirectoryPath()+"/";
+                                        dirctrl.text=dir;
+                                      },
+                                    ),
+                                    Expanded(
+                                      child: TextField(
+                                        enabled: false,
+                                        textCapitalization: TextCapitalization.sentences,
+                                        controller:dirctrl,
+                                      ),
+                                    ),
+                                  ]
+                              ),
+
                               TextFormField(
                                   maxLines: 6,
                                 enabled: false,

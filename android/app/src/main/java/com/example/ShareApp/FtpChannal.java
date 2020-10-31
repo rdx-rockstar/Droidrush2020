@@ -171,15 +171,9 @@ public class FtpChannal extends FlutterActivity {
     int serverControl(String u,String p,String l) {
         int ans;
         if (finalServer.isStopped()) {
-//            if (usr.isEmpty()) {
-//                usr = "ftp";
-//            }
-//            if (pass.isEmpty()) {
-//                pass = "ftp";
-//            }
-//            String subLoc = "";
+            String subLoc = l.toString().substring(20);
             try {
-                setupStart(usr, pass, "");
+                setupStart(usr, pass, subLoc);
             } catch (FileNotFoundException fnfe) {
                 /*if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -243,7 +237,7 @@ public class FtpChannal extends FlutterActivity {
         BaseUser user = new BaseUser();
         user.setName(username);
         user.setPassword(password);
-        String home = Environment.getExternalStorageDirectory().getPath() + "/";
+        String home = Environment.getExternalStorageDirectory().getPath()+"/" + subLoc;
         user.setHomeDirectory(home);
         List<Authority> auths = new ArrayList<>();
         Authority auth = new WritePermission();
