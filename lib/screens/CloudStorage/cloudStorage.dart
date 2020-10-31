@@ -4,6 +4,7 @@ import 'package:ShareApp/screens/CloudStorage/previewpagePublic.dart';
 import 'package:ShareApp/screens/CloudStorage/private_files.dart';
 import 'package:ShareApp/screens/CloudStorage/public_files.dart';
 import 'package:ShareApp/services/auth.dart';
+import 'package:ShareApp/services/download_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -102,6 +103,7 @@ class _CloudStorageState extends State<CloudStorage> {
 
   @override
   Widget build(BuildContext context) {
+    final platform = Theme.of(context).platform;
     // recordsPrivate = Storage().listPrivateFiles();
     initialize();
     // print('This is in the cloud storage file');
@@ -142,7 +144,8 @@ class _CloudStorageState extends State<CloudStorage> {
               onPressed: () {
                 print(current_index);
                 if (current_index == 0)
-                  showSearch(context: context, delegate: DataSearchPub());
+                  showSearch(
+                      context: context, delegate: DataSearchPub(platform));
                 else
                   showSearch(
                       context: context,
@@ -181,7 +184,8 @@ class _CloudStorageState extends State<CloudStorage> {
                 if (value == '2') {
                   _auth.signOut();
                 } else if (value == '1') {
-                  showSearch(context: context, delegate: DataSearchPub());
+                  showSearch(
+                      context: context, delegate: DataSearchPub(platform));
                 }
               },
             ),
@@ -317,6 +321,10 @@ class DataSearchTag extends SearchDelegate<String> {
 
 class DataSearchPub extends SearchDelegate<String> {
   List<Cloudfile> listPublic = recordsPublic;
+  final TargetPlatform platform;
+
+  DataSearchPub(this.platform);
+
   @override
   List<Widget> buildActions(BuildContext context) {
     // TODO: implement buildActions
@@ -386,6 +394,15 @@ class DataSearchPub extends SearchDelegate<String> {
                   textColor: Colors.white,
                   fontSize: 16.0);
               Clipboard.setData(new ClipboardData(text: urlInString));
+              // Code to downlaod files to save one external storage
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => MyHomePage(
+                        platform: platform,
+                        title: s[index].File_name,
+                        urlToDownlaod: urlInString)),
+              );
               Fluttertoast.showToast(
                   msg: "The URL is copied to clipboard",
                   toastLength: Toast.LENGTH_SHORT,
@@ -412,7 +429,8 @@ class DataSearchPub extends SearchDelegate<String> {
 
 class DataSearchPri extends SearchDelegate<String> {
   final FirebaseUser user;
-  DataSearchPri({this.user});
+  final TargetPlatform platform;
+  DataSearchPri({this.user, this.platform});
 
   List<Cloudfile> listPublic = recordsPrivate;
   @override
@@ -501,6 +519,15 @@ class DataSearchPri extends SearchDelegate<String> {
                       backgroundColor: Colors.black,
                       textColor: Colors.white,
                       fontSize: 16.0);
+                  // Code to downlaod files to save one external storage
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyHomePage(
+                            platform: platform,
+                            title: s[index].File_name,
+                            urlToDownlaod: urlInString)),
+                  );
                   Clipboard.setData(new ClipboardData(text: urlInString));
                   Fluttertoast.showToast(
                       msg: "URL is copied to the clipboard",
