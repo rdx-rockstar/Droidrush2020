@@ -25,106 +25,102 @@ class CustomAppBars {
     if (this._index == 0) {
       return AppBar(
         // backgroundColor: Colors.white,
-          title: Text('Local Sharing'),
-          elevation: 0.0,
-          iconTheme: new IconThemeData(color: Colors.white),
-          actions: <Widget>[
-      IconButton(
-      icon: Icon(Icons.computer_outlined),
-    onPressed:() async {
-      var status = await Permission.storage.status;
-      if (!status.isGranted) {
-        print("permission not granted 1.0");
-        await Permission.storage.request();
-      }
-    if (await Nearby().checkLocationPermission()) {
-    if (await Nearby().checkExternalStoragePermission()) {
-    if (await Nearby().checkLocationEnabled()) {
-    //Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (context) => ftpServer()));
-    } else {
-    if (await Nearby().enableLocationServices()) {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (context) => ftpServer()));
-    }
-    }
-    } else {
-    Nearby().askExternalStoragePermission();
-    if (await Nearby().checkLocationEnabled()) {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (context) => ftpServer()));
-    } else {
-    if (await Nearby().enableLocationServices()) {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (context) => ftpServer()));
-    }
-    }
-    }
-    } else {
-    if (await Nearby().askLocationPermission()) {
-    if (await Nearby().checkExternalStoragePermission()) {
-    if (await Nearby().checkLocationEnabled()) {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (context) => ftpServer()));
-    } else {
-    if (await Nearby().enableLocationServices()) {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (context) => ftpServer()));
-    }
-    }
-    } else {
-    Nearby().askExternalStoragePermission();
-    if (await Nearby().checkLocationEnabled()) {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (context) =>ftpServer()));
-    } else {
-    if (await Nearby().enableLocationServices()) {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (context) => ftpServer()));
-    }
-    }
-    }
-    }
-    }
-    }),
-    ],
-    );
+        title: Text('Local Sharing'),
+        elevation: 0.0,
+        iconTheme: new IconThemeData(color: Colors.white),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.computer_outlined),
+              onPressed: () async {
+                var status = await Permission.storage.status;
+                if (!status.isGranted) {
+                  print("permission not granted 1.0");
+                  await Permission.storage.request();
+                }
+                if (await Nearby().checkLocationPermission()) {
+                  if (await Nearby().checkExternalStoragePermission()) {
+                    if (await Nearby().checkLocationEnabled()) {
+                      //Navigator.push(context, MaterialPageRoute(builder: (context) => sharing("recieve",userName)));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => ftpServer()));
+                    } else {
+                      if (await Nearby().enableLocationServices()) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ftpServer()));
+                      }
+                    }
+                  } else {
+                    Nearby().askExternalStoragePermission();
+                    if (await Nearby().checkLocationEnabled()) {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => ftpServer()));
+                    } else {
+                      if (await Nearby().enableLocationServices()) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ftpServer()));
+                      }
+                    }
+                  }
+                } else {
+                  if (await Nearby().askLocationPermission()) {
+                    if (await Nearby().checkExternalStoragePermission()) {
+                      if (await Nearby().checkLocationEnabled()) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ftpServer()));
+                      } else {
+                        if (await Nearby().enableLocationServices()) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ftpServer()));
+                        }
+                      }
+                    } else {
+                      Nearby().askExternalStoragePermission();
+                      if (await Nearby().checkLocationEnabled()) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ftpServer()));
+                      } else {
+                        if (await Nearby().enableLocationServices()) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ftpServer()));
+                        }
+                      }
+                    }
+                  }
+                }
+              }),
+        ],
+      );
     } else if (this._index == 2) {
-    return AppBar(
-    backgroundColor: mBlueColor,
-    elevation: 0,
-    title: Text('History'),
-    iconTheme: new IconThemeData(color: Colors.white),
-    );
+      return AppBar(
+        backgroundColor: mBlueColor,
+        elevation: 0,
+        title: Text('History'),
+        iconTheme: new IconThemeData(color: Colors.white),
+      );
     } else if (this._index == 3) {
-    return AppBar(
-    backgroundColor: mBlueColor,
-    elevation: 0,
-    title: Text('Settings'),
-    iconTheme: new IconThemeData(color: Colors.white),
-    actions: <Widget>[
+      return AppBar(
+        backgroundColor: mBlueColor,
+        elevation: 0,
+        title: Text('Settings'),
+        iconTheme: new IconThemeData(color: Colors.white),
+        actions: <Widget>[
 //    IconButton(
 //    icon: Icon(Icons.notifications),
 //    onPressed: () => print('To imple')),
-    ],
-    );
+        ],
+      );
     }
   }
 }

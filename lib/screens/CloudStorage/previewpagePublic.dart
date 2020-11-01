@@ -1,3 +1,4 @@
+import 'package:ShareApp/services/download_file.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ShareApp/models/Cloudfile.dart';
@@ -5,7 +6,9 @@ import 'package:ShareApp/services/storage.dart';
 
 class pageToViewImagep extends StatefulWidget {
   final Cloudfile cloudfile;
-  const pageToViewImagep({Key key, this.cloudfile}) : super(key: key);
+  final TargetPlatform platform;
+  const pageToViewImagep({Key key, this.cloudfile, this.platform})
+      : super(key: key);
 
   @override
   _pageToViewImagepState createState() => _pageToViewImagepState();
@@ -20,8 +23,32 @@ class _pageToViewImagepState extends State<pageToViewImagep> {
       builder: (context, snapshot) {
         if (snapshot.hasData &&
             snapshot.connectionState == ConnectionState.done) {
-          return Container(
-            child: Image.network(snapshot.data),
+          return Scaffold(
+            backgroundColor: Colors.black,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              centerTitle: true,
+              title: Text("Download"),
+              actions: <Widget>[
+                IconButton(
+                    icon: Icon(Icons.download_rounded),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MyHomePage(
+                                platform: widget.platform,
+                                title: "File to Downlaod",
+                                urlToDownlaod: snapshot.data),
+                          ));
+                    }),
+              ],
+            ),
+            body: Center(
+              child: Container(
+                child: Image.network(snapshot.data),
+              ),
+            ),
           );
         } else {
           return Center(

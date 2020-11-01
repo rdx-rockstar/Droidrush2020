@@ -1,70 +1,45 @@
 import 'dart:ui';
 
 import 'package:ShareApp/constants/color_constant.dart';
-// import 'package:ShareApp/screens/Authentication/Loading.dart';
 import 'package:ShareApp/widgets/customAppbar.dart';
 import 'package:ShareApp/widgets/showScreen.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_svg/flutter_svg.dart';
-// import 'package:intl/intl.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:ShareApp/models/add_history.dart';
-// import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
+  final String userName;
+  const HomeScreen({Key key, this.userName}) : super(key: key);
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String userName;
+  SharedPreferences sharedPreferences;
   int _selectedIndex = 0;
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  // List to save data
-  // List<SaveData> check = [
-  //   // SaveData(fileName: "This is a Just Dummy message", whichSide: "Send", dateTime: "", otherUserId: "i889H"),
-  // ];
-  // SharedPreferences sharedPreferences;
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   loadSP();
-  // }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadSP();
+  }
 
-  // // LOADING THE SHARED PREFERENCES
-  // void loadSP() async {
-  //   sharedPreferences = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     saveData();
-  //   });
-  // }
+  void loadSP() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    loaduserName();
+  }
 
-  // // AND SAVING THE DATA TO SHAREDPREFERENCES
-  // void saveData() {
-  //   List<String> spList = check.map((e) => jsonEncode(e.toMap())).toList();
-  //   sharedPreferences.setStringList('check', spList);
-  //   setState(() {});
-  // }
-
-  // // TO SAVE THE DATA IN check LIST OF SAVEDATA TYPE
-  // void appendList(String fileName, String whichSide, String otherUserId) {
-  //   DateTime now = DateTime.now();
-  //   String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(now);
-  //   check.add(
-  //     SaveData(
-  //         fileName: fileName,
-  //         whichSide: whichSide,
-  //         dateTime: formattedDate,
-  //         otherUserId: otherUserId),
-  //   );
-  //   saveData();
-  // }
+  loaduserName() async {
+    userName = await sharedPreferences.getString('userName');
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,41 +51,59 @@ class _HomeScreenState extends State<HomeScreen> {
         child: new ListView(
           children: <Widget>[
             new UserAccountsDrawerHeader(
-              accountName: Text("MiA3"),
-              accountEmail: Text("fetchfrom@firebase.com"),
-              currentAccountPicture: new GestureDetector(
-                onTap: () => print('To implement This Function'),
-                // FUNCTION WHICH CAN BE
-                child: new CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: new Text("MiA3"),
-                ),
+              accountName: Text(widget.userName),
+              accountEmail: Text(""),
+              currentAccountPicture: new CircleAvatar(
+                backgroundImage: AssetImage('assets/images/fmainJ.jpg'),
               ),
             ),
+            // ListTile(
+            //   title: Text("Web Sharing"),
+            //   leading: Icon(Icons.laptop_chromebook),
+            //   onTap: () {
+            //    // Here we can add ftp transfer
+            //   },
+            // ),
             ListTile(
               title: Text("Local Sharing"),
-              leading: Icon(Icons.settings),
-              onTap: () => print('To Implement'),
+              leading: Icon(Icons.offline_share),
+              onTap: () {
+                _selectedIndex = 0;
+                Navigator.pop(context);
+                setState(() {});
+              },
             ),
             ListTile(
-              title: Text("Cloud Storage"),
-              leading: Icon(Icons.settings),
-              onTap: () => print('To Implement'),
+              title: Text("Cloud Sharing and Storage"),
+              leading: Icon(Icons.web_sharp),
+              onTap: () {
+                _selectedIndex = 1;
+                Navigator.pop(context);
+                setState(() {});
+              },
             ),
             ListTile(
               title: Text("History"),
-              leading: Icon(Icons.settings),
-              onTap: () => print('To Implement'),
+              leading: Icon(Icons.history),
+              onTap: () {
+                _selectedIndex = 2;
+                Navigator.pop(context);
+                setState(() {});
+              },
             ),
             ListTile(
-              title: Text("Setting"),
+              title: Text("Accounts"),
               leading: Icon(Icons.settings),
-              onTap: () => print('To Implement'),
+              onTap: () {
+                _selectedIndex = 3;
+                Navigator.pop(context);
+                setState(() {});
+              },
             ),
-            ListTile(
-              title: Text("About"),
-              leading: Icon(Icons.question_answer_rounded),
-            ),
+            // ListTile(
+            //   title: Text("About"),
+            //   leading: Icon(Icons.question_answer_rounded),
+            // ),
             ListTile(
               title: Text("Close"),
               leading: Icon(Icons.close_rounded),
@@ -136,10 +129,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 blurRadius: 15,
                 offset: Offset(0, 5))
           ],
-          // borderRadius: BorderRadius.only(
-          //   topLeft: Radius.circular(24),
-          //   topRight: Radius.circular(24),
-          // ),
         ),
         child: BottomNavigationBar(
           items: <BottomNavigationBarItem>[
@@ -171,7 +160,9 @@ class _HomeScreenState extends State<HomeScreen> {
           elevation: 0,
         ),
       ),
-      body: ShowScreen(index: _selectedIndex),
+      body: _selectedIndex == 3
+          ? ShowScreen(index: _selectedIndex, userName: widget.userName)
+          : ShowScreen(index: _selectedIndex),
     );
   }
 }

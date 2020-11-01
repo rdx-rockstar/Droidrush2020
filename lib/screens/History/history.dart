@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -55,7 +54,7 @@ class _HistoryState extends State<History> {
         return SmartRefresher(
           // onLoading: _onLoading(),
           enablePullDown: true,
-          enablePullUp: true,
+          enablePullUp: false,
           header: WaterDropHeader(),
           controller: _refreshController,
           onRefresh: _onRefresh,

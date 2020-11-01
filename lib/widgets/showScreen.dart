@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 
 class ShowScreen extends StatefulWidget {
   final int index;
-  ShowScreen({this.index});
+  final String userName;
+  ShowScreen({this.index, this.userName});
 
   @override
   _ShowScreenState createState() => _ShowScreenState();
@@ -16,13 +17,14 @@ class _ShowScreenState extends State<ShowScreen> {
   @override
   Widget build(BuildContext context) {
     if (widget.index == 0) {
+      setState(() {});
       return Local_Sharing();
     } else if (widget.index == 1) {
       return Wrapper();
     } else if (widget.index == 2) {
       return History();
     } else {
-      return Settings();
+      return Settings(userName: widget.userName);
     }
   }
 }

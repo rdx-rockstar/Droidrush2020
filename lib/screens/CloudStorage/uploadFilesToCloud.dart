@@ -29,6 +29,7 @@ class _uploadFilesToCloudState extends State<uploadFilesToCloud> {
       names += widget.path.keys.toList()[i];
     }
     _controller.text = names;
+    file_name = _controller.text;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
