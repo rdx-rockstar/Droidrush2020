@@ -7,6 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
+  final String userName;
+
+  const HomeScreen({Key key, this.userName}) : super(key: key);
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -14,35 +18,25 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   SharedPreferences sharedPreferences;
   int _selectedIndex = 0;
-  String userName;
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  // List to save data
-  // List<SaveData> check = [
-  //   // SaveData(fileName: "This is a Just Dummy message", whichSide: "Send", dateTime: "", otherUserId: "i889H"),
-  // ];
-  // SharedPreferences sharedPreferences;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadSP();
-  }
+    print(
+        'thisi s the meanign of the conten ti n inin tin tithat fied thta we getting ');
 
-  // LOADING THE SHARED PREFERENCES
-  void loadSP() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-    userName = sharedPreferences.getString("userName");
+    // loadSP();
   }
 
   @override
   Widget build(BuildContext context) {
     // appendList("This is a just Dummy message", "Send", "ng67e");
-    // String userName = sharedPreferences.getString('userName');
     CustomAppBars appbar = new CustomAppBars(index: this._selectedIndex);
     return Scaffold(
       appBar: appbar.getAppBar(context),
@@ -50,41 +44,50 @@ class _HomeScreenState extends State<HomeScreen> {
         child: new ListView(
           children: <Widget>[
             new UserAccountsDrawerHeader(
-              accountName: Text("userName"),
-              accountEmail: Text("fetchfrom@firebase.com"),
-              currentAccountPicture: new GestureDetector(
-                onTap: () => print('To implement This Function'),
-                // FUNCTION WHICH CAN BE
-                child: new CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: new Text("MiA3"),
-                ),
+              accountName: Text(widget.userName),
+              accountEmail: Text(""),
+              currentAccountPicture: new CircleAvatar(
+                backgroundImage: AssetImage('assets/images/fmainJ.jpg'),
               ),
+            ),
+            ListTile(
+              title: Text("Web Sharing"),
+              leading: Icon(Icons.laptop_chromebook),
+              onTap: () {
+                print('Hi ther');
+              },
             ),
             ListTile(
               title: Text("Local Sharing"),
               leading: Icon(Icons.settings),
-              onTap: () => print('To Implement'),
+              onTap: () {
+                _selectedIndex = 0;
+                Navigator.pop(context);
+                setState(() {});
+              },
             ),
             ListTile(
               title: Text("Cloud Storage"),
               leading: Icon(Icons.settings),
-              onTap: () => print('To Implement'),
+              onTap: () {
+                _selectedIndex = 1;
+                Navigator.pop(context);
+                setState(() {});
+              },
             ),
             ListTile(
-              title: Text("History"),
+              title: Text("Accounts"),
               leading: Icon(Icons.settings),
-              onTap: () => print('To Implement'),
+              onTap: () {
+                _selectedIndex = 3;
+                Navigator.pop(context);
+                setState(() {});
+              },
             ),
-            ListTile(
-              title: Text("Setting"),
-              leading: Icon(Icons.settings),
-              onTap: () => print('To Implement'),
-            ),
-            ListTile(
-              title: Text("About"),
-              leading: Icon(Icons.question_answer_rounded),
-            ),
+            // ListTile(
+            //   title: Text("About"),
+            //   leading: Icon(Icons.question_answer_rounded),
+            // ),
             ListTile(
               title: Text("Close"),
               leading: Icon(Icons.close_rounded),
