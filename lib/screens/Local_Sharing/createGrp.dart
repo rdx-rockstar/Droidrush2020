@@ -20,6 +20,7 @@ final mymessage = TextEditingController();
 Map<String, String> _paths;
 bool _isadvertising = false;
 ValueNotifier<bool> _status = ValueNotifier<bool>(false);
+ValueNotifier<bool> _advertising = ValueNotifier<bool>(false);
 Map<String, ConnectionInfo> usermap = {};
 List<String> userids = [];
 List<Message> messages = [
@@ -240,6 +241,29 @@ class _createGrpState extends State<createGrp> {
                     );
                   },
                   valueListenable: _status,
+                ),
+              ),
+              Align(
+                alignment: Alignment.topCenter,
+                child: ValueListenableBuilder(
+                  builder: (BuildContext context, bool value, Widget child) {
+                    return Row(
+                      //    status display
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            height: 20.0,
+                            color: value ? Colors.green : Colors.white,
+                            child: Center(
+                                child:
+                                Text(value ? "Advertising" : "")),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                  valueListenable: _advertising,
                 ),
               ),
               recvOneBody(userName),
@@ -495,6 +519,7 @@ class _recvOneBodyState extends State<recvOneBody> {
                 onPressed: () async {
                   if (_isadvertising == false) {
                     _isadvertising = true;
+                    _advertising.value=true;
                     try {
                       Fluttertoast.showToast(
                         msg: "Advertising",
@@ -573,6 +598,8 @@ class _recvOneBodyState extends State<recvOneBody> {
                 child: Text('End room '),
                 color: Colors.amber,
                 onPressed: () async {
+                  await Nearby().stopAdvertising();
+                  _advertising.value=false;
                   await Nearby().stopAllEndpoints();
                   if (_isadvertising && _status.value == false) {
                     Fluttertoast.showToast(

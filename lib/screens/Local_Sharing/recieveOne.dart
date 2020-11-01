@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'dart:typed_data';
 import 'package:ShareApp/screens/Local_Sharing/paths_data.dart';
 import 'package:ShareApp/screens/Local_Sharing/apk_list.dart';
@@ -16,10 +17,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 String cId = "0";
+var timer;
 final mymessage = TextEditingController();
 Map<String, String> _paths;
 bool _isadvertising = false;
 ValueNotifier<bool> _status = ValueNotifier<bool>(false);
+ValueNotifier<bool> _advertising = ValueNotifier<bool>(false);
 List<Message> messages = [
   Message(
     sender: 'Admin',
@@ -195,6 +198,29 @@ class _recieveOneState extends State<recieveOne> {
                     );
                   },
                   valueListenable: _status,
+                ),
+              ),
+              Align(
+                alignment: Alignment.topCenter,
+                child: ValueListenableBuilder(
+                  builder: (BuildContext context, bool value, Widget child) {
+                    return Row(
+                      //    status display
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            height: 20.0,
+                            color: value ? Colors.green : Colors.white,
+                            child: Center(
+                                child:
+                                Text(value ? "Advertising" : "")),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                  valueListenable: _advertising,
                 ),
               ),
               recvOneBody(userName),
@@ -447,7 +473,9 @@ class _recvOneBodyState extends State<recvOneBody> {
                 onPressed: () async {
                   if (_isadvertising == false) {
                     try {
+                      _advertising.value=true;
                       _isadvertising = true;
+                      startTimer();
                       Fluttertoast.showToast(
                         msg: "advertising",
                         backgroundColor: Colors.white,
@@ -462,6 +490,16 @@ class _recvOneBodyState extends State<recvOneBody> {
                         onConnectionResult: (id, status) {
                           if (status.toString() == "Status.CONNECTED") {
                             _status.value = true;
+                            Nearby().stopAdvertising();
+                            _advertising.value=false;
+                            _isadvertising=false;
+                            try{
+                              timer.cancel();
+                              print("timer cancelled");
+                            }
+                            catch(e){
+                              print(e);
+                            }
                           }
                         },
                         onDisconnected: (id) {
@@ -497,6 +535,15 @@ class _recvOneBodyState extends State<recvOneBody> {
                 child: Text('End Connection'),
                 color: Colors.amber,
                 onPressed: () async {
+                  await Nearby().stopAdvertising();
+                  _advertising.value=false;
+                  try{
+                    timer.cancel();
+                    print("timer cancelled");
+                  }
+                  catch(e){
+                    print(e);
+                  }
                   await Nearby().stopAllEndpoints();
                   if (_isadvertising && _status.value == false) {
                     Fluttertoast.showToast(
@@ -560,7 +607,22 @@ class _recvOneBodyState extends State<recvOneBody> {
       // ),
     ]);
   }
-
+  void startTimer(){
+    timer=Timer(Duration(seconds: 30), () async {
+      if(_status.value==false){
+        await Nearby().stopAdvertising();
+        _advertising.value=false;
+        _isadvertising=false;
+        Fluttertoast.showToast(
+          msg: "Advertising timed out",
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          fontSize: 16,
+        );
+      }
+    });
+  }
   void showSnackbar(dynamic a) {
     //    snackbar
     Scaffold.of(context).showSnackBar(SnackBar(

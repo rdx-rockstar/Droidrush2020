@@ -2,6 +2,7 @@ import 'package:device_apps/device_apps.dart';
 import 'dart:async';
 import 'package:open_file/open_file.dart';
 import 'dart:io';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ShareApp/screens/Local_Sharing/paths_data.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -39,6 +40,20 @@ class _ApkExtractorState extends State<ApkExtractor>
   }
   generateApk(String path1, String name, MemoryImage img) async {
     File f1 = new File(path1); // await UninstallApps
+    if(!Directory("/storage/emulated/0/DiGiShare").existsSync()){
+      try {
+        Directory("/storage/emulated/0/DiGiShare")
+            .createSync(recursive: true);}
+            catch (e){
+              Fluttertoast.showToast(
+                msg: "storage permissions not allowed",
+                toastLength: Toast.LENGTH_LONG,
+                backgroundColor: Colors.white,
+                textColor: Colors.black,
+                fontSize: 16,
+              );
+            }
+            }
     Directory dir = await getApplicationDocumentsDirectory();
     String path = join(dir.path, 'ApkExtractor', name);
     Directory n = Directory(path);
@@ -46,7 +61,9 @@ class _ApkExtractorState extends State<ApkExtractor>
     if (dec == false) {
       await n.create();
     }
-    f1.copy('/storage/emulated/0/$name.apk');
+    try {
+      f1.copy('/storage/emulated/0/DiGiShare/$name.apk');
+    }catch(e){}
     f1.copy(join(path, 'setup.apk'));
     File image = new File(join(path, 'image.jpeg'));
     image.writeAsBytesSync(img.bytes);

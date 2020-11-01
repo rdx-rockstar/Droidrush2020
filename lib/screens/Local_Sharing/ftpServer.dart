@@ -103,7 +103,7 @@ class ftpState extends State<ftpServer> {
                       }
                       else{
                         Fluttertoast.showToast(
-                          msg: "error1 value:"+value.toString(),
+                          msg: "Storage Permissions Denied",
                           toastLength: Toast.LENGTH_LONG,
                           backgroundColor: Colors.white,
                           textColor: Colors.black,
@@ -159,7 +159,7 @@ class ftpState extends State<ftpServer> {
                       }
                       else{
                         Fluttertoast.showToast(
-                          msg: "error0 value:"+value.toString(),
+                          msg: "Storage Permissions Denied",
                           toastLength: Toast.LENGTH_LONG,
                           backgroundColor: Colors.white,
                           textColor: Colors.black,

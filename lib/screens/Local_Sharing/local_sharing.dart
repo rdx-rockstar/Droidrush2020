@@ -5,6 +5,7 @@ import 'package:ShareApp/constants/color_constant.dart';
 import 'package:ShareApp/models/buttontapped.dart';
 import 'package:ShareApp/screens/Local_Sharing/createGrp.dart';
 import 'package:ShareApp/screens/Local_Sharing/joinGrp.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:ShareApp/screens/Local_Sharing/recieveOne.dart';
 import 'package:ShareApp/screens/Local_Sharing/sendOne.dart';
 import 'package:flutter/material.dart';
@@ -143,6 +144,11 @@ class _Local_SharingState extends State<Local_Sharing> {
             Expanded(
                 child: GestureDetector(
               onTap: () async {
+                var status = await Permission.storage.status;
+                if (!status.isGranted) {
+                  print("permission not granted 1.0");
+                  await Permission.storage.request();
+                }
                 if (await Nearby().checkLocationPermission()) {
                   if (await Nearby().checkExternalStoragePermission()) {
                     if (await Nearby().checkLocationEnabled()) {
@@ -215,6 +221,11 @@ class _Local_SharingState extends State<Local_Sharing> {
             Expanded(
                 child: GestureDetector(
               onTap: () async {
+                var status = await Permission.storage.status;
+                if (!status.isGranted) {
+                  print("permission not granted 1.0");
+                  await Permission.storage.request();
+                }
                 if (await Nearby().checkLocationPermission()) {
                   if (await Nearby().checkExternalStoragePermission()) {
                     if (await Nearby().checkLocationEnabled()) {
@@ -294,6 +305,11 @@ class _Local_SharingState extends State<Local_Sharing> {
                   child: GestureDetector(
                 // ON TAP FUCNTION FOR JOIN A GROUP
                 onTap: () async {
+                  var status = await Permission.storage.status;
+                  if (!status.isGranted) {
+                    print("permission not granted 1.0");
+                    await Permission.storage.request();
+                  }
                   if (await Nearby().checkLocationPermission()) {
                     if (await Nearby().checkExternalStoragePermission()) {
                       if (await Nearby().checkLocationEnabled()) {
@@ -367,6 +383,11 @@ class _Local_SharingState extends State<Local_Sharing> {
                   child: GestureDetector(
                 //  on tap function for join the group
                 onTap: () async {
+                  var status = await Permission.storage.status;
+                  if (!status.isGranted) {
+                    print("permission not granted 1.0");
+                    await Permission.storage.request();
+                  }
                   if (await Nearby().checkLocationPermission()) {
                     if (await Nearby().checkExternalStoragePermission()) {
                       if (await Nearby().checkLocationEnabled()) {

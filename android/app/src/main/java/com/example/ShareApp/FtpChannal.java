@@ -172,7 +172,7 @@ public class FtpChannal extends FlutterActivity {
         int ans;
         if (finalServer.isStopped()) {
             String subLoc="";
-            if(l.length()>20) {
+            if(l.length()>20 && (l.substring(0,20)).equals("/storage/emulator/0/")){
                 subLoc = l.toString().substring(20);
             }
             try {

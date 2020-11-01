@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -19,11 +20,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 //   Recieve Main APP bar
 
 String cId = "0";
+var timer;
 bool _searching = false;
 final mymessage = TextEditingController();
 Map<String, String> _paths;
 ValueNotifier<bool> _status = ValueNotifier<bool>(false);
-
+ValueNotifier<bool> _isSearching = ValueNotifier<bool>(false);
 class joinGrp extends StatefulWidget {
   String userName;
   joinGrp(String uname) {
@@ -245,6 +247,26 @@ class _joinGrpState extends State<joinGrp> {
                 },
                 valueListenable: _status,
               ),
+              ValueListenableBuilder(
+                builder: (BuildContext context, bool value, Widget child) {
+                  return Row(
+                    //    status display
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          height: 20.0,
+                          color: value ? Colors.green : Colors.white,
+                          child: Center(
+                              child:
+                              Text(value ? "Searching" : "")),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+                valueListenable: _isSearching,
+              ),
               // Now this is the sendOne body class call which creates the start and end fucntion and scan too
               Column(children: <Widget>[
                 Row(
@@ -284,6 +306,14 @@ class _joinGrpState extends State<joinGrp> {
                           color: Colors.amber,
                           onPressed: () async {
                             await Nearby().stopDiscovery();
+                            _isSearching.value=false;
+                            try{
+                              timer.cancel();
+                              print("timer cancelled");
+                            }
+                            catch(e){
+                              print(e);
+                            }
                             await Nearby().stopAllEndpoints();
                             if (_status.value == false && _searching == true) {
                               _searching = false;
@@ -415,7 +445,22 @@ class _joinGrpState extends State<joinGrp> {
       ),
     );
   }
-
+  void startTimer(){
+    timer=Timer(Duration(seconds: 30), () async {
+      if(_status.value==false){
+        await Nearby().stopDiscovery();
+        _isSearching.value=false;
+        _searching=false;
+        Fluttertoast.showToast(
+          msg: "search timed out",
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          fontSize: 16,
+        );
+      }
+    });
+  }
   void getapkpaths() async {
     final dataFromSecondPage = await Navigator.push(
       context,
@@ -471,6 +516,8 @@ class _joinGrpState extends State<joinGrp> {
 
   Future<void> discovering(int r) async {
     try {
+      _isSearching.value=true;
+      startTimer();
       bool a = await Nearby().startDiscovery(
         userName,
         strategy,
@@ -492,6 +539,11 @@ class _joinGrpState extends State<joinGrp> {
                     await Nearby().stopDiscovery();
                     _status.value = true;
                     _searching = false;
+                    _isSearching.value=false;
+                    try{
+                      timer.cancel();
+                    }
+                    catch(e){}
                   }
                 },
                 onDisconnected: (id) {

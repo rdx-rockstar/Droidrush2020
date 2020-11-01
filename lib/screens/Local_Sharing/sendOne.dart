@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'dart:typed_data';
 import 'package:ShareApp/models/message_model.dart';
 import 'package:barcode_scan/barcode_scan.dart';
@@ -17,10 +18,12 @@ import 'dart:convert';
 //   Recieve Main APP bar
 
 String cId = "0";
+var timer;
 final mymessage = TextEditingController();
 Map<String, String> _paths;
 bool _searching = false;
 ValueNotifier<bool> _status = ValueNotifier<bool>(false);
+ValueNotifier<bool> _isSearching = ValueNotifier<bool>(false);
 
 class sendOne extends StatefulWidget {
   String userName;
@@ -283,6 +286,26 @@ class _sendOneState extends State<sendOne> {
                 },
                 valueListenable: _status,
               ),
+              ValueListenableBuilder(
+                builder: (BuildContext context, bool value, Widget child) {
+                  return Row(
+                    //    status display
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          height: 20.0,
+                          color: value ? Colors.green : Colors.white,
+                          child: Center(
+                              child:
+                              Text(value ? "Searching" : "")),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+                valueListenable: _isSearching,
+              ),
               // Now this is the sendOne body class call which creates the start and end fucntion and scan too
               Column(children: <Widget>[
                 Row(
@@ -295,6 +318,8 @@ class _sendOneState extends State<sendOne> {
                           color: Colors.amber,
                           onPressed: () async {
                             if (_searching == false) {
+                              _isSearching.value=true;
+                              startTimer();
                               _searching = true;
                               Fluttertoast.showToast(
                                 msg: "Searching",
@@ -322,6 +347,14 @@ class _sendOneState extends State<sendOne> {
                           color: Colors.amber,
                           onPressed: () async {
                             await Nearby().stopDiscovery();
+                            _isSearching.value=false;
+                            try{
+                              timer.cancel();
+                              print("timer cancelled");
+                            }
+                            catch(e){
+                              print(e);
+                            }
                             await Nearby().stopAllEndpoints();
                             if (_status.value == false && _searching == true) {
                               _searching = false;
@@ -504,7 +537,22 @@ class _sendOneState extends State<sendOne> {
       setState(() => this.barcode = 'Unknown error: $e');
     }
   }
-
+  void startTimer(){
+    timer=Timer(Duration(seconds: 30), () async {
+      if(_status.value==false){
+        await Nearby().stopDiscovery();
+        _isSearching.value=false;
+        _searching=false;
+        Fluttertoast.showToast(
+          msg: "search timed out",
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          fontSize: 16,
+        );
+      }
+    });
+  }
   Future<void> discovering(int r) async {
     try {
       bool a = await Nearby().startDiscovery(
@@ -526,6 +574,16 @@ class _sendOneState extends State<sendOne> {
                 onConnectionResult: (id, status) {
                   if (status.toString() == "Status.CONNECTED") {
                     _status.value = true;
+                    _isSearching.value=false;
+                    Nearby().stopDiscovery();
+                    _searching=false;
+                    try{
+                      timer.cancel();
+                      print("timer cancelled");
+                    }
+                    catch(e){
+                      print(e);
+                    }
                   }
                   Fluttertoast.showToast(
                     msg: "" + status.toString(),
