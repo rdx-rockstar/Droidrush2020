@@ -47,13 +47,13 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               Container(
                 padding: EdgeInsets.fromLTRB(15.0, 110.0, 0.0, 0.0),
-                child: Text('Hello',
+                child: Text('Welcome to ',
                     style:
                         TextStyle(fontSize: 80.0, fontWeight: FontWeight.bold)),
               ),
               Container(
                 padding: EdgeInsets.fromLTRB(16.0, 175.0, 0.0, 0.0),
-                child: Text('There',
+                child: Text('Digi Share',
                     style:
                         TextStyle(fontSize: 80.0, fontWeight: FontWeight.bold)),
               ),

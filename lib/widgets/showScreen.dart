@@ -17,6 +17,7 @@ class _ShowScreenState extends State<ShowScreen> {
   @override
   Widget build(BuildContext context) {
     if (widget.index == 0) {
+      setState(() {});
       return Local_Sharing();
     } else if (widget.index == 1) {
       return Wrapper();

@@ -15,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String userName;
   SharedPreferences sharedPreferences;
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
@@ -27,7 +28,17 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // loadSP();
+    loadSP();
+  }
+
+  void loadSP() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    loaduserName();
+  }
+
+  loaduserName() async {
+    userName = await sharedPreferences.getString('userName');
+    setState(() {});
   }
 
   @override
@@ -40,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: new ListView(
           children: <Widget>[
             new UserAccountsDrawerHeader(
-              accountName: Text(widget.userName),
+              accountName: Text(userName),
               accountEmail: Text(""),
               currentAccountPicture: new CircleAvatar(
                 backgroundImage: AssetImage('assets/images/fmainJ.jpg'),
