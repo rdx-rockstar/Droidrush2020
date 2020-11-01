@@ -8,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   final String userName;
-
   const HomeScreen({Key key, this.userName}) : super(key: key);
 
   @override
@@ -28,9 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print(
-        'thisi s the meanign of the conten ti n inin tin tithat fied thta we getting ');
-
     // loadSP();
   }
 
@@ -50,16 +46,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundImage: AssetImage('assets/images/fmainJ.jpg'),
               ),
             ),
-            ListTile(
-              title: Text("Web Sharing"),
-              leading: Icon(Icons.laptop_chromebook),
-              onTap: () {
-                print('Hi ther');
-              },
-            ),
+            // ListTile(
+            //   title: Text("Web Sharing"),
+            //   leading: Icon(Icons.laptop_chromebook),
+            //   onTap: () {
+            //    // Here we can add ftp transfer
+            //   },
+            // ),
             ListTile(
               title: Text("Local Sharing"),
-              leading: Icon(Icons.settings),
+              leading: Icon(Icons.offline_share),
               onTap: () {
                 _selectedIndex = 0;
                 Navigator.pop(context);
@@ -67,10 +63,19 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
-              title: Text("Cloud Storage"),
-              leading: Icon(Icons.settings),
+              title: Text("Cloud Sharing and Storage"),
+              leading: Icon(Icons.web_sharp),
               onTap: () {
                 _selectedIndex = 1;
+                Navigator.pop(context);
+                setState(() {});
+              },
+            ),
+            ListTile(
+              title: Text("History"),
+              leading: Icon(Icons.history),
+              onTap: () {
+                _selectedIndex = 2;
                 Navigator.pop(context);
                 setState(() {});
               },
@@ -144,7 +149,9 @@ class _HomeScreenState extends State<HomeScreen> {
           elevation: 0,
         ),
       ),
-      body: ShowScreen(index: _selectedIndex),
+      body: _selectedIndex == 3
+          ? ShowScreen(index: _selectedIndex, userName: widget.userName)
+          : ShowScreen(index: _selectedIndex),
     );
   }
 }

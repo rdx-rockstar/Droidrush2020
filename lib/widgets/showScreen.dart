@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 
 class ShowScreen extends StatefulWidget {
   final int index;
-  ShowScreen({this.index});
+  final String userName;
+  ShowScreen({this.index, this.userName});
 
   @override
   _ShowScreenState createState() => _ShowScreenState();
@@ -22,7 +23,7 @@ class _ShowScreenState extends State<ShowScreen> {
     } else if (widget.index == 2) {
       return History();
     } else {
-      return Settings();
+      return Settings(userName: widget.userName);
     }
   }
 }

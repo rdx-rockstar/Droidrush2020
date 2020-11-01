@@ -1,12 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Settings extends StatefulWidget {
+  final String userName;
+  const Settings({this.userName});
+
   @override
   _SettingsState createState() => _SettingsState();
 }
 
 class _SettingsState extends State<Settings> {
   bool showPassword = false;
+  SharedPreferences sharedPreferences;
+  TextEditingController nameController;
+  String userName = " ";
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadSP();
+  }
+
+  void loadSP() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    loaduserName();
+  }
+
+  loaduserName() async {
+    userName = await sharedPreferences.getString('userName');
+    setState(() {});
+  }
+
+  saveuserName(String userName) async {
+    sharedPreferences.setString('userName', userName);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,39 +73,51 @@ class _SettingsState extends State<Settings> {
                           shape: BoxShape.circle,
                           image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: AssetImage('assets/images/usericon.png'),
-                            // image: NetworkImage(
-                            //   "https://images.pexels.com/photos/3307758/pexels-photo-3307758.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=250",
-                            // )
+                            image: AssetImage('assets/images/fmainJ.jpg'),
                           )),
                     ),
-                    Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              width: 4,
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                            ),
-                            color: Colors.blue,
-                          ),
-                          child: Icon(
-                            Icons.edit,
-                            color: Colors.white,
-                          ),
-                        )),
                   ],
                 ),
               ),
               SizedBox(
                 height: 35,
               ),
-              buildTextField("Full Name", "Name of user", false),
-              buildTextField("E-mail", "example@gmail.com", false),
+              // To buil text field
+              Padding(
+                padding: const EdgeInsets.only(bottom: 35.0),
+                child: TextFormField(
+                  controller: nameController,
+                  obscureText: false ? showPassword : false,
+                  onChanged: (val) {
+                    userName = val;
+                    setState(() {});
+                  },
+                  decoration: InputDecoration(
+                      suffixIcon: false
+                          ? IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  showPassword = !showPassword;
+                                });
+                              },
+                              icon: Icon(
+                                Icons.remove_red_eye,
+                                color: Colors.grey,
+                              ),
+                            )
+                          : null,
+                      contentPadding: EdgeInsets.only(bottom: 3),
+                      labelText: "Full Name",
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      hintText: userName,
+                      hintStyle: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                      )),
+                ),
+              ),
+              // buildTextField("Full Name", widget.userName, false),
+              // buildTextField("E-mail", "example@gmail.com", false),
               // buildTextField("Password", "********", true),
               SizedBox(
                 height: 35,
@@ -89,15 +129,23 @@ class _SettingsState extends State<Settings> {
                     padding: EdgeInsets.symmetric(horizontal: 50),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
-                    onPressed: () {},
-                    child: Text("CANCEL",
+                    onPressed: () {
+                      userName = "";
+                      setState(() {});
+                    },
+                    child: Text("CLEAR",
                         style: TextStyle(
                             fontSize: 14,
                             letterSpacing: 2.2,
                             color: Colors.black)),
                   ),
                   RaisedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      print(userName);
+                      saveuserName(userName);
+                      setState(() {});
+                      FocusScope.of(context).unfocus();
+                    },
                     color: Colors.blue,
                     padding: EdgeInsets.symmetric(horizontal: 50),
                     elevation: 2,
@@ -122,10 +170,15 @@ class _SettingsState extends State<Settings> {
 
   Widget buildTextField(
       String labelText, String placeholder, bool isPasswordTextField) {
+    // nameController.text = placeholder;
     return Padding(
       padding: const EdgeInsets.only(bottom: 35.0),
       child: TextField(
+        controller: nameController,
         obscureText: isPasswordTextField ? showPassword : false,
+        onChanged: (val) {
+          nameController.text = val;
+        },
         decoration: InputDecoration(
             suffixIcon: isPasswordTextField
                 ? IconButton(
