@@ -18,7 +18,8 @@ class _OnBoardScreenState extends State<OnBoardScreen> {
   dynamic getVisiting() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     bool visiting = sharedPreferences.getBool('first') ?? false;
-    String userName = sharedPreferences.getString('userName') ?? " ";
+    String userName = sharedPreferences.getString('userName');
+    if (userName == null) userName = "S";
     return new Tuple2(visiting, userName);
   }
 

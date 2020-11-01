@@ -13,10 +13,20 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'uploadFilesToCloud.dart';
 import 'package:ShareApp/services/storage.dart';
 import 'package:ShareApp/constants/color_constant.dart';
+// import 'dart:io';
 
 List<Cloudfile> recordsPublic;
 List<Cloudfile> recordsPrivate;
 List<Cloudfile> recordstag;
+
+// Navigator.push(
+//                             context,
+//                             MaterialPageRoute(
+//                                 builder: (context) => MyHomePage(
+//                                     platform: platform,
+//                                     title: project.File_name,
+//                                     urlToDownlaod: urlInString)),
+//                           );
 
 class CloudStorage extends StatefulWidget {
   final FirebaseUser user;
@@ -32,7 +42,25 @@ class _CloudStorageState extends State<CloudStorage> {
   // TabController _tabController;
   int current_index = 0;
 
-  String getFileKey() {
+  getUrl(String key, TargetPlatform platform) async {
+    String url;
+    await Storage()
+        .fetchFileFromKey(key)
+        .then((value) => url = value.toString());
+    // setState(() {});
+    // sleep(const Duration(seconds: 1));
+    setState(() {});
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => MyHomePage(
+              platform: platform,
+              title: "File To Download",
+              urlToDownlaod: url)),
+    );
+  }
+
+  void getFileKey(BuildContext context, TargetPlatform platform) {
     String File_name;
     final _formKey = GlobalKey<FormState>();
     showDialog<void>(
@@ -74,9 +102,11 @@ class _CloudStorageState extends State<CloudStorage> {
                     ),
                     RaisedButton(
                       child: Text('Get'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        return File_name;
+                      onPressed: () async {
+                        String url = await getUrl(File_name, platform);
+
+                        // Navigator.of(context).pop();
+                        // return File_name;
                       },
                     ),
                   ],
@@ -87,7 +117,7 @@ class _CloudStorageState extends State<CloudStorage> {
         );
       },
     );
-    return File_name;
+    // return File_name;
   }
 
   void initialize() async {
@@ -163,8 +193,7 @@ class _CloudStorageState extends State<CloudStorage> {
                 ? IconButton(
                     icon: Icon(Icons.file_copy),
                     onPressed: () async {
-                      String fileKey = await getFileKey();
-                      print(fileKey);
+                      await getFileKey(context, platform);
                     },
                   )
                 : SizedBox(width: 1),

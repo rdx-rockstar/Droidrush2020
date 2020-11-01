@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: new ListView(
           children: <Widget>[
             new UserAccountsDrawerHeader(
-              accountName: Text(userName),
+              accountName: Text(widget.userName),
               accountEmail: Text(""),
               currentAccountPicture: new CircleAvatar(
                 backgroundImage: AssetImage('assets/images/fmainJ.jpg'),
