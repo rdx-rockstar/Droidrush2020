@@ -499,10 +499,24 @@ class _recvOneBodyState extends State<recvOneBody> {
   }
 
   @override
-  void dispose() {
+  Future<void> dispose() async {
     //   TextField
     // Clean up the controller when the widget is disposed.
     // mymessage.dispose();
+    try {
+      await Nearby().stopAllEndpoints();
+      try {
+        await Nearby().stopAdvertising();
+      }
+      catch(e){}
+    }
+    catch(e){
+      try {
+        await Nearby().stopAdvertising();
+      }
+      catch(e){}
+    }
+    _advertising.value=false;
     super.dispose();
   }
 

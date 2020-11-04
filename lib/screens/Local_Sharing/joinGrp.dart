@@ -92,10 +92,24 @@ class _joinGrpState extends State<joinGrp> {
   }
 
   @override
-  void dispose() {
+  Future<void> dispose() async {
     //   TextField
     // Clean up the controller when the widget is disposed.
-    //mymessage.dispose();
+    //mymessage.dispose();Fstop
+    try {
+      await Nearby().stopAllEndpoints();
+      try {
+        await Nearby().stopDiscovery();
+      }
+      catch(e){}
+    }
+    catch(e){
+      try {
+        await Nearby().stopDiscovery();
+      }
+      catch(e){}
+    }
+    _isSearching.value=false;
     super.dispose();
   }
 

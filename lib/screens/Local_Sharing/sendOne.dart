@@ -91,9 +91,24 @@ class _sendOneState extends State<sendOne> {
   }
 
   @override
-  void dispose() {
+  Future<void> dispose() async {
     //   TextField
+    try {
+      await Nearby().stopAllEndpoints();
+      try {
+        await Nearby().stopDiscovery();
+      }
+      catch(e){}
+    }
+    catch(e){
+      try {
+        await Nearby().stopDiscovery();
+      }
+      catch(e){}
+    }
+    _isSearching.value=false;
     super.dispose();
+
   }
 
   // this is the chat bubble function which is ok till now
