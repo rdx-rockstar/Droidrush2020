@@ -19,13 +19,6 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="DiGi Share"
         android:icon="@mipmap/logo">
-        <activity
-            android:name=".FtpChannal">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
         <provider
               android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"

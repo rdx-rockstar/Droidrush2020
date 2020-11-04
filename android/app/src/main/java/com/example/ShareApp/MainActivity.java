@@ -1,58 +1,58 @@
 package com.example.ShareApp;
 
-import android.Manifest;
-import io.flutter.embedding.engine.FlutterEngine;
-import io.flutter.embedding.android.FlutterActivity;
-import android.app.Activity;
-import android.os.Bundle;
-import android.os.Environment;
+ import android.Manifest;
+ import io.flutter.embedding.engine.FlutterEngine;
+ import io.flutter.embedding.android.FlutterActivity;
+        import android.app.Activity;
+        import android.os.Bundle;
+        import android.os.Environment;
 
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.Result;
+        import io.flutter.plugin.common.MethodCall;
+        import io.flutter.plugin.common.MethodChannel;
+        import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
+        import io.flutter.plugin.common.MethodChannel.Result;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
+        import android.annotation.SuppressLint;
+        import android.content.Context;
+        import android.content.Intent;
+        import android.content.pm.PackageManager;
+        import android.net.wifi.WifiInfo;
+        import android.net.wifi.WifiManager;
+        import android.os.Bundle;
+        import android.os.Environment;
+        import android.util.Log;
 
-import org.apache.ftpserver.FtpServer;
-import org.apache.ftpserver.FtpServerFactory;
-import org.apache.ftpserver.ftplet.Authority;
-import org.apache.ftpserver.ftplet.FtpException;
-import org.apache.ftpserver.ftplet.FtpReply;
-import org.apache.ftpserver.ftplet.FtpRequest;
-import org.apache.ftpserver.ftplet.FtpSession;
-import org.apache.ftpserver.ftplet.Ftplet;
-import org.apache.ftpserver.ftplet.FtpletContext;
-import org.apache.ftpserver.ftplet.FtpletResult;
-import org.apache.ftpserver.ftplet.UserManager;
-import org.apache.ftpserver.listener.ListenerFactory;
-import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
-import org.apache.ftpserver.usermanager.SaltedPasswordEncryptor;
-import org.apache.ftpserver.usermanager.impl.BaseUser;
-import org.apache.ftpserver.usermanager.impl.WritePermission;
+        import org.apache.ftpserver.FtpServer;
+        import org.apache.ftpserver.FtpServerFactory;
+        import org.apache.ftpserver.ftplet.Authority;
+        import org.apache.ftpserver.ftplet.FtpException;
+        import org.apache.ftpserver.ftplet.FtpReply;
+        import org.apache.ftpserver.ftplet.FtpRequest;
+        import org.apache.ftpserver.ftplet.FtpSession;
+        import org.apache.ftpserver.ftplet.Ftplet;
+        import org.apache.ftpserver.ftplet.FtpletContext;
+        import org.apache.ftpserver.ftplet.FtpletResult;
+        import org.apache.ftpserver.ftplet.UserManager;
+        import org.apache.ftpserver.listener.ListenerFactory;
+        import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
+        import org.apache.ftpserver.usermanager.SaltedPasswordEncryptor;
+        import org.apache.ftpserver.usermanager.impl.BaseUser;
+        import org.apache.ftpserver.usermanager.impl.WritePermission;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+        import java.io.File;
+        import java.io.FileNotFoundException;
+        import java.io.IOException;
+        import java.lang.reflect.InvocationTargetException;
+        import java.lang.reflect.Method;
+        import java.util.ArrayList;
+        import java.util.HashMap;
+        import java.util.List;
+        import java.util.Map;
 
 /**
  * NearbyConnectionsPlugin
  */
-public class FtpChannal extends FlutterActivity {
+public class MainActivity extends FlutterActivity {
     private static MethodChannel channel;
     //variables
     static String pass="";
@@ -63,6 +63,11 @@ public class FtpChannal extends FlutterActivity {
     static ListenerFactory factory = new ListenerFactory();
     static PropertiesUserManagerFactory userManagerFactory = new PropertiesUserManagerFactory();
     static FtpServer finalServer;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public void configureFlutterEngine(FlutterEngine flutterEngine) {
@@ -203,16 +208,16 @@ public class FtpChannal extends FlutterActivity {
             }
         } else if (finalServer.isSuspended()) {
             try{
-            finalServer.resume();
-            ans=2;} catch (Exception e) {
+                finalServer.resume();
+                ans=2;} catch (Exception e) {
                 e.printStackTrace();
                 ans=-2;
             }
 
         } else {
             try{
-            finalServer.suspend();
-            ans=0;
+                finalServer.suspend();
+                ans=0;
             } catch (Exception e) {
                 e.printStackTrace();
                 ans=-2;
@@ -224,7 +229,7 @@ public class FtpChannal extends FlutterActivity {
     private void setupStart(String username, String password, String subLoc) throws FileNotFoundException {
         factory.setPort(2133);
         serverFactory.addListener("default", factory.createListener());
-      //  File files = new File(this.getFilesDir(), "users.properties");
+        //  File files = new File(this.getFilesDir(), "users.properties");
 
         File files = new File(Environment.getExternalStorageDirectory().getPath() + "/users.properties");
         if (!files.exists()) {

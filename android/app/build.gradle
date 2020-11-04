@@ -27,7 +27,15 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     compileSdkVersion 29
-
+//    packagingOptions {
+//        pickFirst 'libs/ftplet-api-1.1.1.jar'
+//        pickFirst 'libs/ftpserver-core-1.1.1.jar'
+//        pickFirst 'libs/log4j-1.2.17.jar'
+//        pickFirst 'libs/mina-core-2.0.16.jar'
+//        pickFirst 'libs/slf4j-api-1.7.21.jar'
+//        pickFirst 'libs/slf4j-log4j12-1.7.21.jar'
+//        pickFirst 'META-INF/DEPENDENCIES'
+//    }
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/NOTICE'
@@ -57,8 +65,11 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 flutter {
