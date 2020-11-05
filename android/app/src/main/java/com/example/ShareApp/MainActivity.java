@@ -3,7 +3,10 @@ package com.example.ShareApp;
  import android.Manifest;
  import io.flutter.embedding.engine.FlutterEngine;
  import io.flutter.embedding.android.FlutterActivity;
-        import android.app.Activity;
+ import androidx.annotation.NonNull;
+ import androidx.core.app.ActivityCompat;
+ import androidx.core.content.ContextCompat;
+ import android.app.Activity;
         import android.os.Bundle;
         import android.os.Environment;
 
@@ -96,6 +99,19 @@ public class MainActivity extends FlutterActivity {
                                 case"mad":
                                     result.success(macAddr());
                                     break;
+                                case"permissions":
+                                    boolean ans=true;
+                                    if (ContextCompat.checkSelfPermission(this,
+                                            Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                                        ans=false;
+                                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                                    }
+                                    if (ContextCompat.checkSelfPermission(this,
+                                            Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                                        ans=false;
+                                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                                    }
+                                    result.success(ans);
                                 default:
                                     result.notImplemented();
                             }

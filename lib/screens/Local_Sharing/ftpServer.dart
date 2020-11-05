@@ -281,58 +281,61 @@ class ftpState extends State<ftpServer> {
                                       await Permission.storage.request();
                                     }
                                     else{
-                                    if(!File("/storage/emulated/0/test.txt").existsSync()){
-                                      try {
-                                        File("/storage/emulated/0/test.txt")
-                                            .createSync(recursive: true);
-                                        Fluttertoast.showToast(
-                                          msg: "permissions allowed",
-                                          toastLength: Toast.LENGTH_LONG,
-                                          backgroundColor: Colors.white,
-                                          textColor: Colors.black,
-                                          fontSize: 16,
-                                        );
+                                      ask_permissions();
+                                        if (!File(
+                                            "/storage/emulated/0/test.txt")
+                                            .existsSync()) {
+                                          try {
+                                            File("/storage/emulated/0/test.txt")
+                                                .createSync(recursive: true);
+                                            Fluttertoast.showToast(
+                                              msg: "permissions allowed",
+                                              toastLength: Toast.LENGTH_LONG,
+                                              backgroundColor: Colors.white,
+                                              textColor: Colors.black,
+                                              fontSize: 16,
+                                            );
 //                                        PermissionStatus permissionResult = await SimplePermissions.requestPermission(Permission. WriteExternalStorage);
 //                                        if (permissionResult == PermissionStatus.authorized){
 //                                          // code of read or write file in external storage (SD card)
 //                                        }
-                                      }
-                                      catch(e){
-                                        print(e);
-                                        Fluttertoast.showToast(
-                                          msg: "permission not granted 1.1",
-                                          toastLength: Toast.LENGTH_LONG,
-                                          backgroundColor: Colors.white,
-                                          textColor: Colors.black,
-                                          fontSize: 16,
-                                        );
-                                      }
-                                    }
-                                    else{
-                                      try {
-                                        File("/storage/emulated/0/lol/lol.txt")
-                                            .writeAsString(
-                                            "testing permissions//share it");
-                                        Fluttertoast.showToast(
-                                          msg: "permissions allowed",
-                                          toastLength: Toast.LENGTH_LONG,
-                                          backgroundColor: Colors.white,
-                                          textColor: Colors.black,
-                                          fontSize: 16,
-                                        );
-
-                                      }
-                                      catch(e){
-                                        print (e);
-                                        Fluttertoast.showToast(
-                                          msg: "permission not granted 1.2",
-                                          toastLength: Toast.LENGTH_LONG,
-                                          backgroundColor: Colors.white,
-                                          textColor: Colors.black,
-                                          fontSize: 16,
-                                        );
-                                      }
-                                    }
+                                          }
+                                          catch (e) {
+                                            print(e);
+                                            Fluttertoast.showToast(
+                                              msg: "permission not granted 1.1",
+                                              toastLength: Toast.LENGTH_LONG,
+                                              backgroundColor: Colors.white,
+                                              textColor: Colors.black,
+                                              fontSize: 16,
+                                            );
+                                          }
+                                        }
+                                        else {
+                                          try {
+                                            File(
+                                                "/storage/emulated/0/lol/lol.txt")
+                                                .writeAsString(
+                                                "testing permissions//share it");
+                                            Fluttertoast.showToast(
+                                              msg: "permissions allowed",
+                                              toastLength: Toast.LENGTH_LONG,
+                                              backgroundColor: Colors.white,
+                                              textColor: Colors.black,
+                                              fontSize: 16,
+                                            );
+                                          }
+                                          catch (e) {
+                                            print(e);
+                                            Fluttertoast.showToast(
+                                              msg: "permission not granted 1.2",
+                                              toastLength: Toast.LENGTH_LONG,
+                                              backgroundColor: Colors.white,
+                                              textColor: Colors.black,
+                                              fontSize: 16,
+                                            );
+                                          }
+                                        }
                                     }
                                   }),
                             ]
@@ -350,12 +353,14 @@ class ftpState extends State<ftpServer> {
     return _channel.invokeMethod("create");
   }
   static Future<String> start()async {
-
     return _channel.invokeMethod("start",<String, dynamic>{
       'u': name,
       'p': password,
       'l': dir,
     });
+  }
+  static void ask_permissions()async{
+    return _channel.invokeMethod("permissions");
   }
   static Future<int> stop()async {
     return _channel.invokeMethod("stop");

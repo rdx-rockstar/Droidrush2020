@@ -100,12 +100,15 @@ class _joinGrpState extends State<joinGrp> {
       await Nearby().stopAllEndpoints();
       try {
         await Nearby().stopDiscovery();
-      }
+        timer.cancel();
+     }
       catch(e){}
     }
     catch(e){
       try {
         await Nearby().stopDiscovery();
+        timer.cancel();
+
       }
       catch(e){}
     }

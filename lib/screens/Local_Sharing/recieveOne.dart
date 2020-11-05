@@ -461,10 +461,14 @@ class _recvOneBodyState extends State<recvOneBody> {
       await Nearby().stopAllEndpoints();
       try {
         await Nearby().stopAdvertising();
+        timer.cancel();
+
       }
       catch(e){
         try {
           await Nearby().stopAdvertising();
+          timer.cancel();
+
         }
         catch(e){}
       }

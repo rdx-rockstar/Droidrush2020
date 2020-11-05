@@ -97,12 +97,14 @@ class _sendOneState extends State<sendOne> {
       await Nearby().stopAllEndpoints();
       try {
         await Nearby().stopDiscovery();
+        timer.cancel();
       }
       catch(e){}
     }
     catch(e){
       try {
         await Nearby().stopDiscovery();
+        timer.cancel();
       }
       catch(e){}
     }

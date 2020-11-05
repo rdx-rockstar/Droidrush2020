@@ -18,7 +18,8 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="DiGi Share"
-        android:icon="@mipmap/logo">
+        android:icon="@mipmap/logo"
+        android:requestLegacyExternalStorage="true">
 
         <provider
               android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"
