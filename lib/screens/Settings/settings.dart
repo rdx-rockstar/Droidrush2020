@@ -4,16 +4,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Settings extends StatefulWidget {
   final String userName;
   const Settings({this.userName});
-
   @override
   _SettingsState createState() => _SettingsState();
 }
 
 class _SettingsState extends State<Settings> {
   bool showPassword = false;
+  final _FormKey = GlobalKey<FormState>();
   SharedPreferences sharedPreferences;
-  TextEditingController nameController;
-  String userName = " ";
+  final nameController=TextEditingController();
+  String userName = "";
   @override
   void initState() {
     // TODO: implement initState
@@ -28,22 +28,36 @@ class _SettingsState extends State<Settings> {
 
   loaduserName() async {
     userName = await sharedPreferences.getString('userName');
-    setState(() {});
+//    setState(() {});
+  print (userName+" init");
+  nameController.text=userName;
   }
 
   saveuserName(String userName) async {
     sharedPreferences.setString('userName', userName);
+    print (userName+" save");
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar:AppBar(
+        backgroundColor: Colors.blueAccent,
+        elevation: 0,
+        title: Text('Settings'),
+        iconTheme: new IconThemeData(color: Colors.white),
+        actions: <Widget>[
+//    IconButton(
+//    icon: Icon(Icons.notifications),
+//    onPressed: () => print('To imple')),
+        ],
+      ),
       body: Container(
         padding: EdgeInsets.only(left: 16, top: 25, right: 16),
         child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
+//          onTap: () {
+//            FocusScope.of(context).unfocus();
+//          },
           child: ListView(
             children: [
               Text(
@@ -85,12 +99,19 @@ class _SettingsState extends State<Settings> {
               // To buil text field
               Padding(
                 padding: const EdgeInsets.only(bottom: 35.0),
-                child: TextFormField(
+    child: Container(
+    child: Form(
+    key: _FormKey,
+    child: Column(
+    children: <Widget>[
+                TextFormField(
                   controller: nameController,
                   obscureText: false ? showPassword : false,
+                  validator: (val) =>
+                  val.trim().isEmpty ? 'Enter an name' : null,
                   onChanged: (val) {
                     userName = val;
-                    setState(() {});
+//                    setState(() {});
                   },
                   decoration: InputDecoration(
                       suffixIcon: false
@@ -109,11 +130,16 @@ class _SettingsState extends State<Settings> {
                       contentPadding: EdgeInsets.only(bottom: 3),
                       labelText: "Full Name",
                       floatingLabelBehavior: FloatingLabelBehavior.always,
-                      hintText: userName,
                       hintStyle: TextStyle(
                         fontSize: 16,
                         color: Colors.black,
                       )),
+
+    ),
+      ]
+    ),
+    ),
+
                 ),
               ),
               // buildTextField("Full Name", widget.userName, false),
@@ -131,6 +157,7 @@ class _SettingsState extends State<Settings> {
                         borderRadius: BorderRadius.circular(20)),
                     onPressed: () {
                       userName = "";
+                      nameController.text="";
                       setState(() {});
                     },
                     child: Text("CLEAR",
@@ -141,10 +168,15 @@ class _SettingsState extends State<Settings> {
                   ),
                   RaisedButton(
                     onPressed: () {
-                      print(userName);
-                      saveuserName(userName);
-                      setState(() {});
-                      FocusScope.of(context).unfocus();
+//                      print(userName);
+        if (_FormKey.currentState.validate()) {
+          saveuserName(userName);
+          setState(() {
+
+          });
+        }
+//                      setState(() {});
+//                      FocusScope.of(context).unfocus();
                     },
                     color: Colors.blue,
                     padding: EdgeInsets.symmetric(horizontal: 50),
@@ -168,40 +200,40 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  Widget buildTextField(
-      String labelText, String placeholder, bool isPasswordTextField) {
-    // nameController.text = placeholder;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 35.0),
-      child: TextField(
-        controller: nameController,
-        obscureText: isPasswordTextField ? showPassword : false,
-        onChanged: (val) {
-          nameController.text = val;
-        },
-        decoration: InputDecoration(
-            suffixIcon: isPasswordTextField
-                ? IconButton(
-                    onPressed: () {
-                      setState(() {
-                        showPassword = !showPassword;
-                      });
-                    },
-                    icon: Icon(
-                      Icons.remove_red_eye,
-                      color: Colors.grey,
-                    ),
-                  )
-                : null,
-            contentPadding: EdgeInsets.only(bottom: 3),
-            labelText: labelText,
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: placeholder,
-            hintStyle: TextStyle(
-              fontSize: 16,
-              color: Colors.black,
-            )),
-      ),
-    );
-  }
+//  Widget buildTextField(
+//      String labelText, String placeholder, bool isPasswordTextField) {
+//    // nameController.text = placeholder;
+//    return Padding(
+//      padding: const EdgeInsets.only(bottom: 35.0),
+//      child: TextField(
+//        controller: nameController,
+//        obscureText: isPasswordTextField ? showPassword : false,
+//        onChanged: (val) {
+//          nameController.text = val;
+//        },
+//        decoration: InputDecoration(
+//            suffixIcon: isPasswordTextField
+//                ? IconButton(
+//                    onPressed: () {
+//                      setState(() {
+//                        showPassword = !showPassword;
+//                      });
+//                    },
+//                    icon: Icon(
+//                      Icons.remove_red_eye,
+//                      color: Colors.grey,
+//                    ),
+//                  )
+//                : null,
+//            contentPadding: EdgeInsets.only(bottom: 3),
+//            labelText: labelText,
+//            floatingLabelBehavior: FloatingLabelBehavior.always,
+//            hintText: placeholder,
+//            hintStyle: TextStyle(
+//              fontSize: 16,
+//              color: Colors.black,
+//            )),
+//      ),
+//    );
+//  }
 }

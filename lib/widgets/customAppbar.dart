@@ -104,23 +104,24 @@ class CustomAppBars {
       );
     } else if (this._index == 2) {
       return AppBar(
-        backgroundColor: mBlueColor,
+        backgroundColor: Colors.blueAccent,
         elevation: 0,
         title: Text('History'),
         iconTheme: new IconThemeData(color: Colors.white),
       );
-    } else if (this._index == 3) {
-      return AppBar(
-        backgroundColor: mBlueColor,
-        elevation: 0,
-        title: Text('Settings'),
-        iconTheme: new IconThemeData(color: Colors.white),
-        actions: <Widget>[
-//    IconButton(
-//    icon: Icon(Icons.notifications),
-//    onPressed: () => print('To imple')),
-        ],
-      );
     }
+//    else if (this._index == 3) {
+//      return AppBar(
+//        backgroundColor: mBlueColor,
+//        elevation: 0,
+//        title: Text('Settings'),
+//        iconTheme: new IconThemeData(color: Colors.white),
+//        actions: <Widget>[
+////    IconButton(
+////    icon: Icon(Icons.notifications),
+////    onPressed: () => print('To imple')),
+//        ],
+//      );
+//    }
   }
 }

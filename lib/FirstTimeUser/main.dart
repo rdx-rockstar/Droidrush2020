@@ -90,21 +90,22 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(height: 40.0),
                 Container(
                   height: 40.0,
+                  child: GestureDetector(
+                    onTap: () {
+                      userNameSet(userName);
+                      print(userName);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  HomeScreen(userName: userName)));
+                    },
                   child: Material(
                     borderRadius: BorderRadius.circular(20.0),
                     shadowColor: Colors.black,
                     color: Colors.blue,
                     elevation: 7.0,
-                    child: GestureDetector(
-                      onTap: () {
-                        userNameSet(userName);
-                        print(userName);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    HomeScreen(userName: userName)));
-                      },
+
                       child: Center(
                         child: Text(
                           'Continue',

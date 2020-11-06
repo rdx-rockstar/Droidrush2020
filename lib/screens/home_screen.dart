@@ -15,7 +15,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String userName;
+  String userName="";
+  var ua;
   SharedPreferences sharedPreferences;
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
@@ -29,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // TODO: implement initState
     super.initState();
     loadSP();
+    print("drawer init");
   }
 
   void loadSP() async {
@@ -37,21 +39,30 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   loaduserName() async {
-    userName = await sharedPreferences.getString('userName');
+    userName = sharedPreferences.getString('userName');
     setState(() {});
+    print(userName +" f1");
+  }
+  loaduserName2() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    userName =  sharedPreferences.getString('userName');
+    ua.accountName=userName;
+    print(userName +" f2");
   }
 
   @override
   Widget build(BuildContext context) {
     // appendList("This is a just Dummy message", "Send", "ng67e");
     CustomAppBars appbar = new CustomAppBars(index: this._selectedIndex);
+     loaduserName2();
+    print("at build home");
     return Scaffold(
       appBar: appbar.getAppBar(context),
       drawer: new Drawer(
         child: new ListView(
           children: <Widget>[
-            new UserAccountsDrawerHeader(
-              accountName: Text(widget.userName),
+            ua=new UserAccountsDrawerHeader(
+              accountName: Text(userName+""),
               accountEmail: Text(""),
               currentAccountPicture: new CircleAvatar(
                 backgroundImage: AssetImage('assets/images/fmainJ.jpg'),
