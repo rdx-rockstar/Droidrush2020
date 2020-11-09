@@ -22,7 +22,7 @@ class _WrapperState extends State<Wrapper> {
   void initState() {
     super.initState();
     Future(() async {
-      _timer = Timer.periodic(Duration(seconds: 5), (timer) async {
+      _timer = Timer.periodic(Duration(seconds: 3), (timer) async {
         await FirebaseAuth.instance.currentUser()..reload();
         var user = await FirebaseAuth.instance.currentUser();
         if (user.isEmailVerified) {
@@ -47,12 +47,37 @@ class _WrapperState extends State<Wrapper> {
   Widget build(BuildContext context) {
     FirebaseUser user = Provider.of<FirebaseUser>(context);
     print(user);
-    if (user == null || !_isUserEmailVerified ) {
-      return Authentication();
+    return Container(
+        child: FutureBuilder(
+            future: getArchieved(),
+            builder: (context, data) {
+              if (data.hasData) {
+                print("not null");
+                if(user != null && _isUserEmailVerified ) {
+                  print('22 The user which is entering the CloudStorage ${user.toString()}');
+                  return CloudStorage(user: user);
+                }
+                else {
+                  return Authentication();
+                }
+              } else {
+                print("null");
+                return Center(child: CircularProgressIndicator());
+              }
+            }));
+  }
+  getArchieved() async {
+    print("at arch");
+    await FirebaseAuth.instance.currentUser()..reload();
+    var user = await FirebaseAuth.instance.currentUser();
+    if (user.isEmailVerified) {
+        _isUserEmailVerified = user.isEmailVerified;
+      _timer.cancel();
     }
-    else if(user.isEmailVerified) {
-      print('The user which is entering the CloudStorage ${user.toString()}');
-      return CloudStorage(user: user);
-    }
+    Future<String> _calculation = Future<String>.delayed(
+      Duration(milliseconds: 0),
+          () => 'Data Loaded',
+    );
+    return _calculation;
   }
 }

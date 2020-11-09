@@ -46,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
   loaduserName2() async {
     sharedPreferences = await SharedPreferences.getInstance();
     userName =  sharedPreferences.getString('userName');
-    ua.accountName=userName;
     print(userName +" f2");
   }
 

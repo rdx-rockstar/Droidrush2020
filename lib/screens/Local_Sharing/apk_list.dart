@@ -72,7 +72,7 @@ class _ApkExtractorState extends State<ApkExtractor>
   }
 
   getArchieved() async {
-    // print("Coming at get Archeived");
+     print("Coming at get Archeived");
     Directory dir = await getApplicationDocumentsDirectory();
     print(dir);
     String path = join(dir.path, 'ApkExtractor');
@@ -328,6 +328,7 @@ class _ApkExtractorState extends State<ApkExtractor>
                   future: getArchieved(),
                   builder: (context, data) {
                     if (data.data != null) {
+                      print("not null");
                       List<dynamic> li = data.data;
                       return ListView.builder(
                           key: g1,
@@ -419,6 +420,7 @@ class _ApkExtractorState extends State<ApkExtractor>
                               return Container();
                           });
                     } else {
+                      print("null");
                       return Center(child: CircularProgressIndicator());
                     }
                   })),
