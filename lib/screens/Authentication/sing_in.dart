@@ -437,7 +437,7 @@ class _SignInState extends State<SignIn> {
                                       }
                                     },
                                     child: Text(
-                                      "Sign In with Google",
+                                      "Sign In",
                                       style: TextStyle(
                                           color:
                                               Color.fromRGBO(143, 148, 251, 1)),

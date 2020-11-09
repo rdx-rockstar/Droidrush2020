@@ -289,9 +289,9 @@ class _RegisterState extends State<Register> {
                                             if (val.length < 6) {
                                               return "Enter a password 6 chars long";
                                             } else if (password != val) {
-                                              return "Paswword Do Not Match";
+                                              return "Password Do Not Match";
                                             } else
-                                              null;
+                                              return null;
                                           },
                                           // val.length < 6
                                           //     ? 'Enter a password 6 chars long'
@@ -327,7 +327,6 @@ class _RegisterState extends State<Register> {
                             ),
                             GestureDetector(
                               onTap: () async {
-                                setState(() => loading = true);
                                 if (_formKey.currentState.validate()) {
                                   setState(() => loading = true);
                                   dynamic result =
@@ -439,7 +438,7 @@ class _RegisterState extends State<Register> {
                                       }
                                     },
                                     child: Text(
-                                      "Register with ",
+                                      "Register",
                                       style: TextStyle(
                                           color:
                                               Color.fromRGBO(143, 148, 251, 1)),

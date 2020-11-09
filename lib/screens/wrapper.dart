@@ -68,12 +68,15 @@ class _WrapperState extends State<Wrapper> {
   }
   getArchieved() async {
     print("at arch");
-    await FirebaseAuth.instance.currentUser()..reload();
-    var user = await FirebaseAuth.instance.currentUser();
-    if (user.isEmailVerified) {
+    try {
+      await FirebaseAuth.instance.currentUser()
+        ..reload();
+      var user = await FirebaseAuth.instance.currentUser();
+      if (user.isEmailVerified) {
         _isUserEmailVerified = user.isEmailVerified;
-      _timer.cancel();
+      }
     }
+    catch(e){}
     Future<String> _calculation = Future<String>.delayed(
       Duration(milliseconds: 0),
           () => 'Data Loaded',
