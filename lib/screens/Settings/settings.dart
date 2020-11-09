@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+final _FormKey = GlobalKey<FormState>();
 class Settings extends StatefulWidget {
   final String userName;
   const Settings({this.userName});
@@ -10,7 +10,7 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   bool showPassword = false;
-  final _FormKey = GlobalKey<FormState>();
+
   SharedPreferences sharedPreferences;
   final nameController=TextEditingController();
   String userName = "";

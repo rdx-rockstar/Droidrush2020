@@ -16,7 +16,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String userName="";
-  var ua;
   SharedPreferences sharedPreferences;
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
@@ -43,30 +42,36 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {});
     print(userName +" f1");
   }
-  loaduserName2() async {
-    sharedPreferences = await SharedPreferences.getInstance();
-    userName =  sharedPreferences.getString('userName');
-    print(userName +" f2");
-  }
 
   @override
   Widget build(BuildContext context) {
     // appendList("This is a just Dummy message", "Send", "ng67e");
     CustomAppBars appbar = new CustomAppBars(index: this._selectedIndex);
-     loaduserName2();
     print("at build home");
     return Scaffold(
       appBar: appbar.getAppBar(context),
       drawer: new Drawer(
         child: new ListView(
+
           children: <Widget>[
-            ua=new UserAccountsDrawerHeader(
-              accountName: Text(userName+""),
-              accountEmail: Text(""),
-              currentAccountPicture: new CircleAvatar(
-                backgroundImage: AssetImage('assets/images/fmainJ.jpg'),
-              ),
-            ),
+    Container(
+    child: FutureBuilder(
+    future: getArchieved(),
+    builder: (context, data) {
+    if (data.hasData) {
+      return new UserAccountsDrawerHeader(
+        accountName: Text(userName+""),
+        accountEmail: Text(""),
+        currentAccountPicture: new CircleAvatar(
+          backgroundImage: AssetImage('assets/images/fmainJ.jpg'),
+        ),
+      );
+    }
+    else{
+      return Center(child: CircularProgressIndicator());
+    }
+    })),
+
             // ListTile(
             //   title: Text("Web Sharing"),
             //   leading: Icon(Icons.laptop_chromebook),
@@ -174,5 +179,16 @@ class _HomeScreenState extends State<HomeScreen> {
           ? ShowScreen(index: _selectedIndex, userName: widget.userName)
           : ShowScreen(index: _selectedIndex),
     );
+  }
+  getArchieved() async {
+    print("at arch");
+    sharedPreferences = await SharedPreferences.getInstance();
+    userName =  sharedPreferences.getString('userName');
+    print(userName +" f2");
+    Future<String> _calculation = Future<String>.delayed(
+      Duration(milliseconds: 0),
+          () => 'Data Loaded',
+    );
+    return _calculation;
   }
 }
