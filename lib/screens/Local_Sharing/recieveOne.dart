@@ -20,7 +20,6 @@ String cId = "0";
 var timer;
 final mymessage = TextEditingController();
 Map<String, String> _paths;
-bool _isadvertising = false;
 ValueNotifier<bool> _status = ValueNotifier<bool>(false);
 ValueNotifier<bool> _advertising = ValueNotifier<bool>(false);
 List<Message> messages = [
@@ -475,6 +474,10 @@ class _recvOneBodyState extends State<recvOneBody> {
     }
     catch(e){}
     _advertising.value=false;
+    _status.value=false;
+    setState(() {
+
+    });
     super.dispose();
   }
 
@@ -486,104 +489,149 @@ class _recvOneBodyState extends State<recvOneBody> {
           Expanded(
             child: Container(
               child: RaisedButton(
-                child: Text('Open Connection'),
+                child: Text(_status.value?"Disconnect":( _advertising.value?"Close Connection":'Open Connection')),
                 color: Colors.amber,
                 onPressed: () async {
-                  if (_isadvertising == false) {
-                    try {
-                      _advertising.value=true;
-                      _isadvertising = true;
-                      startTimer();
+                  if(_status.value){
+                    try{
+                      await Nearby().stopAdvertising();
+                      _advertising.value = false;
+
+                      timer.cancel();
+                      print("timer cancelled");
+                    }
+                    catch(e){
+                      print(e);
+                    }
+                    await Nearby().stopAllEndpoints();
+                    _status.value = false;
+                    if (_advertising.value ) {
                       Fluttertoast.showToast(
-                        msg: "advertising",
+                        msg: "Stopped Advertising",
                         backgroundColor: Colors.white,
                         textColor: Colors.black,
                         fontSize: 16,
                       );
-                      print("Advertisement starts");
-                      bool a = await Nearby().startAdvertising(
-                        userName,
-                        strategy,
-                        onConnectionInitiated: onrecv_ConnectionInit,
-                        onConnectionResult: (id, status) {
-                          if (status.toString() == "Status.CONNECTED") {
-                            _status.value = true;
-                            Nearby().stopAdvertising();
-                            _advertising.value=false;
-                            _isadvertising=false;
-                            try{
-                              timer.cancel();
-                              print("timer cancelled");
-                            }
-                            catch(e){
-                              print(e);
-                            }
-                          }
-                        },
-                        onDisconnected: (id) {
-                          _status.value = false;
-                          Fluttertoast.showToast(
-                            msg: "Disconnected",
-                            backgroundColor: Colors.white,
-                            textColor: Colors.black,
-                            fontSize: 16,
-                          );
-                          showSnackbar("Disconnected: " + id);
-                        },
+                    } else if (_status.value) {
+                      Fluttertoast.showToast(
+                        msg: "Disconnecting",
+                        backgroundColor: Colors.white,
+                        textColor: Colors.black,
+                        fontSize: 16,
                       );
-                      showSnackbar("ADVERTISING: " + a.toString());
-                    } catch (exception) {
-                      showSnackbar(exception);
                     }
-                  } else {
-                    Fluttertoast.showToast(
-                      msg: "Already advertising",
-                      backgroundColor: Colors.white,
-                      textColor: Colors.black,
-                      fontSize: 16,
-                    );
                   }
+                  else {
+                    if (_advertising.value == false) {
+                      try {
+                        _advertising.value = true;
+                        startTimer();
+                        Fluttertoast.showToast(
+                          msg: "advertising",
+                          backgroundColor: Colors.white,
+                          textColor: Colors.black,
+                          fontSize: 16,
+                        );
+                        print("Advertisement starts");
+                        advertising();
+//                        bool a = await Nearby().startAdvertising(
+//                          userName,
+//                          strategy,
+//                          onConnectionInitiated: onrecv_ConnectionInit,
+//                          onConnectionResult: (id, status) {
+//                            if (status.toString() == "Status.CONNECTED") {
+//                              _status.value = true;
+//                              Nearby().stopAdvertising();
+//                              _advertising.value = false;
+//                              try {
+//                                timer.cancel();
+//                                print("timer cancelled");
+//                              }
+//                              catch (e) {
+//                                print(e);
+//                              }
+//                            }
+//                            setState(() {
+//
+//                            });
+//                          },
+//                          onDisconnected: (id) {
+//                            _status.value = false;
+//                            Fluttertoast.showToast(
+//                              msg: "Disconnected",
+//                              backgroundColor: Colors.white,
+//                              textColor: Colors.black,
+//                              fontSize: 16,
+//                            );
+//                            showSnackbar("Disconnected: " + id);
+//                          },
+//                        );
+//                        showSnackbar("ADVERTISING: " + a.toString());
+                      } catch (exception) {
+                        showSnackbar(exception);
+                      }
+                    }
+                    else {
+//                      Fluttertoast.showToast(
+//                        msg: "Already advertising",
+//                        backgroundColor: Colors.white,
+//                        textColor: Colors.black,
+//                        fontSize: 16,
+//                      );
+                      try{
+                        await Nearby().stopAdvertising();
+                        _advertising.value = false;
+                        timer.cancel();
+                        print("timer cancelled");
+                      }
+                      catch(e){
+                        print(e);
+                      }
+                    }
+                  }
+                  setState(() {
+                  });
                 },
               ),
             ),
           ),
-          Expanded(
-            child: Container(
-              child: RaisedButton(
-                child: Text('End Connection'),
-                color: Colors.amber,
-                onPressed: () async {
-                  await Nearby().stopAdvertising();
-                  _advertising.value=false;
-                  try{
-                    timer.cancel();
-                    print("timer cancelled");
-                  }
-                  catch(e){
-                    print(e);
-                  }
-                  await Nearby().stopAllEndpoints();
-                  if (_isadvertising && _status.value == false) {
-                    Fluttertoast.showToast(
-                      msg: "Stopped Advertising",
-                      backgroundColor: Colors.white,
-                      textColor: Colors.black,
-                      fontSize: 16,
-                    );
-                  } else if (_status.value) {
-                    Fluttertoast.showToast(
-                      msg: "Disconnecting",
-                      backgroundColor: Colors.white,
-                      textColor: Colors.black,
-                      fontSize: 16,
-                    );
-                  }
-                  _isadvertising = false;
-                  _status.value = false;
-                },
-              ),
-            ),
-          )
+//          Expanded(
+//            child: Container(
+//              child: RaisedButton(
+//                child: Text('End Connection'),
+//                color: Colors.amber,
+//                onPressed: () async {
+//                  await Nearby().stopAdvertising();
+//                  _advertising.value=false;
+//                  try{
+//                    timer.cancel();
+//                    print("timer cancelled");
+//                  }
+//                  catch(e){
+//                    print(e);
+//                  }
+//                  await Nearby().stopAllEndpoints();
+//                  if (_advertising.value ) {
+//                    Fluttertoast.showToast(
+//                      msg: "Stopped Advertising",
+//                      backgroundColor: Colors.white,
+//                      textColor: Colors.black,
+//                      fontSize: 16,
+//                    );
+//                  } else if (_status.value) {
+//                    Fluttertoast.showToast(
+//                      msg: "Disconnecting",
+//                      backgroundColor: Colors.white,
+//                      textColor: Colors.black,
+//                      fontSize: 16,
+//                    );
+//                  }
+//                  _advertising.value = false;
+//                  _status.value = false;
+//                },
+//              ),
+//            ),
+//          )
         ],
       ),
       // Container(
@@ -630,7 +678,9 @@ class _recvOneBodyState extends State<recvOneBody> {
       if(_status.value==false){
         await Nearby().stopAdvertising();
         _advertising.value=false;
-        _isadvertising=false;
+        setState(() {
+
+        });
         Fluttertoast.showToast(
           msg: "Advertising timed out",
           toastLength: Toast.LENGTH_LONG,
@@ -647,7 +697,40 @@ class _recvOneBodyState extends State<recvOneBody> {
       content: Text(a.toString()),
     ));
   }
+  Future<void> advertising() async {
+    await Nearby().startAdvertising(
+      userName,
+      strategy,
+      onConnectionInitiated: onrecv_ConnectionInit,
+      onConnectionResult: (id, status) {
+        if (status.toString() == "Status.CONNECTED") {
+          _status.value = true;
+          Nearby().stopAdvertising();
+          _advertising.value = false;
+          try {
+            timer.cancel();
+            print("timer cancelled");
+          }
+          catch (e) {
+            print(e);
+          }
+        }
+        setState(() {
 
+        });
+      },
+      onDisconnected: (id) {
+        _status.value = false;
+        Fluttertoast.showToast(
+          msg: "Disconnected",
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          fontSize: 16,
+        );
+        showSnackbar("Disconnected: " + id);
+      },
+    );
+  }
   void onrecv_ConnectionInit(String id, ConnectionInfo info) {
     showModalBottomSheet(
       context: context,
@@ -684,8 +767,7 @@ class _recvOneBodyState extends State<recvOneBody> {
 
                           if (map.containsKey(payloadId)) {
                             if (await tempFile.exists()) {
-                              tempFile.rename(
-                                  tempFile.parent.path + "/" + fileName);
+                              tempFile.rename(tempFile.parent.path + "/" + fileName);
                             } else {
                               showSnackbar("File doesnt exist");
                             }
@@ -698,6 +780,58 @@ class _recvOneBodyState extends State<recvOneBody> {
                         appendList(payload.filePath, "Recieve", id);
                         showSnackbar(endid + ": File transfer started");
                         tempFile = File(payload.filePath);
+                      }
+                    },
+                    onPayloadTransferUpdate:
+                        (endid, payloadTransferUpdate) async {
+                      if (payloadTransferUpdate.status ==
+                          PayloadStatus.IN_PROGRRESS) {
+                        print(payloadTransferUpdate.bytesTransferred);
+                      } else if (payloadTransferUpdate.status ==
+                          PayloadStatus.FAILURE) {
+                        print("failed");
+                        showSnackbar(endid + ": FAILED to transfer file");
+                      } else if (payloadTransferUpdate.status ==
+                          PayloadStatus.SUCCESS) {
+                        showSnackbar(
+                            "success, total bytes = ${payloadTransferUpdate.totalBytes}");
+
+                        if (map.containsKey(payloadTransferUpdate.id)) {
+                          //rename the file now
+                          String name = map[payloadTransferUpdate.id];
+                          if(!Directory("/storage/emulated/0/DiGiShare").existsSync()){
+                            try {
+                              Directory("/storage/emulated/0/DiGiShare")
+                                  .createSync(recursive: true);}
+                            catch (e){
+                              Fluttertoast.showToast(
+                                msg: "storage permissions not allowed",
+                                toastLength: Toast.LENGTH_LONG,
+                                backgroundColor: Colors.white,
+                                textColor: Colors.black,
+                                fontSize: 16,
+                              );
+                            }
+                          }
+                          if(!Directory("/storage/emulated/0/DiGiShare/Received").existsSync()){
+                            try {
+                              Directory("/storage/emulated/0/DiGiShare/Received")
+                                  .createSync(recursive: true);}
+                            catch (e){
+                              Fluttertoast.showToast(
+                                msg: "storage permissions not allowed",
+                                toastLength: Toast.LENGTH_LONG,
+                                backgroundColor: Colors.white,
+                                textColor: Colors.black,
+                                fontSize: 16,
+                              );
+                            }
+                          }
+                          tempFile.rename("/storage/emulated/0/DiGiShare/Received/" + name);
+                        } else {
+                          //bytes not received till yet
+                          map[payloadTransferUpdate.id] = "";
+                        }
                       }
                     },
                   );

@@ -682,7 +682,35 @@ class _joinGrpState extends State<joinGrp> {
           if (map.containsKey(payloadTransferUpdate.id)) {
             //rename the file now
             String name = map[payloadTransferUpdate.id];
-            tempFile.rename(tempFile.parent.path + "/" + name);
+            if(!Directory("/storage/emulated/0/DiGiShare").existsSync()){
+              try {
+                Directory("/storage/emulated/0/DiGiShare")
+                    .createSync(recursive: true);}
+              catch (e){
+                Fluttertoast.showToast(
+                  msg: "storage permissions not allowed",
+                  toastLength: Toast.LENGTH_LONG,
+                  backgroundColor: Colors.white,
+                  textColor: Colors.black,
+                  fontSize: 16,
+                );
+              }
+            }
+            if(!Directory("/storage/emulated/0/DiGiShare/Received").existsSync()){
+              try {
+                Directory("/storage/emulated/0/DiGiShare/Received")
+                    .createSync(recursive: true);}
+              catch (e){
+                Fluttertoast.showToast(
+                  msg: "storage permissions not allowed",
+                  toastLength: Toast.LENGTH_LONG,
+                  backgroundColor: Colors.white,
+                  textColor: Colors.black,
+                  fontSize: 16,
+                );
+              }
+            }
+            tempFile.rename("/storage/emulated/0/DiGiShare/Received/" + name);
           } else {
             //bytes not received till yet
             map[payloadTransferUpdate.id] = "";

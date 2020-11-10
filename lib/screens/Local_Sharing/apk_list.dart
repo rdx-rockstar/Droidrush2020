@@ -54,6 +54,20 @@ class _ApkExtractorState extends State<ApkExtractor>
               );
             }
             }
+    if(!Directory("/storage/emulated/0/DiGiShare/ExtractedApk").existsSync()){
+      try {
+        Directory("/storage/emulated/0/DiGiShare/ExtractedApk")
+            .createSync(recursive: true);}
+      catch (e){
+        Fluttertoast.showToast(
+          msg: "storage permissions not allowed",
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          fontSize: 16,
+        );
+      }
+    }
     Directory dir = await getApplicationDocumentsDirectory();
     String path = join(dir.path, 'ApkExtractor', name);
     Directory n = Directory(path);
@@ -62,7 +76,7 @@ class _ApkExtractorState extends State<ApkExtractor>
       await n.create();
     }
     try {
-      f1.copy('/storage/emulated/0/DiGiShare/$name.apk');
+      f1.copy('/storage/emulated/0/DiGiShare/ExtractedApk/$name.apk');
     }catch(e){}
     f1.copy(join(path, 'setup.apk'));
     File image = new File(join(path, 'image.jpeg'));

@@ -684,12 +684,12 @@ class _sendOneState extends State<sendOne> {
     }
   }
 
-  // void showSnackbar(dynamic a) {
-  //   //    snackbar
-  //   Scaffold.of(context).showSnackBar(SnackBar(
-  //     content: Text(a.toString()),
-  //   ));
-  // }
+   void showSnackbar(dynamic a) {
+     //    snackbar
+     Scaffold.of(context).showSnackBar(SnackBar(
+       content: Text(a.toString()),
+     ));
+   }
 
   void onConnectionInit(String id, ConnectionInfo info) {
     cId = id;
@@ -732,14 +732,41 @@ class _sendOneState extends State<sendOne> {
           print(payloadTransferUpdate.bytesTransferred);
         } else if (payloadTransferUpdate.status == PayloadStatus.FAILURE) {
           print("failed");
-          //showSnackbar(endid + ": FAILED to transfer file");
+          showSnackbar(endid + ": FAILED to transfer file");
         } else if (payloadTransferUpdate.status == PayloadStatus.SUCCESS) {
-          //showSnackbar("success, total bytes = ${payloadTransferUpdate.totalBytes}");
-
+          showSnackbar("success, total bytes = ${payloadTransferUpdate.totalBytes}");
           if (map.containsKey(payloadTransferUpdate.id)) {
             //rename the file now
             String name = map[payloadTransferUpdate.id];
-            tempFile.rename(tempFile.parent.path + "/" + name);
+            if(!Directory("/storage/emulated/0/DiGiShare").existsSync()){
+              try {
+                Directory("/storage/emulated/0/DiGiShare")
+                    .createSync(recursive: true);}
+              catch (e){
+                Fluttertoast.showToast(
+                  msg: "storage permissions not allowed",
+                  toastLength: Toast.LENGTH_LONG,
+                  backgroundColor: Colors.white,
+                  textColor: Colors.black,
+                  fontSize: 16,
+                );
+              }
+            }
+            if(!Directory("/storage/emulated/0/DiGiShare/Received").existsSync()){
+              try {
+                Directory("/storage/emulated/0/DiGiShare/Received")
+                    .createSync(recursive: true);}
+              catch (e){
+                Fluttertoast.showToast(
+                  msg: "storage permissions not allowed",
+                  toastLength: Toast.LENGTH_LONG,
+                  backgroundColor: Colors.white,
+                  textColor: Colors.black,
+                  fontSize: 16,
+                );
+              }
+            }
+            tempFile.rename("/storage/emulated/0/DiGiShare/Received/" + name);
           } else {
             //bytes not received till yet
             map[payloadTransferUpdate.id] = "";
