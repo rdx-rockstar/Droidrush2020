@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:ShareApp/models/message_model.dart';
+import 'package:ShareApp/screens/History/received.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,7 @@ class sendOne extends StatefulWidget {
 
 class _sendOneState extends State<sendOne> {
   File tempFile;
+  ScrollController _scrollController = new ScrollController();
   final Strategy strategy =
       Strategy.P2P_POINT_TO_POINT; //   Strategy of connection (P2P)
   Map<int, String> map =
@@ -281,7 +283,16 @@ class _sendOneState extends State<sendOne> {
                 onPressed: () {
                   getapkpaths();
                 },
-              )
+              ),
+              IconButton(
+                icon: Icon(Icons.file_download),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Downloads()));
+                },
+              ),
             ],
           ),
         ),
@@ -434,7 +445,7 @@ class _sendOneState extends State<sendOne> {
                 child: Row(
                   children: <Widget>[
                     IconButton(
-                      icon: Icon(Icons.photo),
+                      icon: Icon(Icons.attach_file),
                       iconSize: 25.0,
                       color: Theme.of(context).primaryColor,
                       onPressed: () async {
@@ -488,6 +499,14 @@ class _sendOneState extends State<sendOne> {
                           }
                           _paths = null;
                         }
+                        setState(() {
+
+                        });
+                        _scrollController.animateTo(
+                          0.0,
+                          curve: Curves.easeOut,
+                          duration: const Duration(milliseconds: 300),
+                        );
                         Message n = new Message();
                         n.sender = userName;
                         n.text = mymessage.text;
@@ -499,6 +518,11 @@ class _sendOneState extends State<sendOne> {
                             setState(() {
                               _messages.add(n);
                             });
+                            _scrollController.animateTo(
+                              0.0,
+                              curve: Curves.easeOut,
+                              duration: const Duration(milliseconds: 300),
+                            );
                           } else {
                             Fluttertoast.showToast(
                               msg: "The Device is Disconnected",
@@ -545,6 +569,7 @@ class _sendOneState extends State<sendOne> {
   ListView buildListView() {
     return ListView.builder(
       reverse: false,
+      controller: _scrollController,
       itemCount: _messages.length,
       itemBuilder: (BuildContext context, int index) {
         bool isMe = !(Reciver_name == _messages[index].sender);
@@ -766,6 +791,11 @@ class _sendOneState extends State<sendOne> {
           setState(() {
 
           });
+          _scrollController.animateTo(
+            0.0,
+            curve: Curves.easeOut,
+            duration: const Duration(milliseconds: 300),
+          );
           //showSnackbar(endid + ": " + str);
 
           if (str.contains(':')) {

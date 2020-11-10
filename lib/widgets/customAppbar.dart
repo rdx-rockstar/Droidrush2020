@@ -1,3 +1,4 @@
+import 'package:ShareApp/screens/History/received.dart';
 import 'package:flutter/material.dart';
 import 'package:ShareApp/constants/color_constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -108,6 +109,17 @@ class CustomAppBars {
         elevation: 0,
         title: Text('History'),
         iconTheme: new IconThemeData(color: Colors.white),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.file_download),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Downloads()));
+              },
+          ),
+        ],
       );
     }
 //    else if (this._index == 3) {
