@@ -14,13 +14,23 @@ import 'package:nearby_connections/nearby_connections.dart';
 // import 'package:ShareApp/models/try_switch.dart';
 
 class Local_Sharing extends StatefulWidget {
+  String uuname="";
+  Local_Sharing(String u){
+    this.uuname=u;
+    print(uuname+" kkk");
+  }
   @override
-  _Local_SharingState createState() => _Local_SharingState();
+  _Local_SharingState createState() => _Local_SharingState(uuname);
 }
 
 class _Local_SharingState extends State<Local_Sharing> {
-  final String userName = Random().nextInt(10000).toString();
+  String userName="";
   bool toggleValue = false;
+  _Local_SharingState(String uname){
+    this.userName=uname;
+    print(userName+" ppp");
+
+  }
   // bool check = CrazySwitch.isChecked;
   @override
   Widget build(BuildContext context) {
@@ -155,7 +165,7 @@ class _Local_SharingState extends State<Local_Sharing> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => sendOne(userName)));
+                              builder: (context) => sendOne(this.userName)));
                     } else {
                       if (await Nearby().enableLocationServices()) {
                         Navigator.push(

@@ -17,12 +17,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 String cId = "0";
+String sender_name="";
 var timer;
 final mymessage = TextEditingController();
 Map<String, String> _paths;
 ValueNotifier<bool> _status = ValueNotifier<bool>(false);
 ValueNotifier<bool> _advertising = ValueNotifier<bool>(false);
-List<Message> messages = [
+List<Message> _messages = [
   Message(
     sender: 'Admin',
     text: 'You Can Start You Conversation Here..',
@@ -225,10 +226,10 @@ class _recieveOneState extends State<recieveOne> {
               recvOneBody(userName),
               Expanded(
                 child: ListView.builder(
-                  itemCount: messages.length,
+                  itemCount: _messages.length,
                   itemBuilder: (BuildContext context, int index) {
-                    bool isMe = true;
-                    return _chatbubble(messages[index], isMe);
+                    bool isMe = !(sender_name == _messages[index].sender);
+                    return _chatbubble(_messages[index], isMe);
                   },
                 ),
               ),
@@ -246,13 +247,15 @@ class _recieveOneState extends State<recieveOne> {
                       color: Theme.of(context).primaryColor,
                       onPressed: () async {
                         _paths = await FilePicker.getMultiFilePath();
-                        Fluttertoast.showToast(
-                          msg: "click send to send files",
-                          toastLength: Toast.LENGTH_LONG,
-                          backgroundColor: Colors.white,
-                          textColor: Colors.black,
-                          fontSize: 16,
-                        );
+                        if(_paths.length>0) {
+                          Fluttertoast.showToast(
+                            msg: "click send to send files",
+                            toastLength: Toast.LENGTH_LONG,
+                            backgroundColor: Colors.white,
+                            textColor: Colors.black,
+                            fontSize: 16,
+                          );
+                        }
                       },
                     ),
                     Expanded(
@@ -281,10 +284,10 @@ class _recieveOneState extends State<recieveOne> {
                                   cId, _paths.values.toList()[i]);
                               Message n = new Message();
                               String s =
-                                  "Sending ${_paths.keys.toList()[i]} to $cId";
+                                  "Sending ${_paths.values.toList()[i].split('/').last} to $sender_name";
                               n.text = s;
-                              n.sender = cId;
-                              messages.add(n);
+                              n.sender = userName;
+                              _messages.add(n);
                               Nearby().sendBytesPayload(
                                   cId,
                                   Uint8List.fromList(
@@ -296,12 +299,11 @@ class _recieveOneState extends State<recieveOne> {
                           Message n = new Message();
                           String s = mymessage.text;
                           n.text = s;
-                          n.sender = cId;
-
-                          if (n.text != "") {
+                          n.sender = userName;
+                          if (n.text.trim() != "") {
                             Nearby().sendBytesPayload(cId,
                                 Uint8List.fromList(mymessage.text.codeUnits));
-                            messages.add(n);
+                            _messages.add(n);
                             setState(() {});
                             Fluttertoast.showToast(
                               msg: s,
@@ -705,6 +707,12 @@ class _recvOneBodyState extends State<recvOneBody> {
       onConnectionResult: (id, status) {
         if (status.toString() == "Status.CONNECTED") {
           _status.value = true;
+          _messages = [
+            Message(
+              sender: 'Admin',
+              text: 'You Can Start You Conversation Here..',
+            ),
+          ];
           Nearby().stopAdvertising();
           _advertising.value = false;
           try {
@@ -740,13 +748,14 @@ class _recvOneBodyState extends State<recvOneBody> {
             children: <Widget>[
               Text("id: " + id),
               Text("Token: " + info.authenticationToken),
-              Text("Name" + info.endpointName),
+              Text("Name: " + info.endpointName),
               Text("Incoming: " + info.isIncomingConnection.toString()),
               RaisedButton(
                 child: Text("Accept Connection"),
                 onPressed: () {
                   Navigator.pop(context);
                   cId = id;
+                  sender_name=info.endpointName;
                   Nearby().acceptConnection(
                     id,
                     onPayLoadRecieved: (endid, payload) async {
@@ -754,9 +763,10 @@ class _recvOneBodyState extends State<recvOneBody> {
                         Message n = new Message();
                         String str = String.fromCharCodes(payload.bytes);
                         n.text = str;
-                        n.sender = endid;
-                        messages.add(n);
-                        setState(() {});
+                        n.sender = sender_name;
+                        _messages.add(n);
+                      setState(() {
+                      });
                         //showSnackbar(endid + ": " + str);
 
                         if (str.contains(':')) {
@@ -766,8 +776,38 @@ class _recvOneBodyState extends State<recvOneBody> {
                           String fileName = (str.split(':')[1]);
 
                           if (map.containsKey(payloadId)) {
+                            print("got map");
                             if (await tempFile.exists()) {
-                              tempFile.rename(tempFile.parent.path + "/" + fileName);
+                              if(!Directory("/storage/emulated/0/DiGiShare").existsSync()){
+                                try {
+                                  Directory("/storage/emulated/0/DiGiShare")
+                                      .createSync(recursive: true);}
+                                catch (e){
+                                  Fluttertoast.showToast(
+                                    msg: "storage permissions not allowed",
+                                    toastLength: Toast.LENGTH_LONG,
+                                    backgroundColor: Colors.white,
+                                    textColor: Colors.black,
+                                    fontSize: 16,
+                                  );
+                                }
+                              }
+                              if(!Directory("/storage/emulated/0/DiGiShare/Received").existsSync()){
+                                try {
+                                  Directory("/storage/emulated/0/DiGiShare/Received")
+                                      .createSync(recursive: true);}
+                                catch (e){
+                                  Fluttertoast.showToast(
+                                    msg: "storage permissions not allowed",
+                                    toastLength: Toast.LENGTH_LONG,
+                                    backgroundColor: Colors.white,
+                                    textColor: Colors.black,
+                                    fontSize: 16,
+                                  );
+                                }
+                              }
+                              tempFile.rename("/storage/emulated/0/DiGiShare/Received/" + fileName);
+                              print("in 1 received");
                             } else {
                               showSnackbar("File doesnt exist");
                             }
@@ -776,6 +816,7 @@ class _recvOneBodyState extends State<recvOneBody> {
                             map[payloadId] = fileName;
                           }
                         }
+                        setState(() {});
                       } else if (payload.type == PayloadType.FILE) {
                         appendList(payload.filePath, "Recieve", id);
                         showSnackbar(endid + ": File transfer started");
@@ -794,10 +835,14 @@ class _recvOneBodyState extends State<recvOneBody> {
                       } else if (payloadTransferUpdate.status ==
                           PayloadStatus.SUCCESS) {
                         showSnackbar(
-                            "success, total bytes = ${payloadTransferUpdate.totalBytes}");
+                            "bytes received = ${payloadTransferUpdate.totalBytes}");
+                        setState(() {
+                        });
 
                         if (map.containsKey(payloadTransferUpdate.id)) {
+                          print("kkk in");
                           //rename the file now
+                          print("in 2 received");
                           String name = map[payloadTransferUpdate.id];
                           if(!Directory("/storage/emulated/0/DiGiShare").existsSync()){
                             try {
@@ -829,6 +874,7 @@ class _recvOneBodyState extends State<recvOneBody> {
                           }
                           tempFile.rename("/storage/emulated/0/DiGiShare/Received/" + name);
                         } else {
+                          print("kkk out");
                           //bytes not received till yet
                           map[payloadTransferUpdate.id] = "";
                         }

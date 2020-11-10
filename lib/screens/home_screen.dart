@@ -175,9 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
           elevation: 0,
         ),
       ),
-      body: _selectedIndex == 3
-          ? ShowScreen(index: _selectedIndex, userName: widget.userName)
-          : ShowScreen(index: _selectedIndex),
+      body:ShowScreen(index: _selectedIndex, userName: userName)
     );
   }
   getArchieved() async {
