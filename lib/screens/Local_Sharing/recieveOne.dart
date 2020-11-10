@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:ShareApp/screens/History/received.dart';
 import 'package:ShareApp/screens/Local_Sharing/paths_data.dart';
 import 'package:ShareApp/screens/Local_Sharing/apk_list.dart';
 import 'package:flutter/cupertino.dart';
@@ -37,13 +38,13 @@ class recieveOne extends StatefulWidget {
     this.userName = uname;
   }
   @override
-  _recieveOneState createState() => _recieveOneState(userName);
+  recieveOneState createState() => recieveOneState(userName);
 }
 
-class _recieveOneState extends State<recieveOne> {
+class recieveOneState extends State<recieveOne> {
   String userName;
-
-  _recieveOneState(String uname) {
+  static ScrollController scrollController = new ScrollController();
+  recieveOneState(String uname) {
     //    Constructor
     this.userName = uname;
   }
@@ -167,7 +168,16 @@ class _recieveOneState extends State<recieveOne> {
                 onPressed: () {
                   getapkpaths();
                 },
-              )
+              ),
+              IconButton(
+                icon: Icon(Icons.file_download),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Downloads()));
+                },
+              ),
             ],
           ),
         ),
@@ -226,6 +236,7 @@ class _recieveOneState extends State<recieveOne> {
               recvOneBody(userName),
               Expanded(
                 child: ListView.builder(
+                  controller: scrollController,
                   itemCount: _messages.length,
                   itemBuilder: (BuildContext context, int index) {
                     bool isMe = !(sender_name == _messages[index].sender);
@@ -294,6 +305,14 @@ class _recieveOneState extends State<recieveOne> {
                                       "$payloadId:${_paths.values.toList()[i].split('/').last}"
                                           .codeUnits));
                             }
+                            setState(() {
+
+                            });
+                            scrollController.animateTo(
+                              0.0,
+                              curve: Curves.easeOut,
+                              duration: const Duration(milliseconds: 300),
+                            );
                             _paths = null;
                           }
                           Message n = new Message();
@@ -303,8 +322,15 @@ class _recieveOneState extends State<recieveOne> {
                           if (n.text.trim() != "") {
                             Nearby().sendBytesPayload(cId,
                                 Uint8List.fromList(mymessage.text.codeUnits));
-                            _messages.add(n);
-                            setState(() {});
+                            setState(() {
+                              _messages.add(n);
+
+                            });
+                            scrollController.animateTo(
+                              0.0,
+                              curve: Curves.easeOut,
+                              duration: const Duration(milliseconds: 300),
+                            );
                             Fluttertoast.showToast(
                               msg: s,
                               toastLength: Toast.LENGTH_LONG,
@@ -721,6 +747,7 @@ class _recvOneBodyState extends State<recvOneBody> {
           }
           catch (e) {
             print(e);
+            print(e);
           }
         }
         setState(() {
@@ -767,6 +794,11 @@ class _recvOneBodyState extends State<recvOneBody> {
                         _messages.add(n);
                       setState(() {
                       });
+                        recieveOneState.scrollController.animateTo(
+                          0.0,
+                          curve: Curves.easeOut,
+                          duration: const Duration(milliseconds: 300),
+                        );
                         //showSnackbar(endid + ": " + str);
 
                         if (str.contains(':')) {
