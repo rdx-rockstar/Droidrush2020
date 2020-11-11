@@ -63,23 +63,49 @@ class _HomeScreenState extends State<HomeScreen> {
         child: new ListView(
 
           children: <Widget>[
-    Container(
-    child: FutureBuilder(
-    future: getArchieved(),
-    builder: (context, data) {
-    if (data.hasData) {
-      return new UserAccountsDrawerHeader(
-        accountName: Text(userName+""),
-        accountEmail: Text(""),
-        currentAccountPicture: new CircleAvatar(
-          backgroundImage: AssetImage('assets/images/fmainJ.jpg'),
-        ),
-      );
-    }
-    else{
-      return Center(child: CircularProgressIndicator());
-    }
-    })),
+            GestureDetector(
+              onTap: () {
+                _selectedIndex = 3;
+                Navigator.pop(context);
+                setState(() {});
+              },
+              child: Container(
+                child: FutureBuilder(
+                    future: getArchieved(),
+                    builder: (context, data) {
+                      if (data.hasData) {
+                        return new UserAccountsDrawerHeader(
+                          accountName: Text(userName+""),
+                          accountEmail: Text(""),
+                          currentAccountPicture: new CircleAvatar(
+                            backgroundImage: AssetImage('assets/images/fmainJ.jpg'),
+                          ),
+                        );
+                      }
+                      else{
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    }
+                )
+              ),
+            ),
+//    Container(
+//    child: FutureBuilder(
+//    future: getArchieved(),
+//    builder: (context, data) {
+//    if (data.hasData) {
+//      return new UserAccountsDrawerHeader(
+//        accountName: Text(userName+""),
+//        accountEmail: Text(""),
+//        currentAccountPicture: new CircleAvatar(
+//          backgroundImage: AssetImage('assets/images/fmainJ.jpg'),
+//        ),
+//      );
+//    }
+//    else{
+//      return Center(child: CircularProgressIndicator());
+//    }
+//    })),
 
             // ListTile(
             //   title: Text("Web Sharing"),
