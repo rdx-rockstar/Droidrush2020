@@ -309,7 +309,7 @@ class recieveOneState extends State<recieveOne> {
 
                             });
                             scrollController.animateTo(
-                              0.0,
+                              scrollController.position.maxScrollExtent,
                               curve: Curves.easeOut,
                               duration: const Duration(milliseconds: 300),
                             );
@@ -327,7 +327,7 @@ class recieveOneState extends State<recieveOne> {
 
                             });
                             scrollController.animateTo(
-                              0.0,
+                              scrollController.position.maxScrollExtent,
                               curve: Curves.easeOut,
                               duration: const Duration(milliseconds: 300),
                             );
@@ -795,7 +795,7 @@ class _recvOneBodyState extends State<recvOneBody> {
                       setState(() {
                       });
                         recieveOneState.scrollController.animateTo(
-                          0.0,
+                          recieveOneState.scrollController.position.maxScrollExtent,
                           curve: Curves.easeOut,
                           duration: const Duration(milliseconds: 300),
                         );

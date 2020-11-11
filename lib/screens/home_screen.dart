@@ -5,6 +5,8 @@ import 'package:ShareApp/widgets/customAppbar.dart';
 import 'package:ShareApp/widgets/showScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'about.dart';
+
 
 class HomeScreen extends StatefulWidget {
   final String userName;
@@ -19,9 +21,13 @@ class _HomeScreenState extends State<HomeScreen> {
   SharedPreferences sharedPreferences;
   int _selectedIndex = 0;
   void _onItemTapped(int index) {
+    if(index<=3){
     setState(() {
       _selectedIndex = index;
-    });
+    });}
+    else{
+
+    }
   }
 
   @override
@@ -120,10 +126,21 @@ class _HomeScreenState extends State<HomeScreen> {
             //   leading: Icon(Icons.question_answer_rounded),
             // ),
             ListTile(
+              title: Text("About us"),
+              leading: Icon(Icons.info_outline),
+              onTap: (){ Navigator.of(context).pop();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => About()));
+              },
+            ),
+            ListTile(
               title: Text("Close"),
               leading: Icon(Icons.close_rounded),
               onTap: () => Navigator.of(context).pop(),
             ),
+
             new Divider(),
             ListTile(
               title: Text("Rate This App"),

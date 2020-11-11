@@ -103,7 +103,7 @@ class _ApkExtractorState extends State<ApkExtractor>
   getList(li, context) {
     if (isSearching == false) list = li;
     return ListView.builder(
-        shrinkWrap: true,
+        shrinkWrap: false,
         itemCount: li.length,
         itemBuilder: (context, index) {
           Application app = li[index];

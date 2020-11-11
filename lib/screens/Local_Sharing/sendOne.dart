@@ -500,10 +500,9 @@ class _sendOneState extends State<sendOne> {
                           _paths = null;
                         }
                         setState(() {
-
                         });
                         _scrollController.animateTo(
-                          0.0,
+                          _scrollController.position.maxScrollExtent,
                           curve: Curves.easeOut,
                           duration: const Duration(milliseconds: 300),
                         );
@@ -519,7 +518,7 @@ class _sendOneState extends State<sendOne> {
                               _messages.add(n);
                             });
                             _scrollController.animateTo(
-                              0.0,
+                              _scrollController.position.maxScrollExtent,
                               curve: Curves.easeOut,
                               duration: const Duration(milliseconds: 300),
                             );
@@ -787,17 +786,15 @@ class _sendOneState extends State<sendOne> {
           Message m = new Message();
           m.sender = Reciver_name;
           m.text = str;
-          _messages.add(m);
           setState(() {
-
+            _messages.add(m);
           });
           _scrollController.animateTo(
-            0.0,
+            _scrollController.position.maxScrollExtent,
             curve: Curves.easeOut,
             duration: const Duration(milliseconds: 300),
           );
           //showSnackbar(endid + ": " + str);
-
           if (str.contains(':')) {
             int payloadId = int.parse(str.split(':')[0]);
             String fileName = (str.split(':')[1]);
@@ -849,6 +846,14 @@ class _sendOneState extends State<sendOne> {
           //showSnackbar(endid + ": File transfer started");
           tempFile = File(payload.filePath);
         }
+        setState(() {
+
+        });
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          curve: Curves.easeOut,
+          duration: const Duration(milliseconds: 300),
+        );
       },
       onPayloadTransferUpdate: (endid, payloadTransferUpdate) {
         if (payloadTransferUpdate.status == PayloadStatus.IN_PROGRRESS) {
