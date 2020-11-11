@@ -422,7 +422,7 @@ class _createGrpState extends State<createGrp> {
   void getapkpaths() async {
     final dataFromSecondPage = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ApkExtractor()),
+      MaterialPageRoute(builder: (context) => ApkExtractor(1)),
     ) as Data;
     _paths = dataFromSecondPage.path;
     print(_paths);

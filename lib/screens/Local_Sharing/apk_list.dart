@@ -8,9 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
-
+int canShare;
 class ApkExtractor extends StatefulWidget {
-  ApkExtractor(){}
+  ApkExtractor(int i){
+    canShare=i;
+  }
   @override
   _ApkExtractorState createState() => _ApkExtractorState();
 }
@@ -47,7 +49,7 @@ class _ApkExtractorState extends State<ApkExtractor>
             catch (e){
               Fluttertoast.showToast(
                 msg: "storage permissions not allowed",
-                toastLength: Toast.LENGTH_LONG,
+                toastLength: Toast.LENGTH_SHORT,
                 backgroundColor: Colors.white,
                 textColor: Colors.black,
                 fontSize: 16,
@@ -61,7 +63,7 @@ class _ApkExtractorState extends State<ApkExtractor>
       catch (e){
         Fluttertoast.showToast(
           msg: "storage permissions not allowed",
-          toastLength: Toast.LENGTH_LONG,
+          toastLength: Toast.LENGTH_SHORT,
           backgroundColor: Colors.white,
           textColor: Colors.black,
           fontSize: 16,
@@ -171,10 +173,24 @@ class _ApkExtractorState extends State<ApkExtractor>
                                           label: Text("Share Apk",
                                               textAlign: TextAlign.left),
                                           onPressed: () async {
-                                            pdata.path.addAll({app.appName:app.apkFilePath});
-                                            print(app.appName+" "+app.apkFilePath);
-                                            Navigator.pop(context);
-                                            Navigator.pop(context,pdata);
+                                            if(canShare==1) {
+                                              pdata.path.addAll({
+                                                app.appName: app.apkFilePath
+                                              });
+                                              print(app.appName + " " +
+                                                  app.apkFilePath);
+                                              Navigator.pop(context);
+                                              Navigator.pop(context, pdata);
+                                            }
+                                            else{
+                                              Fluttertoast.showToast(
+                                                msg: "Not Connected",
+                                                toastLength: Toast.LENGTH_SHORT,
+                                                backgroundColor: Colors.white,
+                                                textColor: Colors.black,
+                                                fontSize: 16,
+                                              );
+                                            }
                                           }),
                                       FlatButton.icon(
                                           icon: Icon(Icons.android),
@@ -394,11 +410,35 @@ class _ApkExtractorState extends State<ApkExtractor>
                                                           label: Text("Share Apk",
                                                               textAlign: TextAlign.left),
                                                           onPressed: () async {
-                                                            print(name+" "+join(li[index].path, 'setup.apk').toString());
-                                                            pdata.path={};
-                                                            pdata.path.addAll({name:join(li[index].path, 'setup.apk')});
-                                                            Navigator.pop(context);
-                                                            Navigator.pop(context,pdata);
+                                                            if(canShare==1) {
+                                                              print(name + " " +
+                                                                  join(li[index]
+                                                                      .path,
+                                                                      'setup.apk')
+                                                                      .toString());
+                                                              pdata.path = {};
+                                                              pdata.path.addAll(
+                                                                  {
+                                                                    name: join(
+                                                                        li[index]
+                                                                            .path,
+                                                                        'setup.apk')
+                                                                  });
+                                                              Navigator.pop(
+                                                                  context);
+                                                              Navigator.pop(
+                                                                  context,
+                                                                  pdata);
+                                                            }
+                                                            else{
+                                                              Fluttertoast.showToast(
+                                                                msg: "Not connected",
+                                                                toastLength: Toast.LENGTH_SHORT,
+                                                                backgroundColor: Colors.white,
+                                                                textColor: Colors.black,
+                                                                fontSize: 16,
+                                                              );
+                                                            }
                                                           }),
                                                       FlatButton.icon(
                                                           icon: Icon(Icons.download_done_outlined),

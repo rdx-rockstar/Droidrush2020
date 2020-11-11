@@ -1,6 +1,9 @@
 import 'dart:ui';
 
 import 'package:ShareApp/constants/color_constant.dart';
+import 'package:ShareApp/screens/History/received.dart';
+import 'package:ShareApp/screens/Local_Sharing/apk_list.dart';
+import 'package:ShareApp/screens/Local_Sharing/ftpServer.dart';
 import 'package:ShareApp/widgets/customAppbar.dart';
 import 'package:ShareApp/widgets/showScreen.dart';
 import 'package:flutter/material.dart';
@@ -85,46 +88,77 @@ class _HomeScreenState extends State<HomeScreen> {
             //    // Here we can add ftp transfer
             //   },
             // ),
+//            ListTile(
+//              title: Text("Local Sharing"),
+//              leading: Icon(Icons.offline_share),
+//              onTap: () {
+//                _selectedIndex = 0;
+//                Navigator.pop(context);
+//                setState(() {});
+//              },
+//            ),
             ListTile(
-              title: Text("Local Sharing"),
-              leading: Icon(Icons.offline_share),
-              onTap: () {
-                _selectedIndex = 0;
-                Navigator.pop(context);
-                setState(() {});
+              title: Text("Pc Sharing"),
+              leading: Icon(Icons.computer_outlined),
+              onTap: (){ Navigator.of(context).pop();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ftpServer()));
               },
             ),
+//            ListTile(
+//              title: Text("Cloud Sharing and Storage"),
+//              leading: Icon(Icons.web_sharp),
+//              onTap: () {
+//                _selectedIndex = 1;
+//                Navigator.pop(context);
+//                setState(() {});
+//              },
+//            ),
+//            ListTile(
+//              title: Text("History"),
+//              leading: Icon(Icons.history),
+//              onTap: () {
+//                _selectedIndex = 2;
+//                Navigator.pop(context);
+//                setState(() {});
+//              },
+//            ),
             ListTile(
-              title: Text("Cloud Sharing and Storage"),
-              leading: Icon(Icons.web_sharp),
-              onTap: () {
-                _selectedIndex = 1;
-                Navigator.pop(context);
-                setState(() {});
+              title: Text("Recived files"),
+              leading: Icon(Icons.file_download),
+              onTap: (){ Navigator.of(context).pop();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Downloads()));
               },
             ),
-            ListTile(
-              title: Text("History"),
-              leading: Icon(Icons.history),
-              onTap: () {
-                _selectedIndex = 2;
-                Navigator.pop(context);
-                setState(() {});
-              },
-            ),
-            ListTile(
-              title: Text("Accounts"),
-              leading: Icon(Icons.settings),
-              onTap: () {
-                _selectedIndex = 3;
-                Navigator.pop(context);
-                setState(() {});
-              },
-            ),
+//            ListTile(
+//              title: Text("Accounts"),
+//              leading: Icon(Icons.settings),
+//              onTap: () {
+//                _selectedIndex = 3;
+//                Navigator.pop(context);
+//                setState(() {});
+//              },
+//            ),
             // ListTile(
             //   title: Text("About"),
             //   leading: Icon(Icons.question_answer_rounded),
             // ),
+
+            ListTile(
+              title: Text("Apk Extractor"),
+              leading: Icon(Icons.android_outlined),
+              onTap: (){ Navigator.of(context).pop();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ApkExtractor(0)));
+              },
+            ),
             ListTile(
               title: Text("About us"),
               leading: Icon(Icons.info_outline),

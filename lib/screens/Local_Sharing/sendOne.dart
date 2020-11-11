@@ -551,7 +551,7 @@ class _sendOneState extends State<sendOne> {
   void getapkpaths() async {
     final dataFromSecondPage = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => ApkExtractor()),
+      MaterialPageRoute(builder: (context) => ApkExtractor(1)),
     ) as Data;
     _paths = dataFromSecondPage.path;
     print(_paths);

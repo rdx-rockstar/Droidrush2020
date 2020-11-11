@@ -32,7 +32,7 @@ class ftpState extends State<ftpServer> {
       if(value==1){
         Fluttertoast.showToast(
           msg: "server created",
-          toastLength: Toast.LENGTH_LONG,
+          toastLength: Toast.LENGTH_SHORT,
           backgroundColor: Colors.white,
           textColor: Colors.black,
           fontSize: 16,
@@ -41,7 +41,7 @@ class ftpState extends State<ftpServer> {
       else{
         Fluttertoast.showToast(
           msg: "server not created",
-          toastLength: Toast.LENGTH_LONG,
+          toastLength: Toast.LENGTH_SHORT,
           backgroundColor: Colors.white,
           textColor: Colors.black,
           fontSize: 16,
@@ -55,7 +55,7 @@ class ftpState extends State<ftpServer> {
       if(value==1){
         Fluttertoast.showToast(
           msg: "server stopped",
-          toastLength: Toast.LENGTH_LONG,
+          toastLength: Toast.LENGTH_SHORT,
           backgroundColor: Colors.white,
           textColor: Colors.black,
           fontSize: 16,
@@ -94,7 +94,7 @@ class ftpState extends State<ftpServer> {
                         _status.value = false;
                         Fluttertoast.showToast(
                           msg: "succesfully suspended",
-                          toastLength: Toast.LENGTH_LONG,
+                          toastLength: Toast.LENGTH_SHORT,
                           backgroundColor: Colors.white,
                           textColor: Colors.black,
                           fontSize: 16,
@@ -104,7 +104,7 @@ class ftpState extends State<ftpServer> {
                       else{
                         Fluttertoast.showToast(
                           msg: "Storage Permissions Denied",
-                          toastLength: Toast.LENGTH_LONG,
+                          toastLength: Toast.LENGTH_SHORT,
                           backgroundColor: Colors.white,
                           textColor: Colors.black,
                           fontSize: 16,
@@ -124,7 +124,7 @@ class ftpState extends State<ftpServer> {
                           c=1;
                         Fluttertoast.showToast(
                           msg: "server started",
-                          toastLength: Toast.LENGTH_LONG,
+                          toastLength: Toast.LENGTH_SHORT,
                           backgroundColor: Colors.white,
                           textColor: Colors.black,
                           fontSize: 16,
@@ -132,7 +132,7 @@ class ftpState extends State<ftpServer> {
                         else{
                           Fluttertoast.showToast(
                             msg: "server resumed",
-                            toastLength: Toast.LENGTH_LONG,
+                            toastLength: Toast.LENGTH_SHORT,
                             backgroundColor: Colors.white,
                             textColor: Colors.black,
                             fontSize: 16,
@@ -290,7 +290,7 @@ class ftpState extends State<ftpServer> {
                                                 .createSync(recursive: true);
                                             Fluttertoast.showToast(
                                               msg: "permissions allowed",
-                                              toastLength: Toast.LENGTH_LONG,
+                                              toastLength: Toast.LENGTH_SHORT,
                                               backgroundColor: Colors.white,
                                               textColor: Colors.black,
                                               fontSize: 16,
@@ -304,7 +304,7 @@ class ftpState extends State<ftpServer> {
                                             print(e);
                                             Fluttertoast.showToast(
                                               msg: "permission not granted 1.1",
-                                              toastLength: Toast.LENGTH_LONG,
+                                              toastLength: Toast.LENGTH_SHORT,
                                               backgroundColor: Colors.white,
                                               textColor: Colors.black,
                                               fontSize: 16,
@@ -319,7 +319,7 @@ class ftpState extends State<ftpServer> {
                                                 "testing permissions//share it");
                                             Fluttertoast.showToast(
                                               msg: "permissions allowed",
-                                              toastLength: Toast.LENGTH_LONG,
+                                              toastLength: Toast.LENGTH_SHORT,
                                               backgroundColor: Colors.white,
                                               textColor: Colors.black,
                                               fontSize: 16,
@@ -329,7 +329,7 @@ class ftpState extends State<ftpServer> {
                                             print(e);
                                             Fluttertoast.showToast(
                                               msg: "permission not granted 1.2",
-                                              toastLength: Toast.LENGTH_LONG,
+                                              toastLength: Toast.LENGTH_SHORT,
                                               backgroundColor: Colors.white,
                                               textColor: Colors.black,
                                               fontSize: 16,
