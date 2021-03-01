@@ -1,4 +1,4 @@
-# ShareApp
+# DiGiShare
 
 A new Flutter project.
 
